@@ -37,7 +37,7 @@ let currentSong: MusicPlayerTrack = $state({
     id: 0,
     title: "Music",
     artist: "Artist",
-    cover: "/favicon/icon-light.ico",
+    cover: "/favicon/favicon.ico",
     url: "",
     duration: 0,
 });

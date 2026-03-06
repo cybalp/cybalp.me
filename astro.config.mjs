@@ -46,8 +46,9 @@ const adapter = process.env.GITHUB_ACTIONS
 // Ref: https://astro.build/config
 export default defineConfig({
     site: siteConfig.siteURL,
+    output: 'hybrid',
     base: "/",
-    trailingSlash: "always",
+    trailingSlash: "never",
     adapter: adapter,
     integrations: [
         decapCmsOauth({

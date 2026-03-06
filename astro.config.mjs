@@ -1,3 +1,4 @@
+import { envField } from "astro/config";
 import { defineConfig } from "astro/config";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
@@ -46,10 +47,16 @@ const adapter = process.env.GITHUB_ACTIONS
 // Ref: https://astro.build/config
 export default defineConfig({
     site: siteConfig.siteURL,
-    output: 'hybrid',
+    output: 'static',
     base: "/",
-    trailingSlash: "never",
+    trailingSlash: "ignore",
     adapter: adapter,
+    env: {
+      schema: {
+        OAUTH_GITHUB_CLIENT_ID: envField.string({ context: 'server', access: 'secret' }),
+        OAUTH_GITHUB_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret' }),
+      }
+    },
     integrations: [
         decapCmsOauth({
             decapCMSVersion: "3.9.0",

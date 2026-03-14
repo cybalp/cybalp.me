@@ -26,7 +26,12 @@ export async function initFancybox() {
 	if (!Fancybox) {
 		const mod = await import("@fancyapps/ui");
 		Fancybox = mod.Fancybox;
-		await import("@fancyapps/ui/dist/fancybox/fancybox.css");
+		// @docs Dynamic CSS import fails in production when inlineStylesheets: "always" is set in
+		try {
+			await import("@fancyapps/ui/dist/fancybox/fancybox.css");
+		} catch {
+			// Non-fatal: vendor CSS is already inlined via base.astro static import.
+		}
 	}
 	if (fancyboxSelectors.length > 0) {
 		return;

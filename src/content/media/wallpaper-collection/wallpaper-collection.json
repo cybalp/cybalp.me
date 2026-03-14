@@ -7,356 +7,407 @@
 	"tags": ["wallpapers", "anime", "linux", "art"],
 	"layout": "grid",
 	"columns": 4,
+	"pageSize": 10,
 	"photos": [
 		{
 			"src": "./404.webp",
 			"alt": "404 Error Wallpaper",
 			"title": "404 Error",
 			"description": "404 error themed wallpaper",
-			"tags": ["error", "tech"]
+			"tags": ["error", "tech"],
+			"downloadable": false
 		},
 		{
 			"src": "./anime-arch.webp",
 			"alt": "Anime Arch Wallpaper",
 			"title": "Anime Arch",
 			"description": "Anime style Arch Linux wallpaper",
-			"tags": ["anime", "linux", "arch"]
+			"tags": ["anime", "linux", "arch"],
+			"downloadable": true
 		},
 		{
 			"src": "./anime-room.webp",
 			"alt": "Anime Room Wallpaper",
 			"title": "Anime Room",
 			"description": "Cozy anime room scene",
-			"tags": ["anime", "room", "cozy"]
+			"tags": ["anime", "room", "cozy"],
+			"downloadable": true
 		},
 		{
 			"src": "./anime.webp",
 			"alt": "Anime Wallpaper",
 			"title": "Anime",
 			"description": "Anime themed wallpaper",
-			"tags": ["anime"]
+			"tags": ["anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./arch.webp",
 			"alt": "Arch Linux Wallpaper",
 			"title": "Arch Linux",
 			"description": "Arch Linux themed wallpaper",
-			"tags": ["linux", "arch"]
+			"tags": ["linux", "arch"],
+			"downloadable": true
 		},
 		{
 			"src": "./arch2.webp",
 			"alt": "Arch Linux Wallpaper 2",
 			"title": "Arch Linux 2",
 			"description": "Another Arch Linux themed wallpaper",
-			"tags": ["linux", "arch"]
+			"tags": ["linux", "arch"],
+			"downloadable": true
 		},
 		{
 			"src": "./archcraft.webp",
 			"alt": "Archcraft Wallpaper",
 			"title": "Archcraft",
 			"description": "Archcraft Linux distribution wallpaper",
-			"tags": ["linux", "archcraft"]
+			"tags": ["linux", "archcraft"],
+			"downloadable": true
 		},
 		{
 			"src": "./archman.webp",
 			"alt": "Archman Wallpaper",
 			"title": "Archman",
 			"description": "Archman Linux distribution wallpaper",
-			"tags": ["linux", "archman"]
+			"tags": ["linux", "archman"],
+			"downloadable": true
 		},
 		{
 			"src": "./bonsai.webp",
 			"alt": "Bonsai Wallpaper",
 			"title": "Bonsai",
 			"description": "Bonsai tree wallpaper",
-			"tags": ["nature", "bonsai", "minimal"]
+			"tags": ["nature", "bonsai", "minimal"],
+			"downloadable": true
 		},
 		{
 			"src": "./boy.webp",
 			"alt": "Boy Character Wallpaper",
 			"title": "Boy",
 			"description": "Character wallpaper featuring a boy",
-			"tags": ["character", "anime"]
+			"tags": ["character", "anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./boy2.webp",
 			"alt": "Boy Character Wallpaper 2",
 			"title": "Boy 2",
 			"description": "Another character wallpaper featuring a boy",
-			"tags": ["character", "anime"]
+			"tags": ["character", "anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./cat.webp",
 			"alt": "Cat Wallpaper",
 			"title": "Cat",
 			"description": "Cat themed wallpaper",
-			"tags": ["cat", "animal"]
+			"tags": ["cat", "animal"],
+			"downloadable": true
 		},
 		{
 			"src": "./comp.webp",
 			"alt": "Computer Wallpaper",
 			"title": "Computer",
 			"description": "Computer/tech themed wallpaper",
-			"tags": ["tech", "computer"]
+			"tags": ["tech", "computer"],
+			"downloadable": true
 		},
 		{
 			"src": "./cyber.webp",
 			"alt": "Cyberpunk Wallpaper",
 			"title": "Cyberpunk",
 			"description": "Cyberpunk themed wallpaper",
-			"tags": ["cyberpunk", "futuristic", "neon"]
+			"tags": ["cyberpunk", "futuristic", "neon"],
+			"downloadable": true
 		},
 		{
 			"src": "./dark.webp",
 			"alt": "Dark Wallpaper",
 			"title": "Dark",
 			"description": "Dark themed wallpaper",
-			"tags": ["dark", "minimal"]
+			"tags": ["dark", "minimal"],
+			"downloadable": true
 		},
 		{
 			"src": "./dark2.webp",
 			"alt": "Dark Wallpaper 2",
 			"title": "Dark 2",
 			"description": "Another dark themed wallpaper",
-			"tags": ["dark", "minimal"]
+			"tags": ["dark", "minimal"],
+			"downloadable": true
 		},
 		{
 			"src": "./eagle.webp",
 			"alt": "Eagle Wallpaper",
 			"title": "Eagle",
 			"description": "Eagle themed wallpaper",
-			"tags": ["eagle", "animal", "nature"]
+			"tags": ["eagle", "animal", "nature"],
+			"downloadable": true
 		},
 		{
 			"src": "./evangelion.webp",
 			"alt": "Evangelion Wallpaper",
 			"title": "Evangelion",
 			"description": "Evangelion anime themed wallpaper",
-			"tags": ["anime", "evangelion"]
+			"tags": ["anime", "evangelion"],
+			"downloadable": true
 		},
 		{
 			"src": "./garage.webp",
 			"alt": "Garage Wallpaper",
 			"title": "Garage",
 			"description": "Garage scene wallpaper",
-			"tags": ["garage", "scene"]
+			"tags": ["garage", "scene"],
+			"downloadable": true
 		},
 		{
 			"src": "./girl.webp",
 			"alt": "Girl Character Wallpaper",
 			"title": "Girl",
 			"description": "Character wallpaper featuring a girl",
-			"tags": ["character", "anime"]
+			"tags": ["character", "anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./girl2.webp",
 			"alt": "Girl Character Wallpaper 2",
 			"title": "Girl 2",
 			"description": "Another character wallpaper featuring a girl",
-			"tags": ["character", "anime"]
+			"tags": ["character", "anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./girlcoder.webp",
 			"alt": "Girl Coder Wallpaper",
 			"title": "Girl Coder",
 			"description": "Girl coder themed wallpaper",
-			"tags": ["character", "coding", "tech"]
+			"tags": ["character", "coding", "tech"],
+			"downloadable": true
 		},
 		{
 			"src": "./gta.webp",
 			"alt": "GTA Wallpaper",
 			"title": "GTA",
 			"description": "Grand Theft Auto themed wallpaper",
-			"tags": ["gta", "gaming"]
+			"tags": ["gta", "gaming"],
+			"downloadable": true
 		},
 		{
 			"src": "./it.webp",
 			"alt": "IT Wallpaper",
 			"title": "IT",
 			"description": "IT/tech themed wallpaper",
-			"tags": ["tech", "it"]
+			"tags": ["tech", "it"],
+			"downloadable": true
 		},
 		{
 			"src": "./kali.webp",
 			"alt": "Kali Linux Wallpaper",
 			"title": "Kali Linux",
 			"description": "Kali Linux themed wallpaper",
-			"tags": ["linux", "kali", "security"]
+			"tags": ["linux", "kali", "security"],
+			"downloadable": true
 		},
 		{
 			"src": "./kali2.webp",
 			"alt": "Kali Linux Wallpaper 2",
 			"title": "Kali Linux 2",
 			"description": "Another Kali Linux themed wallpaper",
-			"tags": ["linux", "kali", "security"]
+			"tags": ["linux", "kali", "security"],
+			"downloadable": true
 		},
 		{
 			"src": "./kali3.webp",
 			"alt": "Kali Linux Wallpaper 3",
 			"title": "Kali Linux 3",
 			"description": "Another Kali Linux themed wallpaper",
-			"tags": ["linux", "kali", "security"]
+			"tags": ["linux", "kali", "security"],
+			"downloadable": true
 		},
 		{
 			"src": "./komando.webp",
 			"alt": "Komando Wallpaper",
 			"title": "Komando",
 			"description": "Komando themed wallpaper",
-			"tags": ["military", "action"]
+			"tags": ["military", "action"],
+			"downloadable": true
 		},
 		{
 			"src": "./lady.webp",
 			"alt": "Lady Character Wallpaper",
 			"title": "Lady",
 			"description": "Character wallpaper featuring a lady",
-			"tags": ["character", "anime"]
+			"tags": ["character", "anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./lady2.webp",
 			"alt": "Lady Character Wallpaper 2",
 			"title": "Lady 2",
 			"description": "Another character wallpaper featuring a lady",
-			"tags": ["character", "anime"]
+			"tags": ["character", "anime"],
+			"downloadable": true
 		},
 		{
 			"src": "./lights.webp",
 			"alt": "Lights Wallpaper",
 			"title": "Lights",
 			"description": "Lights themed wallpaper",
-			"tags": ["lights", "neon", "cyberpunk"]
+			"tags": ["lights", "neon", "cyberpunk"],
+			"downloadable": true
 		},
 		{
 			"src": "./lights2.webp",
 			"alt": "Lights Wallpaper 2",
 			"title": "Lights 2",
 			"description": "Another lights themed wallpaper",
-			"tags": ["lights", "neon", "cyberpunk"]
+			"tags": ["lights", "neon", "cyberpunk"],
+			"downloadable": true
 		},
 		{
 			"src": "./lights3.webp",
 			"alt": "Lights Wallpaper 3",
 			"title": "Lights 3",
 			"description": "Another lights themed wallpaper",
-			"tags": ["lights", "neon", "cyberpunk"]
+			"tags": ["lights", "neon", "cyberpunk"],
+			"downloadable": true
 		},
 		{
 			"src": "./mario.webp",
 			"alt": "Mario Wallpaper",
 			"title": "Mario",
 			"description": "Super Mario themed wallpaper",
-			"tags": ["mario", "gaming", "nintendo"]
+			"tags": ["mario", "gaming", "nintendo"],
+			"downloadable": true
 		},
 		{
 			"src": "./messy.webp",
 			"alt": "Messy Wallpaper",
 			"title": "Messy",
 			"description": "Messy/chaotic themed wallpaper",
-			"tags": ["abstract", "chaotic"]
+			"tags": ["abstract", "chaotic"],
+			"downloadable": true
 		},
 		{
 			"src": "./minimal.webp",
 			"alt": "Minimal Wallpaper",
 			"title": "Minimal",
 			"description": "Minimalist wallpaper",
-			"tags": ["minimal", "simple"]
+			"tags": ["minimal", "simple"],
+			"downloadable": true
 		},
 		{
 			"src": "./nebula.webp",
 			"alt": "Nebula Wallpaper",
 			"title": "Nebula",
 			"description": "Nebula/space themed wallpaper",
-			"tags": ["space", "nebula", "cosmic"]
+			"tags": ["space", "nebula", "cosmic"],
+			"downloadable": true
 		},
 		{
 			"src": "./red.webp",
 			"alt": "Red Wallpaper",
 			"title": "Red",
 			"description": "Red themed wallpaper",
-			"tags": ["red", "color"]
+			"tags": ["red", "color"],
+			"downloadable": true
 		},
 		{
 			"src": "./red2.webp",
 			"alt": "Red Wallpaper 2",
 			"title": "Red 2",
 			"description": "Another red themed wallpaper",
-			"tags": ["red", "color"]
+			"tags": ["red", "color"],
+			"downloadable": true
 		},
 		{
 			"src": "./retro.webp",
 			"alt": "Retro Wallpaper",
 			"title": "Retro",
 			"description": "Retro themed wallpaper",
-			"tags": ["retro", "vintage", "80s"]
+			"tags": ["retro", "vintage", "80s"],
+			"downloadable": true
 		},
 		{
 			"src": "./root.webp",
 			"alt": "Root Wallpaper",
 			"title": "Root",
 			"description": "Root/admin themed wallpaper",
-			"tags": ["linux", "root", "admin"]
+			"tags": ["linux", "root", "admin"],
+			"downloadable": true
 		},
 		{
 			"src": "./root2.webp",
 			"alt": "Root Wallpaper 2",
 			"title": "Root 2",
 			"description": "Another root/admin themed wallpaper",
-			"tags": ["linux", "root", "admin"]
+			"tags": ["linux", "root", "admin"],
+			"downloadable": true
 		},
 		{
 			"src": "./snake.webp",
 			"alt": "Snake Wallpaper",
 			"title": "Snake",
 			"description": "Snake themed wallpaper",
-			"tags": ["snake", "animal"]
+			"tags": ["snake", "animal"],
+			"downloadable": true
 		},
 		{
 			"src": "./staircase.webp",
 			"alt": "Staircase Wallpaper",
 			"title": "Staircase",
 			"description": "Staircase scene wallpaper",
-			"tags": ["architecture", "staircase"]
+			"tags": ["architecture", "staircase"],
+			"downloadable": true
 		},
 		{
 			"src": "./techno.webp",
 			"alt": "Techno Wallpaper",
 			"title": "Techno",
 			"description": "Techno/electronic themed wallpaper",
-			"tags": ["techno", "electronic", "music"]
+			"tags": ["techno", "electronic", "music"],
+			"downloadable": true
 		},
 		{
 			"src": "./tiger.webp",
 			"alt": "Tiger Wallpaper",
 			"title": "Tiger",
 			"description": "Tiger themed wallpaper",
-			"tags": ["tiger", "animal", "wildlife"]
+			"tags": ["tiger", "animal", "wildlife"],
+			"downloadable": true
 		},
 		{
 			"src": "./tokyo.webp",
 			"alt": "Tokyo Wallpaper",
 			"title": "Tokyo",
 			"description": "Tokyo city themed wallpaper",
-			"tags": ["tokyo", "city", "japan"]
+			"tags": ["tokyo", "city", "japan"],
+			"downloadable": true
 		},
 		{
 			"src": "./tux.webp",
 			"alt": "Tux Wallpaper",
 			"title": "Tux",
 			"description": "Tux the Linux penguin wallpaper",
-			"tags": ["linux", "tux", "penguin"]
+			"tags": ["linux", "tux", "penguin"],
+			"downloadable": true
 		},
 		{
 			"src": "./user.webp",
 			"alt": "User Wallpaper",
 			"title": "User",
 			"description": "User themed wallpaper",
-			"tags": ["user", "tech"]
+			"tags": ["user", "tech"],
+			"downloadable": true
 		},
 		{
 			"src": "./waterfall.webp",
 			"alt": "Waterfall Wallpaper",
 			"title": "Waterfall",
 			"description": "Waterfall nature scene wallpaper",
-			"tags": ["waterfall", "nature", "landscape"]
+			"tags": ["waterfall", "nature", "landscape"],
+			"downloadable": true
 		}
 	],
 	"visible": true

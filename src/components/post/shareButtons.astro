@@ -1,0 +1,268 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/post/shareButtons.astro
+// ❯ @desc Social share strip for the post license (CC) block.
+// ❯       Shows an optional cover thumbnail, then share links for
+// ❯       Facebook, X/Twitter, LinkedIn, Reddit, a Web Share API button
+// ❯       (mobile — covers Instagram / WhatsApp native sheet), and a
+// ❯       clipboard copy button (Instagram / GitHub manual sharing).
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import Icon from "@components/common/icon.astro";
+import ImageWrapper from "@components/common/imageWrapper.astro";
+
+// ❯ PROPS
+interface Props {
+    title: string;
+    // @hint absoluteUrl must be a full https:// URL — social OG previews require it
+    absoluteUrl: string;
+    // @hint optional — relative cover path from post frontmatter (e.g. "img/btrfs.webp")
+    cover?: string;
+    // @hint required when cover is provided — relative dir of the post file
+    coverBasePath?: string;
+    // @hint true when the parent card has a dark cover background — switches icon/divider colours to white
+    hasDarkBg?: boolean;
+}
+
+const { title, absoluteUrl, cover, coverBasePath = "/", hasDarkBg = false } = Astro.props;
+const hasCover = !!cover;
+
+// ❯ SHARE URLS
+// @docs encodeURIComponent applied at build time so each URL survives as a query parameter.
+const encUrl   = encodeURIComponent(absoluteUrl);
+const encTitle = encodeURIComponent(title);
+
+const facebookHref = `https://www.facebook.com/sharer/sharer.php?u=${encUrl}`;
+const xHref        = `https://x.com/intent/tweet?url=${encUrl}&text=${encTitle}`;
+const linkedInHref = `https://www.linkedin.com/sharing/share-offsite/?url=${encUrl}`;
+const redditHref   = `https://www.reddit.com/submit?url=${encUrl}&title=${encTitle}`;
+---
+
+<!-- ❯ RENDER -->
+<div class="mt-3">
+
+    <!-- Half-width divider — intentionally stops before the CC watermark -->
+    <div class:list={["border-t w-1/2 mb-2", hasDarkBg ? "border-white/15" : "border-black/10 dark:border-white/10"]}></div>
+
+    <!-- Share row -->
+    <!-- @hint data-title / data-url are read by the inline <script> for native share + copy -->
+    <div
+        class="share-strip flex items-center gap-1"
+        data-title={title}
+        data-url={absoluteUrl}
+        data-dark-bg={hasDarkBg ? "true" : undefined}
+    >
+        {hasCover && (
+            <div class="cover-thumb flex-shrink-0 mr-2">
+                <ImageWrapper
+                    src={cover!}
+                    basePath={coverBasePath}
+                    alt={title}
+                    class="w-10 h-10 rounded-md"
+                />
+            </div>
+        )}
+
+        <span class:list={["text-[0.62rem] uppercase tracking-widest mr-1.5 select-none font-semibold", hasDarkBg ? "text-white/45" : "text-black/30 dark:text-white/30"]}>
+            Share
+        </span>
+
+        <!-- Facebook -->
+        <a
+            href={facebookHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on Facebook"
+            title="Facebook"
+            class="share-btn"
+        >
+            <Icon icon="fa6-brands:facebook" size="sm" />
+        </a>
+
+        <!-- X (Twitter) -->
+        <a
+            href={xHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on X"
+            title="X (Twitter)"
+            class="share-btn"
+        >
+            <Icon icon="fa6-brands:x-twitter" size="sm" />
+        </a>
+
+        <!-- LinkedIn -->
+        <a
+            href={linkedInHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on LinkedIn"
+            title="LinkedIn"
+            class="share-btn"
+        >
+            <Icon icon="fa6-brands:linkedin" size="sm" />
+        </a>
+
+        <!-- Reddit -->
+        <a
+            href={redditHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Share on Reddit"
+            title="Reddit"
+            class="share-btn"
+        >
+            <Icon icon="fa6-brands:reddit" size="sm" />
+        </a>
+
+        <!-- Native Web Share API — hidden until JS confirms support (mobile only) -->
+        <!-- @docs OS share sheet on iOS/Android includes Instagram, WhatsApp, etc.
+                   This button is the correct way to support Instagram sharing on mobile. -->
+        <button
+            type="button"
+            aria-label="Share via…"
+            title="Share via…"
+            class="share-btn native-share-btn hidden"
+            data-native-share
+        >
+            <Icon icon="fa6-solid:share-nodes" size="sm" />
+        </button>
+
+        <!-- Copy link — covers Instagram (paste in bio/story) and GitHub -->
+        <button
+            type="button"
+            aria-label="Copy link"
+            title="Copy link"
+            class="share-btn copy-btn"
+            data-copy-btn
+        >
+            <Icon icon="fa6-solid:link" size="sm" />
+        </button>
+
+        <span
+            class="copy-confirm text-[0.7rem] text-green-500 opacity-0 transition-opacity duration-300 ml-1 pointer-events-none select-none"
+            aria-live="polite"
+        >
+            Copied!
+        </span>
+    </div>
+</div>
+
+<style>
+    .cover-thumb :global(> div) {
+        border-radius: 0.375rem;
+    }
+
+    .share-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 0.375rem;
+        color: rgb(0 0 0 / 0.35);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition:
+            color 150ms ease,
+            background-color 150ms ease;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+
+    :global(.dark) .share-btn {
+        color: rgb(255 255 255 / 0.35);
+    }
+
+    .share-btn:hover {
+        color: var(--primary);
+        background-color: rgb(0 0 0 / 0.05);
+    }
+
+    :global(.dark) .share-btn:hover {
+        background-color: rgb(255 255 255 / 0.07);
+    }
+
+    /* ── Dark background overrides (cover card mode) */
+    /* @docs When hasDarkBg=true the parent card already has a dark overlay,
+             so we force white-tinted icons and a white hover ring in both modes. */
+    .share-strip[data-dark-bg] .share-btn {
+        color: rgb(255 255 255 / 0.5);
+    }
+
+    .share-strip[data-dark-bg] .share-btn:hover {
+        color: var(--primary);
+        background-color: rgb(255 255 255 / 0.1);
+    }
+</style>
+
+<script>
+    // ❯ NATIVE SHARE
+    // @docs Reveal the native share button only when navigator.share exists.
+    //       Keeps the strip clean on desktop browsers that don't support it.
+    document.querySelectorAll<HTMLElement>("[data-native-share]").forEach((btn) => {
+        if (typeof navigator.share === "function") {
+            btn.classList.remove("hidden");
+        }
+    });
+
+    // ❯ CLIPBOARD HELPERS
+    // @docs Uses navigator.clipboard.writeText with a synchronous execCommand
+    //       textarea fallback for older WebViews / non-secure contexts.
+    function showCopied(strip: Element): void {
+        const confirm = strip.querySelector(".copy-confirm") as HTMLElement | null;
+        if (!confirm) return;
+        confirm.style.opacity = "1";
+        setTimeout(() => { confirm.style.opacity = "0"; }, 2200);
+    }
+
+    function execCommandCopy(text: string): void {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.cssText = "position:fixed;left:-9999px;opacity:0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand("copy"); } catch (_) { /* noop */ }
+        document.body.removeChild(ta);
+    }
+
+    // ❯ EVENT DELEGATION
+    // @docs A single listener on document handles all share-strip interactions,
+    //       surviving Swup page transitions that re-render the license block.
+    document.addEventListener("click", (e) => {
+        const target = e.target as Element;
+
+        // ── Copy link
+        const copyBtn = target.closest("[data-copy-btn]") as HTMLElement | null;
+        if (copyBtn) {
+            const strip = copyBtn.closest(".share-strip") as HTMLElement | null;
+            const url   = strip?.dataset.url ?? "";
+            if (!url) return;
+
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard
+                    .writeText(url)
+                    .then(() => strip && showCopied(strip))
+                    .catch(() => { execCommandCopy(url); strip && showCopied(strip); });
+            } else {
+                execCommandCopy(url);
+                strip && showCopied(strip);
+            }
+            return;
+        }
+
+        // ── Native share
+        const nativeBtn = target.closest("[data-native-share]") as HTMLElement | null;
+        if (nativeBtn && typeof navigator.share === "function") {
+            const strip = nativeBtn.closest(".share-strip") as HTMLElement | null;
+            navigator.share({
+                title: strip?.dataset.title ?? document.title,
+                url:   strip?.dataset.url   ?? location.href,
+            }).catch(() => { /* user dismissed share sheet — noop */ });
+        }
+    });
+</script>

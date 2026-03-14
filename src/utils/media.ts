@@ -19,6 +19,7 @@ export interface Photo {
 	date?: string;
 	width?: number;
 	height?: number;
+	downloadable?: boolean;
 }
 
 export interface AlbumGroup {
@@ -32,6 +33,9 @@ export interface AlbumGroup {
 	tags?: string[];
 	layout?: "grid" | "masonry" | "list";
 	columns?: number;
+	// @docs When set, the gallery grid shows photos in batches of this size with a "Show more" button.
+	//       Fancybox gallery only includes currently visible photos (re-evaluated on each click).
+	pageSize?: number;
 	photos: Photo[];
 	visible?: boolean;
 	basePath?: string;

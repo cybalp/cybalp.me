@@ -4,7 +4,7 @@ published: 2026-02-13
 description: "Bruce Schneier mind analysis"
 cover: "img/bruce-schneier.webp"
 coverInContent: false
-pinned: true
+pinned: false
 tags: "Cryptography"
 category: "WHO!"
 draft: false

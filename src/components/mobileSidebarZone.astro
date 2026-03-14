@@ -1,0 +1,56 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/mobileSidebarZone.astro
+// ❯ @desc Renders a specific list of widgets for mobile-only zones (top/bottom).
+//        Used by grid.astro to render mobilePosition:"top" and mobilePosition:"bottom"
+//        widgets in correct DOM order around <main> on mobile screens.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import Categories from "@components/sidebar/categories.astro";
+import Netstat from "@components/sidebar/netstat.astro";
+import Profile from "@components/sidebar/profile.astro";
+import Tags from "@components/sidebar/tags.astro";
+import TOC from "@components/sidebar/toc.astro";
+import Wall from "@components/sidebar/wall.astro";
+import type { WidgetComponentConfig } from "@/types/config";
+import type { MarkdownHeading } from "astro";
+
+// ❯ PROPS
+interface Props {
+	components: WidgetComponentConfig[];
+	headings?: MarkdownHeading[];
+}
+
+const { components, headings = [] } = Astro.props;
+
+// ❯ COMPONENT MAP
+const componentMap = {
+	profile: Profile,
+	wall: Wall,
+	categories: Categories,
+	tags: Tags,
+	statistics: Netstat,
+	toc: TOC,
+} as const;
+
+// ❯ @docs Builds a loose props object per component type, then spreads it to avoid
+//         strict per-component prop type conflicts (same pattern as sidebar.astro).
+function buildProps(component: WidgetComponentConfig) {
+	return {
+		style: component.style,
+		depth: component.depth,
+		headings: component.type === "toc" ? headings : undefined,
+	};
+}
+---
+
+<div class="flex flex-col w-full gap-4">
+    {components.map((component) => {
+        const Component = componentMap[component.type as keyof typeof componentMap];
+        if (!Component) return null;
+        const props = buildProps(component);
+        return <Component {...props} />;
+    })}
+</div>

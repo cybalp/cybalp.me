@@ -11,6 +11,7 @@ export const prerender = true;
 
 import BackwardButton from "@components/backwardButton.astro";
 // ❯ IMPORTS
+import StatCard from "@components/data/statCard.astro";
 import { LinkPresets } from "@constants/link-presets";
 import GridLayout from "@layouts/grid.astro";
 import {
@@ -78,50 +79,23 @@ function getLanguageColor(language: string): string {
                 </p>
             </div>
 
-            <!-- netstat -->
+            <!-- ❯ Stats Cards -->
             <div id="codes-stats-container" class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-8">
-                <button 
-                    id="codes-total-card"
-                    class="stat-card stat-card-blue group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{sortedCodes.length}</div>
-                        <div class="stat-label">Total Code Snippets</div>
-                    </div>
-                </button>
-                <button 
-                    id="codes-languages-card"
-                    class="stat-card stat-card-green group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{languages.length}</div>
-                        <div class="stat-label">Languages</div>
-                    </div>
-                </button>
-                <button 
-                    id="codes-tags-card"
-                    class="stat-card stat-card-purple group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{tags.length}</div>
-                        <div class="stat-label">Alias</div>
-                    </div>
-                </button>
+                <StatCard id="codes-total-card" color="blue" value={sortedCodes.length} label="Total Code Snippets">
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="codes-languages-card" color="green" value={languages.length} label="Languages">
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="codes-tags-card" color="purple" value={tags.length} label="Alias">
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                </StatCard>
             </div>
 
             <!-- Search Bar -->
@@ -161,6 +135,7 @@ function getLanguageColor(language: string): string {
                 <div id="codes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {sortedCodes.map((code, index) => (
                         <div 
+                            id={`code-${code.id}`}
                             class="code-card card-base p-6 hover:shadow-lg transition-all cursor-pointer group"
                             data-code-index={index}
                             data-title={code.title.toLowerCase()}
@@ -383,6 +358,21 @@ function getLanguageColor(language: string): string {
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        /* ❯ @doc Visual pulse when a card is deep-linked from the global search. */
+        @keyframes search-target-flash {
+            0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+            20%  { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.35); }
+            60%  { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0.15); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .search-target-flash {
+            animation: search-target-flash 1.8s ease-out forwards;
+            outline: 1px solid rgba(34, 197, 94, 0.3);
+            outline-offset: 2px;
+            border-radius: 0.5rem;
         }
     </style>
 
@@ -659,6 +649,30 @@ function getLanguageColor(language: string): string {
             };
             (document as any).__practicalCodesEscapeHandler = escapeHandler;
             document.addEventListener('keydown', escapeHandler);
+
+            // ❯ SEARCH ANCHOR NAVIGATION
+            // ❯ @doc Handles deep-linking from the global search overlay.
+            //        When search navigates to /practical-codes/#code-{id}, the card is
+            //        scrolled into view, briefly highlighted, and its modal is opened.
+            //        Uses sessionStorage so Swup can navigate first, then handle on page:view.
+            function handleSearchTarget() {
+                const targetId = sessionStorage.getItem('cybalp_search_target');
+                if (!targetId) return;
+                sessionStorage.removeItem('cybalp_search_target');
+
+                const card = document.getElementById(targetId) as HTMLElement | null;
+                if (!card) return;
+
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.classList.add('search-target-flash');
+                    setTimeout(() => card.classList.remove('search-target-flash'), 1800);
+                    // ❯ @doc Auto-open the detail modal so the user lands directly on the snippet.
+                    setTimeout(() => openModal(card), 250);
+                }, 150);
+            }
+
+            handleSearchTarget();
             
             // ❯ Stats Cards Click Handlers
             const openStatsModal = (modalId: string) => {

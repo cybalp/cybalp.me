@@ -10,6 +10,7 @@ import LightDarkSwitch from "@components/navbar/lightDarkSwitch.svelte";
 import NavLinks from "@components/navbar/navLinks.astro";
 import NavMenu from "@components/navbar/navMenu.svelte";
 import Search from "@components/navbar/search.svelte";
+import { searchConfig } from "@/config";
 import Translator from "@components/navbar/translator.svelte";
 import WallpaperSwitch from "@components/navbar/wallpaperSwitch.svelte";
 import { LinkPresets } from "@constants/link-presets";
@@ -84,6 +85,27 @@ let links: NavbarLink[] = navbarConfig.links.map(
     <div class:list={[
         className,
         "overflow-visible! max-w-(--page-width) h-18 mx-auto flex items-center justify-between md:px-4"]}>
+        {/* ❯ MOBILE LEFT: Search trigger — dispatches Ctrl+K to the already-hydrated Search component.
+                Rendered before the logo so CSS Grid can place it in column 1 on mobile.
+                md:hidden ensures it doesn't appear on desktop where Search is in the buttons group.
+                @gogogo mobile navbar */}
+        <div id="navbar-mobile-search" class="flex items-center md:hidden shrink-0">
+            <button
+                aria-label="Search Panel"
+                class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90
+                       flex items-center justify-center
+                       border border-green-500/20 hover:border-green-500/40"
+                onclick="document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true,bubbles:true}))"
+            >
+                <span class="inline-icon inline-flex items-center justify-center text-base text-[1.25rem] text-green-400 dark:text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"/>
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        {/* ❯ CENTER: Logo + site title (centered on mobile, left-aligned on desktop) */}
         <a href={url('/')} class="btn-plain scale-animation rounded-lg h-13 px-3 font-bold active:scale-95">
             <div class="flex flex-row items-center gap-2">
                 <img
@@ -97,17 +119,31 @@ let links: NavbarLink[] = navbarConfig.links.map(
                 <span class="text-(--primary) text-md">{siteConfig.title}</span>
             </div>
         </a>
+
+        {/* ❯ Desktop nav links (hidden on mobile) */}
         <div class="hidden md:flex items-center navbar-nav-links">
             {links.map((l) => {
                 return <NavLinks link={l} />;
             })}
         </div>
+
+        {/* ❯ RIGHT: Desktop search + settings + NavMenu hamburger */}
         <div class="flex items-center navbar-buttons" id="navbar-buttons">
-            <Search client:load></Search>
-            <Translator client:load></Translator>
-            <DisplaySettings client:load></DisplaySettings>
-            <LightDarkSwitch client:load></LightDarkSwitch>
-            <WallpaperSwitch client:load></WallpaperSwitch>
+            {/* ❯ Desktop-only: Search + setting buttons
+                  Search moved here from mobile so only one instance hydrates.
+                  Mobile search is handled by the #navbar-mobile-search Ctrl+K trigger above. */}
+            <div class="hidden md:flex items-center">
+                <Search
+                    sources={searchConfig?.sources ?? []}
+                    commands={searchConfig?.commands ?? []}
+                    client:load
+                ></Search>
+                <Translator client:load></Translator>
+                <DisplaySettings client:load></DisplaySettings>
+                <LightDarkSwitch client:load></LightDarkSwitch>
+                <WallpaperSwitch client:load></WallpaperSwitch>
+            </div>
+            {/* ❯ @gogogo mobile navbar — NavMenu shows all settings on mobile */}
             <NavMenu client:load links={links}></NavMenu>
         </div>
     </div>
@@ -182,40 +218,4 @@ if (document.readyState === 'loading') {
 }
 </script>
 
-{import.meta.env.PROD && <script is:inline define:vars={{scriptUrl: url('/pagefind/pagefind.js')}}>
-// ❯ @doc Loads and initializes Pagefind search library.
-async function loadPagefind() {
-    try {
-        const response = await fetch(scriptUrl, { method: 'HEAD' });
-        if (!response.ok) {
-            throw new Error(`Pagefind script not found: ${response.status}`);
-        }
-
-        const pagefind = await import(scriptUrl);
-
-        await pagefind.options({
-            excerptLength: 20 // 20 words
-        });
-
-        window.pagefind = pagefind;
-
-        document.dispatchEvent(new CustomEvent('pagefindready'));
-        console.log('Pagefind loaded and initialized successfully, event dispatched.');
-    } catch (error) {
-        console.error('Failed to load Pagefind:', error);
-        window.pagefind = {
-            search: () => Promise.resolve({ results: [] }),
-            options: () => Promise.resolve(),
-        };
-        document.dispatchEvent(new CustomEvent('pagefindloaderror'));
-        console.log('Pagefind load error, event dispatched.');
-    }
-}
-
-// ❯ Initialization
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadPagefind);
-} else {
-    loadPagefind();
-}
-</script>}
+<!-- ❯ @gogogo new search source — Pagefind removed; search is now powered by /search-index.json -->

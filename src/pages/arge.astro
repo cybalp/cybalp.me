@@ -8,6 +8,7 @@ export const prerender = true;
 
 import BackwardButton from "@components/backwardButton.astro";
 import ProjectCard from "@components/data/projectCard.astro";
+import StatCard from "@components/data/statCard.astro";
 import { UNCATEGORIZED } from "@constants/constants";
 // ❯ IMPORTS
 import { LinkPresets } from "@constants/link-presets";
@@ -77,62 +78,26 @@ const getCategoryText = (category: string) => {
             </div>
             <!-- ❯ Statistics Cards -->
             <div id="arge-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-16">
-                <button 
-                    id="arge-total-card"
-                    class="stat-card stat-card-blue group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{stats.total}</div>
-                        <div class="stat-label">{i18n(I18nKey.projectsTotal)}</div>
-                    </div>
-                </button>
-                <button 
-                    id="arge-completed-card"
-                    class="stat-card stat-card-green group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{stats.byStatus.completed}</div>
-                        <div class="stat-label">{i18n(I18nKey.projectsCompleted)}</div>
-                    </div>
-                </button>
-                <button 
-                    id="arge-inprogress-card"
-                    class="stat-card stat-card-yellow group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{stats.byStatus.inProgress}</div>
-                        <div class="stat-label">{i18n(I18nKey.projectsInProgress)}</div>
-                    </div>
-                </button>
-                <button 
-                    id="arge-techstack-card"
-                    class="stat-card stat-card-purple group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{allTechStack.length}</div>
-                        <div class="stat-label">{i18n(I18nKey.projectsTechStack)}</div>
-                    </div>
-                </button>
+                <StatCard id="arge-total-card" color="blue" value={stats.total} label={i18n(I18nKey.projectsTotal)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="arge-completed-card" color="green" value={stats.byStatus.completed} label={i18n(I18nKey.projectsCompleted)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="arge-inprogress-card" color="yellow" value={stats.byStatus.inProgress} label={i18n(I18nKey.projectsInProgress)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="arge-techstack-card" color="purple" value={allTechStack.length} label={i18n(I18nKey.projectsTechStack)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </StatCard>
             </div>
             {featuredProjects.length > 0 && (
                 <div class="mb-16">
@@ -219,7 +184,7 @@ const getCategoryText = (category: string) => {
             </div>
         </div>
     </div>
-</GridLayout>
+
 
 <style>
     /* ❯ Page Container */
@@ -546,13 +511,10 @@ const getCategoryText = (category: string) => {
 
 <!-- ❯ SCRIPTS -->
 <script>
-    // ❯ Stats Cards Click Handlers
+    // ❯ @doc Initializes arge page modals and stat card click handlers.
     (window as any).initArgePage = function initArgePage() {
-        const isArgePage = window.location.pathname.includes('/arge');
-        if (!isArgePage) {
-            return;
-        }
-        
+        if (!window.location.pathname.includes('/arge')) return;
+
         // ❯ Modal Management
         const openModal = (modalId: string) => {
             const modal = document.getElementById(modalId);
@@ -575,101 +537,110 @@ const getCategoryText = (category: string) => {
         // ❯ Event Handler Setup
         const statsContainer = document.getElementById('arge-stats-container');
         if (!statsContainer) {
-            setTimeout(() => initArgePage(), 100);
+            setTimeout(() => (window as any).initArgePage(), 100);
             return;
         }
-        
-        const oldHandler = (statsContainer as any).__argeCardClickHandler;
-        if (oldHandler) {
-            try {
-                statsContainer.removeEventListener('click', oldHandler);
-            } catch (e) {
-                // Ignore errors
-            }
-        }
-        
+
+        const oldClickHandler = (statsContainer as any).__argeCardClickHandler;
+        if (oldClickHandler) statsContainer.removeEventListener('click', oldClickHandler);
+
         const clickHandler = (e: Event) => {
-            const target = e.target as HTMLElement;
-            const card = target.closest('button[id$="-card"]') as HTMLElement;
-            if (card) {
-                const cardId = card.id;
-                if (cardId === 'arge-total-card') {
-                    openModal('arge-total-modal');
-                } else if (cardId === 'arge-completed-card') {
-                    openModal('arge-completed-modal');
-                } else if (cardId === 'arge-inprogress-card') {
-                    openModal('arge-inprogress-modal');
-                } else if (cardId === 'arge-techstack-card') {
-                    openModal('arge-techstack-modal');
-                }
-            }
+            const card = (e.target as HTMLElement).closest('button[id$="-card"]') as HTMLElement;
+            if (!card) return;
+            const modalMap: Record<string, string> = {
+                'arge-total-card':      'arge-total-modal',
+                'arge-completed-card':  'arge-completed-modal',
+                'arge-inprogress-card': 'arge-inprogress-modal',
+                'arge-techstack-card':  'arge-techstack-modal',
+            };
+            const target = modalMap[card.id];
+            if (target) openModal(target);
         };
-        
+
         (statsContainer as any).__argeCardClickHandler = clickHandler;
         statsContainer.addEventListener('click', clickHandler);
 
+        // ❯ @doc Wires up close button and backdrop click for a modal.
         const setupCloseHandlers = (modalId: string, closeBtnId: string) => {
             const modal = document.getElementById(modalId);
             const closeBtn = document.getElementById(closeBtnId);
-            
+
             if (closeBtn) {
-                const oldHandler = (closeBtn as any).__closeHandler;
-                if (oldHandler) {
-                    closeBtn.removeEventListener('click', oldHandler);
-                }
+                const old = (closeBtn as any).__closeHandler;
+                if (old) closeBtn.removeEventListener('click', old);
                 const handler = () => closeModal(modalId);
                 (closeBtn as any).__closeHandler = handler;
                 closeBtn.addEventListener('click', handler);
             }
-            
+
             if (modal) {
-                const oldHandler = (modal as any).__backdropHandler;
-                if (oldHandler) {
-                    modal.removeEventListener('click', oldHandler);
-                }
-                const handler = (e: Event) => {
-                    if (e.target === modal) closeModal(modalId);
-                };
+                const old = (modal as any).__backdropHandler;
+                if (old) modal.removeEventListener('click', old);
+                const handler = (e: Event) => { if (e.target === modal) closeModal(modalId); };
                 (modal as any).__backdropHandler = handler;
                 modal.addEventListener('click', handler);
             }
         };
 
-        setupCloseHandlers('arge-total-modal', 'close-arge-total-modal');
-        setupCloseHandlers('arge-completed-modal', 'close-arge-completed-modal');
+        setupCloseHandlers('arge-total-modal',      'close-arge-total-modal');
+        setupCloseHandlers('arge-completed-modal',  'close-arge-completed-modal');
         setupCloseHandlers('arge-inprogress-modal', 'close-arge-inprogress-modal');
-        setupCloseHandlers('arge-techstack-modal', 'close-arge-techstack-modal');
+        setupCloseHandlers('arge-techstack-modal',  'close-arge-techstack-modal');
 
         // ❯ Keyboard Handler
-        const oldEscapeHandler = (document as any).__argeEscapeHandler;
-        if (oldEscapeHandler) {
-            document.removeEventListener('keydown', oldEscapeHandler);
-        }
+        const oldEsc = (document as any).__argeEscapeHandler;
+        if (oldEsc) document.removeEventListener('keydown', oldEsc);
         const escapeHandler = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                const modals = ['arge-total-modal', 'arge-completed-modal', 'arge-inprogress-modal', 'arge-techstack-modal'];
-                for (const modalId of modals) {
-                    const modal = document.getElementById(modalId);
-                    if (modal && !modal.classList.contains('hidden')) {
-                        closeModal(modalId);
-                        break;
-                    }
-                }
+            if (e.key !== 'Escape') return;
+            const modals = ['arge-total-modal', 'arge-completed-modal', 'arge-inprogress-modal', 'arge-techstack-modal'];
+            for (const id of modals) {
+                const modal = document.getElementById(id);
+                if (modal && !modal.classList.contains('hidden')) { closeModal(id); break; }
             }
         };
         (document as any).__argeEscapeHandler = escapeHandler;
         document.addEventListener('keydown', escapeHandler);
     };
-    
-    const initArgePage = (window as any).initArgePage;
-    
+
+    // ❯ Initial Call
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            initArgePage();
-        });
+        document.addEventListener('DOMContentLoaded', () => (window as any).initArgePage());
     } else {
-        setTimeout(() => {
-            initArgePage();
-        }, 50);
+        setTimeout(() => (window as any).initArgePage(), 50);
+    }
+
+    // ❯ Swup Integration — mirrors toolchains/practical-codes pattern
+    // ❯ @docs page:view fires after Swup replaces #swup-container; re-init is required
+    //         because the stat card buttons are fresh DOM nodes after each navigation.
+    if (!(window as any).__argePageHooksSetup) {
+        (window as any).__argePageHooksSetup = true;
+
+        const setupSwupHooks = () => {
+            if (window.swup && window.swup.hooks) {
+                window.swup.hooks.on('page:view', () => {
+                    if (window.location.pathname.includes('/arge')) {
+                        requestAnimationFrame(() => {
+                            setTimeout(() => (window as any).initArgePage?.(), 100);
+                        });
+                    }
+                });
+                return true;
+            }
+            return false;
+        };
+
+        if (!setupSwupHooks()) {
+            const checkSwup = setInterval(() => {
+                if (window.swup && window.swup.hooks) {
+                    clearInterval(checkSwup);
+                    setupSwupHooks();
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkSwup), 5000);
+        }
+
+        document.addEventListener('swup:enable', setupSwupHooks);
     }
 </script>
+
+</GridLayout>

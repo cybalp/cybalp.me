@@ -13,6 +13,9 @@ import Footer from "@components/footer.astro";
 import FullscreenWallpaper from "@components/fullscreenWallpaper.astro";
 import Navbar from "@components/navbar.astro";
 import Sidebar from "@components/sidebar.astro";
+import MobileSidebarZone from "@components/mobileSidebarZone.astro";
+import MobileBackToMain from "@components/mobileBackToMain.astro";
+import MobileProfilePopup from "@components/mobileProfilePopup.astro";
 import TocButton from "@components/tocButton.astro";
 import {
 	BANNER_HEIGHT,
@@ -85,6 +88,8 @@ const {
 	mainContentClass,
 	middleSidebarClass,
 	mobileFooterClass,
+	mobileTopComponents,
+	mobileBottomComponents,
 } = widgetManager.getGridLayout(headings, Astro.url.pathname);
 ---
 
@@ -133,6 +138,13 @@ const {
         <div
             class="relative max-w-(--page-width) mx-auto pointer-events-auto"
         >
+            {/* ❯ Mobile Back to Main: pill button — LEFT side of banner, non-main pages only.
+                  Always rendered so Swup navigation doesn't orphan it; visibility managed by JS.
+                  absolute positioning is relative to this .relative wrapper. */}
+            <MobileBackToMain isMainPage={isMainPage} />
+            {/* ❯ Profile popup overlay — global overlay, always in DOM, opened by back-to-main btn */}
+            <MobileProfilePopup />
+
             <div
                     id="main-grid"
                     class={`transition-all duration-600 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto] mx-auto gap-4 px-0 md:px-4 ${!hasAnyComponents ? "mobile-no-sidebar" : ""} ${(hasLeftSidebar || hasRightSidebar) ? "mobile-both-sidebar" : ""}`}
@@ -174,6 +186,21 @@ const {
                         </a>
                     )
                 }
+
+                {/* ❯ Mobile Top Zone: profile (and any mobilePosition:"top" widgets) — only on mobile */}
+                {/* ❯ @hint transparentClass intentionally omitted here — outer wrapper manages
+                       wallpaper-transparent via JS so mode switches work correctly */}
+                {mobileTopComponents.length > 0 && (
+                    <div
+                        id="mobile-top-bar"
+                        class={`col-span-1 block md:hidden onload-animation-up transition-swup-fade`}
+                    >
+                        <MobileSidebarZone
+                            components={mobileTopComponents}
+                            headings={headings}
+                        />
+                    </div>
+                )}
 
                 <div class="contents lg:contents md:flex md:flex-col md:col-start-1 md:row-start-1 md:gap-4">
                     {
@@ -222,11 +249,25 @@ const {
                     </div>
                 </main>
 
-                <div class={middleSidebarClass}>
+                {/* ❯ Mobile Bottom Zone: wall (and any mobilePosition:"bottom" widgets) — only on mobile */}
+                {mobileBottomComponents.length > 0 && (
+                    <div
+                        id="mobile-bottom-bar"
+                        class={`col-span-1 block md:hidden onload-animation-up transition-swup-fade`}
+                    >
+                        <MobileSidebarZone
+                            components={mobileBottomComponents}
+                            headings={headings}
+                        />
+                    </div>
+                )}
+
+                {/* ❯ Legacy middle-sidebar: hidden — mobile zones above replace it */}
+                <div class="hidden">
                     <Sidebar
                         id="middle-sidebar"
                         side="middle"
-                        class={`${transparentClass} onload-animation-up`}
+                        class={`${transparentClass}`}
                         headings={headings}
                     />
                 </div>

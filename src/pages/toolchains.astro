@@ -10,6 +10,7 @@ import BackwardButton from "@components/backwardButton.astro";
 // ❯ COMPONENT IMPORTS
 import IconifyLoader from "@components/common/iconifyLoader.astro";
 import SkillCard from "@components/data/skillCard.astro";
+import StatCard from "@components/data/statCard.astro";
 import { UNCATEGORIZED } from "@constants/constants";
 // ❯ EXTERNAL IMPORTS
 import { LinkPresets } from "@constants/link-presets";
@@ -102,70 +103,36 @@ const getLevelText = (level: string) => {
 
             <!-- ❯ Stats Cards -->
             <div id="skills-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
-                <button 
-                    id="total-skills-card"
-                    class="stat-card stat-card-blue group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{stats.total}</div>
-                        <div class="stat-label">{i18n(I18nKey.skillsTotal)}</div>
-                    </div>
-                </button>
-                <button 
-                    id="expert-card"
-                    class="stat-card stat-card-red group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{stats.byLevel.expert}</div>
-                        <div class="stat-label">{i18n(I18nKey.skillsExpert)}</div>
-                    </div>
-                </button>
-                <button 
-                    id="advanced-card"
-                    class="stat-card stat-card-orange group text-left w-full"
-                >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">{stats.byLevel.advanced}</div>
-                        <div class="stat-label">{i18n(I18nKey.skillsAdvanced)}</div>
-                    </div>
-                </button>
-                <button 
+                <StatCard id="total-skills-card" color="blue" value={stats.total} label={i18n(I18nKey.skillsTotal)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="expert-card" color="red" value={stats.byLevel.expert} label={i18n(I18nKey.skillsExpert)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </StatCard>
+                <StatCard id="advanced-card" color="orange" value={stats.byLevel.advanced} label={i18n(I18nKey.skillsAdvanced)}>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </StatCard>
+                <StatCard
                     id="experience-card"
-                    class="stat-card stat-card-purple group text-left w-full"
+                    color="purple"
+                    value={(() => {
+                        const years = totalExperience.years || 0;
+                        const months = totalExperience.months || 0;
+                        if (years === 0 && months === 0) return '0';
+                        return (years + months / 12).toFixed(1);
+                    })()}
+                    label={i18n(I18nKey.skillExperience)}
                 >
-                    <div class="stat-icon">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">
-                            {(() => {
-                                const years = totalExperience.years || 0;
-                                const months = totalExperience.months || 0;
-                                if (years === 0 && months === 0) return '0';
-                                const decimal = years + (months / 12);
-                                return decimal.toFixed(1);
-                            })()}
-                        </div>
-                        <div class="stat-label">{i18n(I18nKey.skillExperience)}</div>
-                    </div>
-                </button>
+                    <svg slot="icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </StatCard>
             </div>
 
             <!-- ❯ Advanced Skills Section -->

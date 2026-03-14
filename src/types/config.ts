@@ -206,6 +206,8 @@ export type WidgetComponentConfig = {
 	responsive?: {
 		hidden?: ("mobile" | "tablet" | "desktop")[];
 		collapseThreshold?: number;
+		// @docs Controls where this widget renders on mobile: above content, below content, or not at all
+		mobilePosition?: "top" | "bottom" | "hidden";
 	};
 	depth?: number;
 };
@@ -329,6 +331,29 @@ export type AnnouncementConfig = {
     href: string;
     ctaText?: string;
     icon?: string;
+};
+
+// ❯ @gogogo new search source — add new SearchSource entries via cybalp.config.yaml → search.sources
+export type SearchSource = {
+	id: string;
+	enabled: boolean;
+	label: string;
+	url: string;
+	aliases: string[];
+};
+
+export type SearchCommand = {
+	id: string;
+	triggers: string[];
+	label: string;
+	icon?: string;
+	action: string;
+};
+
+export type SearchConfig = {
+	enable: boolean;
+	sources: SearchSource[];
+	commands: SearchCommand[];
 };
 
 export type MusicPlayerConfig = {

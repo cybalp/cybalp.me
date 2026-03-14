@@ -127,28 +127,113 @@ function parseMarkdownLink(link: string): { text: string; url: string } | null {
             </header>
             
             <!-- ❯ PHOTO GALLERY -->
+            <!-- @gogogo new album layout -->
             <div
                 class={`photo-gallery moment-images ${album.layout === 'masonry' ? 'masonry-layout' : 'grid-layout'}`}
-                data-layout={album.layout || 'grid'} // "grid" | "masonry"
-                data-columns={album.columns || 3} // 2 | 3 | 4
+                data-layout={album.layout || 'grid'}
+                data-columns={album.columns || 3}
             >
-                {album.photos.map((photo, index) => (
-                    <figure class="photo-item group relative overflow-hidden rounded-lg">
-                        <ImageWrapper
-                            src={photo.src}
-                            basePath={album.basePath}
-                            alt={photo.alt}
-                            class="photo-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
-                        />
-                    </figure>
-                ))}
+                {album.photos.map((photo, index) => {
+                    const isHidden = album.pageSize !== undefined && index >= album.pageSize;
+                    return (
+                        <figure
+                            class={`photo-item group relative overflow-hidden rounded-lg${isHidden ? ' photo-initially-hidden' : ''}`}
+                            data-downloadable={photo.downloadable === true ? "true" : "false"}
+                        >
+                            <ImageWrapper
+                                src={photo.src}
+                                basePath={album.basePath}
+                                alt={photo.alt}
+                                class="photo-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                            />
+                        </figure>
+                    );
+                })}
             </div>
+
+            <!-- ❯ LOAD MORE BUTTON -->
+            {album.pageSize && album.pageSize < album.photos.length && (
+                <div class="flex justify-center mt-8" id="gallery-load-more-wrapper">
+                    <button
+                        id="gallery-load-more"
+                        class="btn-regular h-10 px-6 rounded-lg flex items-center gap-2 text-sm font-medium"
+                        data-batch-size={album.pageSize}
+                        data-total={album.photos.length}
+                        data-visible={album.pageSize}
+                    >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                        Show more
+                        <span id="gallery-load-counter" class="opacity-50">
+                            ({album.pageSize} / {album.photos.length})
+                        </span>
+                    </button>
+                </div>
+            )}
         </div>
     </div>
-</GridLayout>
 
-<!-- ❯ STYLES -->
-<style>
+    <!-- ❯ LOAD MORE SCRIPT -->
+    <script>
+        // @docs Reveals photos in batches matching album.pageSize.
+        //       Fancybox re-queries the selector on each click, so newly revealed photos
+        //       are automatically included in the gallery group without rebinding.
+        //       Script lives inside GridLayout (#swup-container) so Swup re-executes it
+        //       on every navigation — no manual page:view hook needed.
+        const btn = document.getElementById("gallery-load-more") as HTMLButtonElement | null;
+        const wrapper = document.getElementById("gallery-load-more-wrapper");
+        const counter = document.getElementById("gallery-load-counter");
+
+        if (btn) {
+            const batchSize = parseInt(btn.dataset.batchSize ?? "10");
+            const total    = parseInt(btn.dataset.total    ?? "0");
+            let visible    = parseInt(btn.dataset.visible  ?? "0");
+
+            const old = (btn as any).__loadMoreHandler;
+            if (old) btn.removeEventListener("click", old);
+
+            const clickHandler = () => {
+                const hidden = document.querySelectorAll<HTMLElement>(
+                    ".photo-gallery .photo-initially-hidden"
+                );
+                const toReveal = Array.from(hidden).slice(0, batchSize);
+
+                toReveal.forEach((el, i) => {
+                    el.classList.remove("photo-initially-hidden");
+                    // @docs Staggered entrance: each card starts 40ms after the previous.
+                    el.style.animationDelay = `${i * 40}ms`;
+                    el.classList.add("photo-item-revealing");
+                    el.addEventListener(
+                        "animationend",
+                        () => {
+                            el.classList.remove("photo-item-revealing");
+                            el.style.animationDelay = "";
+                        },
+                        { once: true }
+                    );
+                });
+
+                visible += toReveal.length;
+
+                const remaining = document.querySelectorAll(
+                    ".photo-gallery .photo-initially-hidden"
+                ).length;
+
+                if (remaining === 0) {
+                    wrapper?.remove();
+                } else if (counter) {
+                    counter.textContent = `(${visible} / ${total})`;
+                }
+            };
+
+            (btn as any).__loadMoreHandler = clickHandler;
+            btn.addEventListener("click", clickHandler);
+        }
+    </script>
+
+    <!-- ❯ STYLES -->
+    <style>
     /* ❯ GRID LAYOUT */
     .grid-layout {
         display: grid;
@@ -193,4 +278,20 @@ function parseMarkdownLink(link: string): { text: string; url: string } | null {
     .grid-layout .photo-container {
         aspect-ratio: 1;
     }
+
+    /* ❯ PAGINATION */
+    .photo-initially-hidden {
+        display: none;
+    }
+
+    @keyframes photo-reveal {
+        from { opacity: 0; transform: scale(0.94) translateY(10px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .photo-item-revealing {
+        animation: photo-reveal 0.35s ease forwards;
+    }
 </style>
+
+</GridLayout>

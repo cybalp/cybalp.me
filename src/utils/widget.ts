@@ -261,6 +261,33 @@ export class WidgetManager {
 				text: (h.textContent || "").replace(/#+\s*$/, ""),
 			}));
 	}
+	// ❯ MOBILE ZONE QUERIES
+	// ❯ @doc Returns widgets configured to appear ABOVE main content on mobile.
+	getMobileTopComponents(currentPath?: string): WidgetComponentConfig[] {
+		const all = [
+			...(this.config.components.left || []),
+			...(this.config.components.right || []),
+		];
+		return all.filter(
+			(c) =>
+				c.responsive?.mobilePosition === "top" &&
+				this.shouldShowComponent(c, currentPath),
+		);
+	}
+
+	// ❯ @doc Returns widgets configured to appear BELOW main content on mobile.
+	getMobileBottomComponents(currentPath?: string): WidgetComponentConfig[] {
+		const all = [
+			...(this.config.components.left || []),
+			...(this.config.components.right || []),
+		];
+		return all.filter(
+			(c) =>
+				c.responsive?.mobilePosition === "bottom" &&
+				this.shouldShowComponent(c, currentPath),
+		);
+	}
+
 	// ❯ @doc Generates grid layout classes based on content.
 	getGridLayout(headings: any[] = [], currentPath?: string) {
 		const hasLeftComponents = this.hasContentOnSide(
@@ -325,20 +352,23 @@ export class WidgetManager {
 			.replace(/\s+/g, " ");
 		const mainContentClass = `
             overflow-hidden w-full
-            col-span-1 row-start-1 row-end-2
-            ${hasAnyComponents ? "md:col-start-2 md:col-end-3 md:row-start-1 md:row-end-2" : "md:col-span-1"}
+            col-span-1
+            ${hasAnyComponents ? "md:col-start-2 md:col-end-3 md:row-start-1 md:row-end-2" : "md:col-span-1 md:row-start-1 md:row-end-2"}
             ${
-							hasLeftSidebar && hasRightSidebar
+						hasLeftSidebar && hasRightSidebar
+							? "lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2"
+							: hasLeftSidebar
 								? "lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2"
-								: hasLeftSidebar
-									? "lg:col-start-2 lg:col-end-3 lg:row-start-1 lg:row-end-2"
-									: hasRightSidebar
-										? "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2"
-										: "lg:col-span-1"
-						}
+								: hasRightSidebar
+									? "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-2"
+									: "lg:col-span-1"
+					}
         `
 			.trim()
 			.replace(/\s+/g, " ");
+
+		const mobileTopComponents = this.getMobileTopComponents(currentPath);
+		const mobileBottomComponents = this.getMobileBottomComponents(currentPath);
 
 		return {
 			hasLeftSidebar,
@@ -350,6 +380,8 @@ export class WidgetManager {
 			mainContentClass,
 			mobileFooterClass,
 			middleSidebarClass,
+			mobileTopComponents,
+			mobileBottomComponents,
 		};
 	}
 }

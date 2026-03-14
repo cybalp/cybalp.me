@@ -16,6 +16,7 @@ import type {
 	ParticleConfig,
 	PostConfig,
 	ProfileConfig,
+	SearchConfig,
 	SidebarConfig,
 	SiteConfig,
 	WallConfig,
@@ -43,6 +44,8 @@ type ConfigFile = {
 	musicPlayer: MusicPlayerConfig;
 	// ❯ @gogogo announcement — 2/4 config: wire new fields from YAML to the type here
 	announcement: AnnouncementConfig;
+	// ❯ @gogogo new search source — 2/2 config: add the search field here when adding new features
+	search?: SearchConfig;
 };
 
 // ❯ CONFIGURATION LOADING
@@ -123,3 +126,4 @@ export const footerConfig: FooterConfig = config.footer;
 export const particleConfig: ParticleConfig = config.particle;
 export const musicPlayerConfig: MusicPlayerConfig = config.musicPlayer;
 export const announcementConfig: AnnouncementConfig = config.announcement;
+export const searchConfig: SearchConfig | undefined = config.search;

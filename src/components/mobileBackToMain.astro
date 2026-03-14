@@ -1,0 +1,114 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/mobileBackToMain.astro
+// ❯ @desc Mobile-only pill button rendered in the banner area on non-main pages.
+//        Always in the DOM so Swup navigation doesn't orphan it.
+//        Visibility is controlled via JS: shown on non-main, hidden on main page.
+//        Clicking opens the mobileProfilePopup overlay.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import { Icon } from "astro-icon/components";
+import { profileConfig } from "@/config";
+
+// ❯ PROPS
+interface Props {
+    isMainPage: boolean;
+}
+const { isMainPage } = Astro.props;
+
+// ❯ DATA
+const avatar = profileConfig.avatar;
+---
+
+<!-- ❯ RENDER
+     - absolute: positioned relative to the .relative wrapper in grid.astro
+     - left-4 / -top-13: mirrors banner-credit position on opposite side
+     - z-[60]: above the banner (z-10) and navbar (z-50)
+     - initial style: server-rendered visibility — JS updates on page transitions
+     - NO onload-animation-up: avoids opacity:0 initial state
+     - NO "block" class: only "flex" so there is no display: conflict with md:hidden
+-->
+<button
+    id="mobile-btm-btn"
+    aria-label="Open profile card"
+    aria-expanded="false"
+    style={isMainPage ? "display: none" : ""}
+    class="group transition-all absolute flex items-center gap-2 rounded-full
+           pl-1.5 pr-3 left-4 -top-13 h-9 z-[60]
+           bg-black/60 hover:bg-black/75 active:bg-black/85
+           md:hidden cursor-pointer"
+>
+    {avatar ? (
+        <img
+            src={avatar}
+            alt="Profile"
+            width="24"
+            height="24"
+            class="rounded-full w-6 h-6 object-cover shrink-0 ring-1 ring-white/20"
+            loading="eager"
+        />
+    ) : (
+        <Icon
+            class="text-white/75 text-[1.1rem] shrink-0"
+            name="material-symbols:terminal"
+        />
+    )}
+    <span class="text-white/80 text-xs font-medium leading-none select-none">Main</span>
+    <Icon
+        class="text-[oklch(0.75_0.14_var(--hue))] text-[0.7rem] shrink-0 -ml-0.5
+               transition-transform duration-200 group-hover:translate-x-0.5"
+        name="fa6-solid:chevron-right"
+    />
+</button>
+
+<!-- ❯ BUTTON CONTROLLER -->
+<script is:inline>
+// ❯ @doc Shows/hides the button based on current pathname.
+//        Runs on every Swup page transition (astro:page-load) so
+//        navigating to/from the main page correctly updates visibility.
+function updateMobileBackToMainVisibility() {
+    const btn = document.getElementById('mobile-btm-btn');
+    if (!btn) return;
+    const isMain = window.location.pathname === '/' || window.location.pathname === '';
+    btn.style.display = isMain ? 'none' : '';
+}
+
+// ❯ Click handler — reset on navigation, re-attach on load
+function initBackToMainBtn() {
+    const btn = document.getElementById('mobile-btm-btn');
+    if (!btn) return;
+    // ❯ avoid attaching duplicate listeners on re-init
+    if (btn._btmInitialized) return;
+    btn._btmInitialized = true;
+    btn.addEventListener('click', () => {
+        if (typeof window.openProfilePopup === 'function') {
+            window.openProfilePopup();
+            btn.setAttribute('aria-expanded', 'true');
+        }
+    });
+}
+
+// ❯ Initial setup
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        updateMobileBackToMainVisibility();
+        initBackToMainBtn();
+    });
+} else {
+    updateMobileBackToMainVisibility();
+    initBackToMainBtn();
+}
+
+// ❯ Swup page transitions — reset guard so re-init works, then update visibility
+document.addEventListener('astro:page-load', () => {
+    const btn = document.getElementById('mobile-btm-btn');
+    if (btn) {
+        btn._btmInitialized = false;
+        btn.setAttribute('aria-expanded', 'false');
+    }
+    updateMobileBackToMainVisibility();
+    initBackToMainBtn();
+});
+</script>

@@ -1,0 +1,36 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/data/statCard.astro
+// ❯ @desc Reusable stat card button component for statistics displays.
+// ❯        Accepts a named slot "icon" for the decorative SVG icon.
+// ❯        @gogogo new stat-card color — add variant in src/styles/main.css (stat-card-{color} block)
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ TYPES
+export type StatCardColor = 'blue' | 'green' | 'yellow' | 'purple' | 'red' | 'orange';
+
+// ❯ PROPS
+interface Props {
+    id: string;
+    color: StatCardColor;
+    value: string | number;
+    label: string;
+}
+
+const { id, color, value, label } = Astro.props;
+---
+
+<!-- ❯ RENDER -->
+<button
+    id={id}
+    class:list={['stat-card', `stat-card-${color}`, 'group', 'text-left', 'w-full']}
+>
+    <div class="stat-icon">
+        <slot name="icon" />
+    </div>
+    <div class="stat-content">
+        <div class="stat-value">{value}</div>
+        <div class="stat-label">{label}</div>
+    </div>
+</button>

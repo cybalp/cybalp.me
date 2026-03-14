@@ -223,6 +223,8 @@ const jsonLd = {
                             licenseName={entry.data.licenseName}
                             licenseUrl={entry.data.licenseUrl}
                             postUrl={getPostUrl(entry)}
+                            cover={entry.data.cover}
+                            coverBasePath={getFileDirFromPath(entry.filePath || '')}
                             class="mb-6 rounded-xl license-container onload-animation-up"
                         />
                     )

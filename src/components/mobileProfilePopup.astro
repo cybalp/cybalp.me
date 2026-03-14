@@ -1,0 +1,150 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/mobileProfilePopup.astro
+// ❯ @desc Full-screen overlay that shows the profile card on non-main pages.
+//        Triggered by mobileBackToMain.astro button. Mobile-only (md:hidden).
+//        Contains a "Go to Main" link so the user can navigate when desired.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import { Icon } from "astro-icon/components";
+import { url } from "@utils/url";
+import { profileConfig } from "@/config";
+import ImageWrapper from "@components/common/imageWrapper.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+// ❯ DATA
+const homeUrl = url("/");
+const { name, bio, avatar, links } = profileConfig;
+
+// ❯ @doc Returns brand color class for social media icons.
+const getIconColorClass = (icon: string): string => {
+    if (icon.includes("github")) return "text-[#181717] dark:text-[#f5f5f5]";
+    if (icon.includes("linkedin")) return "text-[#0077b5]";
+    if (icon.includes("instagram")) return "text-[#E4405F]";
+    return "";
+};
+---
+
+<!-- ❯ BACKDROP: click to dismiss -->
+<div
+    id="profile-popup-backdrop"
+    class="fixed inset-0 z-[500] bg-black/60 backdrop-blur-sm
+           flex items-center justify-center p-4
+           opacity-0 pointer-events-none transition-opacity duration-200 md:hidden"
+    aria-hidden="true"
+>
+    <!-- ❯ CARD: stop click propagation to keep it open on card tap -->
+    <div
+        id="profile-popup-card"
+        class="card-base w-full max-w-xs p-4 flex flex-col gap-3
+               translate-y-4 transition-transform duration-200"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Profile card"
+    >
+        <!-- ❯ CLOSE BUTTON -->
+        <button
+            id="profile-popup-close"
+            aria-label="Close profile card"
+            class="btn-plain absolute top-2 right-2 w-8 h-8 rounded-lg flex items-center justify-center"
+        >
+            <Icon name="material-symbols:close-rounded" class="text-[1.1rem]" />
+        </button>
+
+        <!-- ❯ AVATAR -->
+        <a href={url('/identity/')} class="group block relative mx-auto max-w-36 overflow-hidden rounded-xl active:scale-95">
+            <div class="absolute transition pointer-events-none group-hover:bg-black/30 w-full h-full z-10 flex items-center justify-center">
+                <Icon name="material-symbols:fingerprint" class="transition opacity-0 group-hover:opacity-100 text-white text-4xl" />
+            </div>
+            <ImageWrapper src={avatar || ""} alt="Profile Image" class="mx-auto" loading="eager" />
+        </a>
+
+        <!-- ❯ NAME + BIO -->
+        <div class="text-center">
+            <div class="font-bold text-xl dark:text-neutral-50 transition mb-1">{name}</div>
+            <div class="h-1 w-5 bg-(--primary) mx-auto rounded-full mb-2 transition"></div>
+            <div class="text-neutral-400 text-sm transition">{bio}</div>
+        </div>
+
+        <!-- ❯ SOCIAL LINKS -->
+        {links.length > 0 && (
+            <div class="flex gap-2 justify-center">
+                {links.map(item => (
+                    <a rel="me" aria-label={item.name} href={item.url} target="_blank"
+                       class="btn-regular rounded-lg h-10 w-10 flex items-center justify-center active:scale-90">
+                        <Icon name={item.icon} class={`text-[1.4rem] ${getIconColorClass(item.icon)}`} />
+                    </a>
+                ))}
+            </div>
+        )}
+
+        <!-- ❯ GO TO MAIN LINK -->
+        <a
+            href={homeUrl}
+            class="btn-regular rounded-lg h-9 flex items-center justify-center gap-2
+                   font-medium text-sm active:scale-95 transition mt-1"
+        >
+            <Icon name="material-symbols:home-outline-rounded" class="text-[1.1rem]" />
+            <span>Main</span>
+            <Icon name="fa6-solid:arrow-right" class="text-[0.7rem] text-(--primary)" />
+        </a>
+    </div>
+</div>
+
+<!-- ❯ POPUP CONTROLLER -->
+<script is:inline>
+// ❯ @doc Opens the profile popup overlay with animation.
+window.openProfilePopup = function () {
+    const backdrop = document.getElementById('profile-popup-backdrop');
+    const card = document.getElementById('profile-popup-card');
+    if (!backdrop || !card) return;
+    backdrop.classList.remove('opacity-0', 'pointer-events-none');
+    backdrop.setAttribute('aria-hidden', 'false');
+    card.classList.remove('translate-y-4');
+};
+
+// ❯ @doc Closes the profile popup overlay with animation.
+window.closeProfilePopup = function () {
+    const backdrop = document.getElementById('profile-popup-backdrop');
+    const card = document.getElementById('profile-popup-card');
+    if (!backdrop || !card) return;
+    backdrop.classList.add('opacity-0', 'pointer-events-none');
+    backdrop.setAttribute('aria-hidden', 'true');
+    card.classList.add('translate-y-4');
+};
+
+function initProfilePopup() {
+    const backdrop = document.getElementById('profile-popup-backdrop');
+    const card = document.getElementById('profile-popup-card');
+    const closeBtn = document.getElementById('profile-popup-close');
+    if (!backdrop) return;
+
+    // ❯ Click backdrop (not card) → close
+    backdrop.addEventListener('click', (e) => {
+        if (!card?.contains(e.target)) window.closeProfilePopup();
+    });
+
+    // ❯ Dedicated close button
+    closeBtn?.addEventListener('click', window.closeProfilePopup);
+
+    // ❯ Esc key → close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') window.closeProfilePopup();
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProfilePopup);
+} else {
+    initProfilePopup();
+}
+// ❯ Reinit after swup page transitions; also close popup if navigated to main page
+document.addEventListener('astro:page-load', () => {
+    // ❯ Close any open popup whenever the page changes (SPA navigation)
+    if (typeof window.closeProfilePopup === 'function') window.closeProfilePopup();
+    initProfilePopup();
+});
+</script>

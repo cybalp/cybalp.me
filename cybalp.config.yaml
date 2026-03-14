@@ -117,20 +117,32 @@ sidebar:
             - type: "profile"
               enable: true
               position: "top"
+              visibility:
+                  mode: "include"
+                  paths: ["^/$"]
+              responsive:
+                  mobilePosition: "top"
             - type: "wall"
               enable: true
               position: "top"
+              visibility:
+                  mode: "include"
+                  paths: ["^/$"]
+              responsive:
+                  mobilePosition: "top"
             - type: "categories"
               enable: true
               position: "sticky"
               responsive:
                   collapseThreshold: 5
+                  mobilePosition: "hidden"
               depth: 3
             - type: "tags"
               enable: true
               position: "sticky"
               responsive:
                   collapseThreshold: 20
+                  mobilePosition: "hidden"
         right:
             - type: "toc"
               enable: true
@@ -164,11 +176,11 @@ wall:
     title: "Wall"
     content: "Identity updated!"
     closable: false
-    link:
-        enable: true
-        text: "RUN! Identity"
-        url: "/identity/"
-        external: false
+    #link:
+    #    enable: true
+    #    text: "RUN! Identity"
+    #    url: "/identity/"
+    #    external: false
 
 # ❯ POST
 post:
@@ -211,6 +223,73 @@ particle:
         rotation: 0.12
         fadeSpeed: 0.12
     zIndex: 100
+
+# ❯ SEARCH
+# ❯ @gogogo new search source — add a new entry under sources to include a new page in search results
+search:
+    enable: true
+    sources:
+        - id: "posts"
+          enabled: true
+          label: "Posts"
+          url: "/vault/"
+          aliases: ["post", "posts", "blog", "vault", "write", "article"]
+        - id: "practicalCodes"
+          enabled: true
+          label: "Codes"
+          url: "/practical-codes/"
+          aliases: ["code", "codes", "snippet", "snippets", "practical", "bash", "script"]
+        - id: "personalLog"
+          enabled: true
+          label: "Log"
+          url: "/Personal/"
+          aliases: ["log", "personal", "moment", "thought", "thoughts"]
+        - id: "media"
+          enabled: true
+          label: "Media"
+          url: "/media/"
+          aliases: ["photo", "photos", "album", "albums", "wallpaper", "image", "media", "gallery"]
+    commands:
+        - id: "theme-dark"
+          triggers: ["dark", "darkmode", "dark mode", "night"]
+          label: "Switch to Dark Mode"
+          icon: "material-symbols:dark-mode"
+          action: "theme:dark"
+        - id: "theme-light"
+          triggers: ["light", "lightmode", "light mode", "day"]
+          label: "Switch to Light Mode"
+          icon: "material-symbols:light-mode"
+          action: "theme:light"
+        - id: "theme-system"
+          triggers: ["system", "auto", "system theme"]
+          label: "Use System Theme"
+          icon: "material-symbols:contrast"
+          action: "theme:system"
+        - id: "github"
+          triggers: ["github", "gh", "git"]
+          label: "Open GitHub"
+          icon: "fa6-brands:github"
+          action: "url:https://github.com/cybalp"
+        - id: "linkedin"
+          triggers: ["linkedin", "li", "cv", "resume"]
+          label: "Open LinkedIn"
+          icon: "fa6-brands:linkedin"
+          action: "url:https://www.linkedin.com/in/alpulkegul"
+        - id: "instagram"
+          triggers: ["instagram", "ig", "insta"]
+          label: "Open Instagram"
+          icon: "fa6-brands:instagram"
+          action: "url:https://instagram.com/cybalp"
+        - id: "rss"
+          triggers: ["rss", "feed", "subscribe"]
+          label: "RSS Feed"
+          icon: "material-symbols:rss-feed"
+          action: "navigate:/rss.xml"
+        - id: "home"
+          triggers: ["home", "main", "index", "start"]
+          label: "Go to Home"
+          icon: "material-symbols:home"
+          action: "navigate:/"
 
 # ❯ ANNOUNCEMENT BANNER
 # ❯ @gogogo announcement new banner — edit message/href/ctaText/icon to publish a new announcement

@@ -1,0 +1,61 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/backwardButton.astro
+// ❯ @desc Backward navigation button component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+// ❯ IMPORTS
+import { getParentLink } from "@utils/navigation";
+import { url } from "@utils/url";
+
+// ❯ PROPS
+interface Props {
+	currentPath?: string;
+	href?: string;
+	text?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { currentPath, href, text } = Astro.props;
+
+// ❯ COMPUTED
+let targetUrl = href;
+let targetText = text;
+
+if (currentPath && !targetUrl) {
+	const parentLink = getParentLink(currentPath);
+	if (parentLink) {
+		targetUrl = url(parentLink.url);
+		targetText = `${i18n(I18nKey.backTo)} ${parentLink.name}`;
+	} else {
+		// If no parent link found, default to Main page
+		const mainPath = "/";
+		if (currentPath !== mainPath) {
+			targetUrl = url(mainPath);
+			targetText = `${i18n(I18nKey.backTo)} ${i18n(I18nKey.main)}`;
+		}
+	}
+}
+
+// ❯ @doc Returns null if no valid URL found.
+if (!targetUrl) {
+	return null;
+}
+---
+
+<div class="mb-6">
+    <a
+        href={targetUrl}
+        class="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-(--primary) transition-colors group"
+    >
+        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        <span class="text-sm font-medium">
+            {targetText}
+        </span>
+    </a>
+</div>

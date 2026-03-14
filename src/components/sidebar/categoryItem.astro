@@ -1,0 +1,39 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/sidebar/categoryItem.astro
+// ❯ @desc Recursive category item component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import ButtonLink from "@components/common/buttonLink.astro";
+// ❯ IMPORTS
+import type { CategoryTreeItem } from "@utils/content";
+
+// ❯ PROPS
+interface Props {
+	nodes: CategoryTreeItem[];
+	depth?: number;
+	maxDepth?: number;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { nodes, depth = 0, maxDepth = 3 } = Astro.props;
+---
+
+<!-- ❯ RENDER -->
+{nodes.map((node) => (
+    <div>
+        <div style={`padding-left: ${depth * 0.75}rem;`}>
+            <ButtonLink
+                url={node.url}
+                badge={String(node.count)}
+                label={`View all posts in the ${node.name.trim()} category`}
+            >
+                {node.name.trim()}
+            </ButtonLink>
+        </div>
+        {node.children.length > 0 && depth < maxDepth - 1 && (
+            <Astro.self nodes={node.children} depth={depth + 1} maxDepth={maxDepth} />
+        )}
+    </div>
+))}

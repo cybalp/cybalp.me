@@ -1,0 +1,14 @@
+{
+	"name": "Bash",
+	"description": "Unix shell and command language.",
+	"icon": "simple-icons:gnubash",
+	"category": "cybersecurity",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#4EAA25"
+}

@@ -1,0 +1,655 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/toolchains.astro
+// ❯ @desc Toolchains showcase page with stats and modals.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export const prerender = true;
+
+import BackwardButton from "@components/backwardButton.astro";
+// ❯ COMPONENT IMPORTS
+import IconifyLoader from "@components/common/iconifyLoader.astro";
+import SkillCard from "@components/data/skillCard.astro";
+import { UNCATEGORIZED } from "@constants/constants";
+// ❯ EXTERNAL IMPORTS
+import { LinkPresets } from "@constants/link-presets";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import GridLayout from "@layouts/grid.astro";
+// ❯ UTILITY IMPORTS
+import {
+	getAdvancedSkills,
+	getSkillStats,
+	getSkillsByCategory,
+	getTotalExperience,
+	skillsData,
+} from "@utils/skills";
+import { LinkPreset } from "@/types/config";
+
+// ❯ DATA INITIALIZATION
+// ❯ fetch from LinkPresets
+const title = LinkPresets[LinkPreset.Toolchains].name;
+const subtitle = LinkPresets[LinkPreset.Toolchains].description;
+// ❯ fetch from utils
+const stats = getSkillStats();
+const advancedSkills = getAdvancedSkills();
+const totalExperience = getTotalExperience();
+const categories = [...new Set(skillsData.map((skill) => skill.category))];
+const skillsByCategory = categories.reduce(
+	(acc, category) => {
+		acc[category] = getSkillsByCategory(category);
+		return acc;
+	},
+	{} as Record<string, typeof skillsData>,
+);
+// ❯ extract icons
+const allIcons = skillsData.map((skill) => skill.icon).filter(Boolean);
+
+// ❯ HELPER FUNCTIONS
+// ❯ @doc Maps category key to display text.
+const getCategoryText = (category: string) => {
+	switch (category) {
+		case "cybersecurity":
+			return "Cybersecurity";
+		case "backend":
+			return "Backend";
+		case "frontend":
+			return "Frontend";
+		case "area-of-interest":
+			return "Area of Interest";
+		case "others":
+			return "Others";
+		case UNCATEGORIZED:
+			return i18n(I18nKey.uncategorized);
+		default:
+			return category;
+	}
+};
+
+// ❯ @doc Maps skill level to i18n text.
+const getLevelText = (level: string) => {
+	switch (level) {
+		case "expert":
+			return i18n(I18nKey.skillsExpert);
+		case "advanced":
+			return i18n(I18nKey.skillsAdvanced);
+		case "intermediate":
+			return i18n(I18nKey.skillsIntermediate);
+		case "beginner":
+			return i18n(I18nKey.skillsBeginner);
+		default:
+			return level;
+	}
+};
+---
+
+<!-- ❯ TEMPLATE -->
+<GridLayout title={title} description={subtitle}>
+    <IconifyLoader preloadIcons={allIcons} />
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-9 py-6 relative w-full">
+            <BackwardButton currentPath={Astro.url.pathname} />
+            
+            <!-- ❯ Header Section -->
+            <div class="flex flex-col items-start justify-center mb-8">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 arge-title">
+                    {i18n(I18nKey.toolchains)}
+                </h1>
+                <p class="text-lg text-black/60 dark:text-white/60">
+                    {subtitle}
+                </p>
+            </div>
+
+            <!-- ❯ Stats Cards -->
+            <div id="skills-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+                <button 
+                    id="total-skills-card"
+                    class="stat-card stat-card-blue group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{stats.total}</div>
+                        <div class="stat-label">{i18n(I18nKey.skillsTotal)}</div>
+                    </div>
+                </button>
+                <button 
+                    id="expert-card"
+                    class="stat-card stat-card-red group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{stats.byLevel.expert}</div>
+                        <div class="stat-label">{i18n(I18nKey.skillsExpert)}</div>
+                    </div>
+                </button>
+                <button 
+                    id="advanced-card"
+                    class="stat-card stat-card-orange group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{stats.byLevel.advanced}</div>
+                        <div class="stat-label">{i18n(I18nKey.skillsAdvanced)}</div>
+                    </div>
+                </button>
+                <button 
+                    id="experience-card"
+                    class="stat-card stat-card-purple group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">
+                            {(() => {
+                                const years = totalExperience.years || 0;
+                                const months = totalExperience.months || 0;
+                                if (years === 0 && months === 0) return '0';
+                                const decimal = years + (months / 12);
+                                return decimal.toFixed(1);
+                            })()}
+                        </div>
+                        <div class="stat-label">{i18n(I18nKey.skillExperience)}</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- ❯ Advanced Skills Section -->
+            {advancedSkills.length > 0 && (
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-4">
+                        {i18n(I18nKey.skillsAdvancedTitle)}
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {advancedSkills.map((skill) => (
+                            <SkillCard skill={skill} size="large" showProgress={true} showIcon={true} />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <!-- ❯ Skills By Category -->
+            <div class="space-y-8">
+                {categories.map((category) => {
+                    const categorySkills = skillsByCategory[category];
+                    if (categorySkills.length === 0) return null;
+
+                    return (
+                        <div>
+                            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-4">
+                                {getCategoryText(category)}
+                                <span class="text-lg font-normal text-black/60 dark:text-white/60 ml-2">
+                                    ({categorySkills.length})
+                                </span>
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {categorySkills.map((skill) => (
+                                    <SkillCard skill={skill} size="medium" showProgress={true} showIcon={true} />
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            
+            <!-- ❯ Statistics Section -->
+            <div class="mt-12 pt-8 border-t border-black/10 dark:border-white/10">
+                <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-6">
+                    {i18n(I18nKey.skillsDistribution)}
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">
+                            {i18n(I18nKey.skillsByLevel)}
+                        </h3>
+                        <div class="space-y-3">
+                            {Object.entries(stats.byLevel).map(([level, count]) => {
+                                const percentage = Math.round((count / stats.total) * 100);
+                                return (
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-20 text-sm text-black/70 dark:text-white/70">
+                                            {i18n(level === 'expert' ? I18nKey.skillsExpert :
+                                                        level === 'advanced' ? I18nKey.skillsAdvanced :
+                                                        level === 'intermediate' ? I18nKey.skillsIntermediate :
+                                                        I18nKey.skillsBeginner)}
+                                        </div>
+                                        <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div
+                                                class={`h-2 rounded-full transition-all duration-600 ${
+                                                    level === 'expert' ? 'bg-red-500' :
+                                                    level === 'advanced' ? 'bg-orange-500' :
+                                                    level === 'intermediate' ? 'bg-yellow-500' :
+                                                    'bg-green-500'
+                                                }`}
+                                                style={`width: ${percentage}%`}
+                                            ></div>
+                                        </div>
+                                        <div class="w-12 text-sm text-black/70 dark:text-white/70 text-right">
+                                            {count}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">
+                            {i18n(I18nKey.skillsByCategory)}
+                        </h3>
+                        <div class="space-y-3">
+                            {Object.entries(stats.byCategory).map(([category, count]) => {
+                                const percentage = Math.round((count / stats.total) * 100);
+                                return (
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-20 text-sm text-black/70 dark:text-white/70 truncate">
+                                            {getCategoryText(category)}
+                                        </div>
+                                        <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div
+                                                class="h-2 rounded-full bg-blue-500 transition-all duration-500"
+                                                style={`width: ${percentage}%`}
+                                            ></div>
+                                        </div>
+                                        <div class="w-12 text-sm text-black/70 dark:text-white/70 text-right">
+                                            {count}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ❯ MODALS -->
+    <!-- ❯ Total Skills Modal -->
+    <div id="total-skills-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.skillsTotal)} - All Skills
+            </h2>
+            <button id="close-total-skills-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {stats.total} Skills</h3>
+            </div>
+            <div class="space-y-2">
+                {skillsData.map((skill) => (
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                        <div class="flex-1">
+                            <div class="font-semibold text-black/90 dark:text-white/90">{skill.name}</div>
+                            <div class="text-sm text-black/60 dark:text-white/60">{getCategoryText(skill.category)} • {getLevelText(skill.level)}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ❯ Expert Level Modal -->
+    <div id="expert-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.skillsExpert)} Level Skills
+            </h2>
+            <button id="close-expert-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {stats.byLevel.expert} Expert Skills</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {skillsData.filter(s => s.level === 'expert').map((skill) => (
+                    <SkillCard skill={skill} size="small" showProgress={true} showIcon={true} />
+                ))}
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ❯ Advanced Level Modal -->
+    <div id="advanced-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.skillsAdvanced)} Level Skills
+            </h2>
+            <button id="close-advanced-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {stats.byLevel.advanced} Advanced Skills</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {skillsData.filter(s => s.level === 'advanced').map((skill) => (
+                    <SkillCard skill={skill} size="small" showProgress={true} showIcon={true} />
+                ))}
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ❯ Experience Modal -->
+    <div id="experience-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.skillExperience)} Details
+            </h2>
+            <button id="close-experience-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total Experience</h3>
+                <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+                    <div class="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                        {totalExperience.years} {i18n(I18nKey.skillYears)} {totalExperience.months > 0 ? `${totalExperience.months} ${i18n(I18nKey.skillMonths)}` : ''}
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80">Experience by Skill</h3>
+                <div class="space-y-2">
+                    {skillsData.sort((a, b) => {
+                        const aMonths = a.experience.years * 12 + a.experience.months;
+                        const bMonths = b.experience.years * 12 + b.experience.months;
+                        return bMonths - aMonths;
+                    }).map((skill) => {
+                        const totalMonths = skill.experience.years * 12 + skill.experience.months;
+                        return (
+                            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
+                                <div class="flex-1">
+                                    <div class="font-semibold text-black/90 dark:text-white/90">{skill.name}</div>
+                                    <div class="text-sm text-black/60 dark:text-white/60">{skill.category}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-black/90 dark:text-white/90">
+                                        {skill.experience.years > 0 ? `${skill.experience.years} ${i18n(I18nKey.skillYears)}` : ''}
+                                        {skill.experience.months > 0 ? ` ${skill.experience.months} ${i18n(I18nKey.skillMonths)}` : ''}
+                                    </div>
+                                    <div class="text-xs text-black/50 dark:text-white/50">
+                                        ({totalMonths} {i18n(I18nKey.skillMonths)})
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+<!-- ❯ SCRIPTS -->
+<script>
+        // ❯ @doc Initializes skills page modals and event handlers.
+        (window as any).initSkillsPage = function initSkillsPage() {
+            // ❯ Page Detection
+            const isToolchainsPage = window.location.pathname.includes('/toolchains') && 
+                                !window.location.pathname.includes('/toolchains-hobbies');
+            if (!isToolchainsPage) {
+                return;
+            }
+            
+            // ❯ Modal Management
+            const openModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+
+            const closeModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            };
+
+            // ❯ Event Handler Setup
+            const statsContainer = document.getElementById('skills-stats-container');
+            
+            if (!statsContainer) {
+                setTimeout(() => initSkillsPage(), 100);
+                return;
+            }
+            
+            const oldHandler = (statsContainer as any).__skillsCardClickHandler;
+            if (oldHandler) {
+                try {
+                    statsContainer.removeEventListener('click', oldHandler);
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
+            
+            const clickHandler = (e: Event) => {
+                const target = e.target as HTMLElement;
+                const card = target.closest('button[id$="-card"]') as HTMLElement;
+                if (card) {
+                    const cardId = card.id;
+                    if (cardId === 'total-skills-card') {
+                        openModal('total-skills-modal');
+                    } else if (cardId === 'expert-card') {
+                        openModal('expert-modal');
+                    } else if (cardId === 'advanced-card') {
+                        openModal('advanced-modal');
+                    } else if (cardId === 'experience-card') {
+                        openModal('experience-modal');
+                    }
+                }
+            };
+            
+            (statsContainer as any).__skillsCardClickHandler = clickHandler;
+            statsContainer.addEventListener('click', clickHandler);
+
+            const setupCloseHandlers = (modalId: string, closeBtnId: string) => {
+                const modal = document.getElementById(modalId);
+                const closeBtn = document.getElementById(closeBtnId);
+                
+                if (closeBtn) {
+                    const oldHandler = (closeBtn as any).__closeHandler;
+                    if (oldHandler) {
+                        closeBtn.removeEventListener('click', oldHandler);
+                    }
+                    const handler = () => closeModal(modalId);
+                    (closeBtn as any).__closeHandler = handler;
+                    closeBtn.addEventListener('click', handler);
+                }
+                
+                if (modal) {
+                    const oldHandler = (modal as any).__backdropHandler;
+                    if (oldHandler) {
+                        modal.removeEventListener('click', oldHandler);
+                    }
+                    const handler = (e: Event) => {
+                        if (e.target === modal) closeModal(modalId);
+                    };
+                    (modal as any).__backdropHandler = handler;
+                    modal.addEventListener('click', handler);
+                }
+            };
+
+            setupCloseHandlers('total-skills-modal', 'close-total-skills-modal');
+            setupCloseHandlers('expert-modal', 'close-expert-modal');
+            setupCloseHandlers('advanced-modal', 'close-advanced-modal');
+            setupCloseHandlers('experience-modal', 'close-experience-modal');
+
+            // ❯ Keyboard Handler
+            const oldEscapeHandler = (document as any).__skillsEscapeHandler;
+            if (oldEscapeHandler) {
+                document.removeEventListener('keydown', oldEscapeHandler);
+            }
+            const escapeHandler = (e: KeyboardEvent) => {
+                if (e.key === 'Escape') {
+                    const modals = ['total-skills-modal', 'expert-modal', 'advanced-modal', 'experience-modal'];
+                    for (const modalId of modals) {
+                        const modal = document.getElementById(modalId);
+                        if (modal && !modal.classList.contains('hidden')) {
+                            closeModal(modalId);
+                            break;
+                        }
+                    }
+                }
+            };
+            (document as any).__skillsEscapeHandler = escapeHandler;
+            document.addEventListener('keydown', escapeHandler);
+
+            // ❯ Icon Loading
+            if (window.__iconifyLoader) {
+            window.__iconifyLoader.load().then(() => {
+                const skillCards = document.querySelectorAll('.skill-card');
+                skillCards.forEach(card => {
+                    card.dispatchEvent(new CustomEvent('iconify-ready'));
+                });
+            }).catch(error => {
+                console.error('Failed to load icons on skills page:', error);
+            });
+        }
+        };
+    
+        const initSkillsPage = (window as any).initSkillsPage;
+    
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initSkillsPage();
+            });
+        } else {
+            setTimeout(() => {
+                initSkillsPage();
+            }, 50);
+        }
+
+        // ❯ Swup Integration
+        if (!(window as any).__skillsPageHooksSetup) {
+            (window as any).__skillsPageHooksSetup = true;
+            
+            const setupSwupHooks = () => {
+                if (window.swup && window.swup.hooks) {
+                    window.swup.hooks.on('page:view', () => {
+                        const isToolchainsPage = window.location.pathname.includes('/toolchains') && 
+                                            !window.location.pathname.includes('/toolchains-hobbies');
+                        
+                        if (isToolchainsPage) {
+                            requestAnimationFrame(() => {
+                                setTimeout(() => {
+                                    let initFn = (window as any).initSkillsPage;
+                                    
+                                    if (!initFn) {
+                                        setTimeout(() => {
+                                            const scripts = document.querySelectorAll('script');
+                                            let foundScript = false;
+                                            scripts.forEach((script) => {
+                                                if (script.textContent && 
+                                                    script.textContent.includes('initSkillsPage') && 
+                                                    !script.src &&
+                                                    !(script as any).__swupExecuted) {
+                                                    foundScript = true;
+                                                    try {
+                                                        (script as any).__swupExecuted = true;
+                                                        const newScript = document.createElement('script');
+                                                        newScript.textContent = script.textContent;
+                                                        Array.from(script.attributes).forEach(attr => {
+                                                            newScript.setAttribute(attr.name, attr.value);
+                                                        });
+                                                        document.head.appendChild(newScript);
+                                                        setTimeout(() => {
+                                                            if (newScript.parentNode) {
+                                                                document.head.removeChild(newScript);
+                                                            }
+                                                            setTimeout(() => {
+                                                                initFn = (window as any).initSkillsPage;
+                                                                if (initFn) {
+                                                                    initFn();
+                                                                }
+                                                            }, 50);
+                                                        }, 100);
+                                                    } catch (e) {
+                                                        // Ignore errors
+                                                    }
+                                                }
+                                            });
+                                        }, 100);
+                                    } else {
+                                        initFn();
+                                    }
+                                }, 100);
+                            });
+                        }
+                    });
+                    
+                    return true;
+                }
+                return false;
+            };
+
+            if (!setupSwupHooks()) {
+                const checkSwup = setInterval(() => {
+                    if (window.swup && window.swup.hooks) {
+                        clearInterval(checkSwup);
+                        setupSwupHooks();
+                    }
+                }, 100);
+
+                setTimeout(() => {
+                    clearInterval(checkSwup);
+                }, 5000);
+            }
+            
+            document.addEventListener('swup:enable', () => {
+                setupSwupHooks();
+            });
+        }
+
+    // ❯ Page Restoration Handler
+    if (typeof window !== 'undefined') {
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted && window.__iconifyLoader) {
+                setTimeout(() => {
+                    window.__iconifyLoader.load().catch(console.error);
+                }, 100);
+            }
+        });
+    }
+</script>
+</GridLayout>

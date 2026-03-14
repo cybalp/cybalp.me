@@ -1,0 +1,14 @@
+{
+	"name": "Virt-Manager",
+	"description": "Desktop user interface for managing virtual machines.",
+	"icon": "mdi:server-network",
+	"category": "others",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#4A90E2"
+}

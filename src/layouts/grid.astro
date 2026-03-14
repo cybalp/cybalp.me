@@ -1,0 +1,246 @@
+---
+
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/layouts/grid.astro
+// ❯ @desc Grid-based page layout.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import BackToTopButton from "@components/back2TopButton.astro";
+import Banner from "@components/banner.astro";
+import IconifyLoader from "@components/common/iconifyLoader.astro";
+import Footer from "@components/footer.astro";
+import FullscreenWallpaper from "@components/fullscreenWallpaper.astro";
+import Navbar from "@components/navbar.astro";
+import Sidebar from "@components/sidebar.astro";
+import TocButton from "@components/tocButton.astro";
+import {
+	BANNER_HEIGHT,
+	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
+} from "@constants/constants";
+import { pathsEqual, url } from "@utils/url";
+import { widgetManager } from "@utils/widget";
+// ❯ IMPORTS
+import type { MarkdownHeading } from "astro";
+import { Icon } from "astro-icon/components";
+import { siteConfig } from "@/config";
+import BaseLayout from "./base.astro";
+import "@styles/grid.css";
+
+// ❯ TYPES
+interface Props {
+	title?: string;
+	banner?: string;
+	description?: string;
+	lang?: string;
+	setOGTypeArticle?: boolean;
+	postSlug?: string;
+	headings?: MarkdownHeading[];
+}
+
+// ❯ PROPS
+const {
+	title,
+	banner,
+	description,
+	lang,
+	setOGTypeArticle,
+	postSlug,
+	headings = [],
+} = Astro.props;
+
+// ❯ PAGE CONFIGURATION
+const isMainPage = pathsEqual(Astro.url.pathname, url("/"));
+
+// ❯ WALLPAPER CONFIGURATION
+const hasBannerCredit =
+	siteConfig.wallpaper.mode === "banner" &&
+	siteConfig.wallpaper.banner?.credit?.enable;
+const hasBannerLink = !!siteConfig.wallpaper.banner?.credit?.url;
+const shouldEnableTransparency =
+	siteConfig.wallpaper.mode === "banner" ||
+	siteConfig.wallpaper.mode === "fullscreen";
+const transparentClass = shouldEnableTransparency
+	? "wallpaper-transparent"
+	: "";
+
+// ❯ LAYOUT CALCULATION
+// ❯ @doc Calculates main content panel top position.
+const mainPanelTop =
+	siteConfig.wallpaper.mode === "banner"
+		? `calc(${BANNER_HEIGHT}vh - ${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem)`
+		: "5.5rem";
+const finalMainPanelTop =
+	siteConfig.wallpaper.mode === "banner" ? mainPanelTop : "5.5rem";
+
+// ❯ SIDEBAR CONFIGURATION
+// ❯ @doc Gets grid layout configuration based on sidebar widgets.
+const {
+	hasLeftSidebar,
+	hasRightSidebar,
+	hasAnyComponents,
+	gridCols,
+	leftSidebarClass,
+	rightSidebarClass,
+	mainContentClass,
+	middleSidebarClass,
+	mobileFooterClass,
+} = widgetManager.getGridLayout(headings, Astro.url.pathname);
+---
+
+<BaseLayout
+    title={title}
+    banner={banner}
+    description={description}
+    lang={lang}
+    setOGTypeArticle={setOGTypeArticle}
+    postSlug={postSlug}
+>
+    <IconifyLoader />
+    <slot slot="head" name="head" />
+    <div
+        id="top-row"
+        class="z-50 pointer-events-none relative transition-all duration-600 max-w-(--page-width) px-0 md:px-4 mx-auto"
+        class:list={[""]}
+    >
+        <div
+            id="navbar-wrapper"
+            class="pointer-events-auto sticky top-0 transition-all"
+        >
+            <Navbar />
+        </div>
+    </div>
+    <FullscreenWallpaper
+        config={siteConfig.wallpaper}
+        class={siteConfig.wallpaper.mode === "fullscreen" ? "" : "hidden"}
+    />
+    {
+        shouldEnableTransparency && (
+            <script>
+                document.body.classList.add('wallpaper-transparent');
+            </script>
+        )
+    }
+    <Banner
+        config={siteConfig.wallpaper}
+        isMainPage={isMainPage}
+        class={siteConfig.wallpaper.mode === "banner" ? "" : "hidden"}
+    />
+    <div
+        class={`absolute w-full z-30 pointer-events-none transition-all duration-600 ${siteConfig.wallpaper.mode !== "banner" ? "no-banner-layout" : ""} ${transparentClass}`}
+        style={`top: ${finalMainPanelTop}`}
+    >
+        <div
+            class="relative max-w-(--page-width) mx-auto pointer-events-auto"
+        >
+            <div
+                    id="main-grid"
+                    class={`transition-all duration-600 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto] mx-auto gap-4 px-0 md:px-4 ${!hasAnyComponents ? "mobile-no-sidebar" : ""} ${(hasLeftSidebar || hasRightSidebar) ? "mobile-both-sidebar" : ""}`}
+                >
+                {
+                    hasBannerCredit && (
+                        <a
+                            href={siteConfig.wallpaper.banner?.credit?.url}
+                            id="banner-credit"
+                            target="_blank"
+                            rel="noopener"
+                            aria-label="Visit image source"
+                            class:list={[
+                                "group onload-animation-up transition-all absolute flex justify-center items-center rounded-full " +
+                                    "px-3 right-4 -top-13 bg-black/60 hover:bg-black/70 h-9",
+                                {
+                                    "hover:pr-9 active:bg-black/80":
+                                        hasBannerLink,
+                                },
+                            ]}
+                        >
+                            <Icon
+                                class="text-white/75 text-[1.25rem] mr-1"
+                                name="material-symbols:copyright-outline-rounded"
+                            />
+                            <div class="text-white/75 text-xs">
+                                {siteConfig.wallpaper.banner?.credit?.text}
+                            </div>
+                            <Icon
+                                class:list={[
+                                    "transition absolute text-[oklch(0.75_0.14_var(--hue))] right-4 text-[0.75rem] opacity-0",
+                                    {
+                                        "group-hover:opacity-100":
+                                            hasBannerLink,
+                                    },
+                                ]}
+                                name="fa6-solid:arrow-up-right-from-square"
+                            />
+                        </a>
+                    )
+                }
+
+                <div class="contents lg:contents md:flex md:flex-col md:col-start-1 md:row-start-1 md:gap-4">
+                    {
+                        hasLeftSidebar ? (
+                            <Sidebar
+                                id="left-sidebar"
+                                side="left"
+                                class={`${leftSidebarClass} ${transparentClass} onload-animation-up`}
+                                headings={headings}
+                            />
+                        ) : (
+                            <div id="left-sidebar" class="hidden"></div>
+                        )
+                    }
+                    {
+                        hasRightSidebar ? (
+                            <Sidebar
+                                id="right-sidebar"
+                                side="right"
+                                class={`${rightSidebarClass} ${transparentClass} onload-animation-up`}
+                                headings={headings}
+                            />
+                        ) : (
+                            <div id="right-sidebar" class="hidden"></div>
+                        )
+                    }
+                </div>
+
+                <main
+                    id="swup-container"
+                    class={`${mainContentClass} transition-swup-fade flex flex-col`}
+                >
+                    <div id="grid-class-carrier" data-grid-class={gridCols} class="hidden"></div>
+                    <div
+                        id="content-wrapper"
+                        class="onload-animation-up transition-leaving flex flex-col min-h-full"
+                    >
+                        <div class="flex-1">
+                            <slot />
+                        </div>
+                        <div
+                            class="footer col-span-2 onload-animation-up hidden lg:block transition-swup-fade mt-auto"
+                        >
+                            <Footer />
+                        </div>
+                    </div>
+                </main>
+
+                <div class={middleSidebarClass}>
+                    <Sidebar
+                        id="middle-sidebar"
+                        side="middle"
+                        class={`${transparentClass} onload-animation-up`}
+                        headings={headings}
+                    />
+                </div>
+
+                <div class={mobileFooterClass}>
+                    <Footer />
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <TocButton />
+
+    <BackToTopButton />
+
+</BaseLayout>

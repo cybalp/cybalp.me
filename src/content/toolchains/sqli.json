@@ -1,0 +1,14 @@
+{
+	"name": "SQLi",
+	"description": "SQL Injection vulnerability testing and exploitation.",
+	"icon": "mdi:database-lock",
+	"category": "cybersecurity",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#FF6B6B"
+}

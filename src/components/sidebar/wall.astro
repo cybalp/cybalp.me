@@ -1,0 +1,422 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/sidebar/wall.astro
+// ❯ @desc Wall widget component with terminal interface.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+// ❯ IMPORTS
+import { Icon } from "astro-icon/components";
+import { wallConfig } from "@/config";
+import WidgetLayout from "./widgetLayout.astro";
+
+// ❯ CONFIGURATION
+const config = wallConfig;
+
+// ❯ PROPS
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const className = Astro.props.class;
+const style = Astro.props.style;
+---
+
+<!-- ❯ RENDER -->
+<WidgetLayout
+    name={config.title || "Wall"}
+    id="wall"
+    class={className}
+    style={style}
+>
+    <div class="terminal-container">
+        <!-- ❯ Terminal Window -->
+        <div class="terminal-window">
+            <!-- ❯ Terminal Header -->
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="terminal-btn terminal-btn-close"></span>
+                    <span class="terminal-btn terminal-btn-minimize"></span>
+                    <span class="terminal-btn terminal-btn-maximize"></span>
+                </div>
+                <div class="terminal-title">system@cybalp:~$</div>
+            </div>
+            <!-- ❯ Terminal Body -->
+            <div class="terminal-body">
+                <div class="terminal-content" data-content={config.content}>
+<!--                    <div class="terminal-line">
+                        <span class="terminal-prompt">❯</span>
+                        <span class="terminal-command"> cat /var/log/wall.log</span>
+                    </div> 
+                    <div class="terminal-output" id="terminal-output"></div>
+                    <div class="terminal-line terminal-input-line">-->
+                        <span class="terminal-prompt">❯</span>
+                        <span class="terminal-cursor">█</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ❯ Optional Link -->
+        {config.link && config.link.enable !== false && (
+            <div class="mt-3">
+                <a
+                    href={config.link.url}
+                    target={config.link.external ? "_blank" : "_self"}
+                    rel={config.link.external ? "noopener noreferrer" : undefined}
+                    class="btn-regular rounded-lg px-3 py-1.5 text-sm font-medium active:scale-95 transition-transform"
+                >
+                    {config.link.text}
+                </a>
+            </div>
+        )}
+    </div>
+</WidgetLayout>
+
+<!-- ❯ STYLES -->
+<style>
+    .terminal-container {
+        font-family: 'Fira Code', 'Courier New', 'Consolas', monospace;
+    }
+    
+    .terminal-window {
+        background: #0d1117;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        border: 1px solid #30363d;
+        transition: all 0.3s ease;
+    }
+    
+    .terminal-window:hover {
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(88, 166, 255, 0.1);
+    }
+    
+    .terminal-header {
+        background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #30363d;
+        position: relative;
+    }
+    
+    .terminal-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(88, 166, 255, 0.3), transparent);
+    }
+    
+    .terminal-buttons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .terminal-btn {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        display: inline-block;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    .terminal-btn:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    
+    .terminal-btn-close {
+        background: #ff5f56;
+    }
+    
+    .terminal-btn-minimize {
+        background: #ffbd2e;
+    }
+    
+    .terminal-btn-maximize {
+        background: #27c93f;
+    }
+    
+    .terminal-title {
+        color: #58a6ff;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+    }
+    
+    .terminal-body {
+        padding: 16px;
+        min-height: 100px;
+        max-height: 400px;
+        overflow-y: auto;
+        background: #0d1117;
+        scrollbar-width: thin;
+        scrollbar-color: #30363d #0d1117;
+    }
+    
+    @media (max-width: 768px) {
+        .terminal-body {
+            padding: 12px;
+            min-height: 80px;
+            font-size: 12px;
+        }
+    }
+    
+    .terminal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .terminal-body::-webkit-scrollbar-track {
+        background: #0d1117;
+    }
+    
+    .terminal-body::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 3px;
+    }
+    
+    .terminal-body::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+    }
+    
+    .terminal-content {
+        color: #c9d1d9;
+        font-size: 13px;
+        line-height: 1.8;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    
+    @media (max-width: 768px) {
+        .terminal-content {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+    }
+    
+    .terminal-line {
+        display: flex;
+        align-items: center;
+        margin-bottom: 6px;
+        min-height: 20px;
+        flex-wrap: wrap;
+        white-space: normal;
+    }
+    
+    @media (max-width: 768px) {
+        .terminal-line {
+            white-space: normal;
+            word-break: break-word;
+        }
+    }
+    
+    .terminal-prompt {
+        color: #58a6ff;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        font-weight: 500;
+        flex-shrink: 0;
+        white-space: nowrap;
+        margin-right: 8px;
+    }
+    
+    .terminal-command {
+        color: #c9d1d9;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        white-space: normal;
+        word-break: break-word;
+        flex-shrink: 1;
+    }
+    
+    @media (min-width: 769px) {
+        .terminal-command {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+    }
+    
+    .terminal-cursor {
+        color: #58a6ff;
+        animation: blink 1s infinite;
+        margin-left: 0;
+        font-weight: bold;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        flex-shrink: 0;
+    }
+    
+    .terminal-input-line {
+        margin-top: 10px;
+    }
+    
+    .terminal-output {
+        color: #7ee787;
+        margin-left: 0;
+        margin-top: 6px;
+        margin-bottom: 6px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.8;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        display: block;
+        visibility: visible;
+        opacity: 1;
+        min-height: 1.5em;
+    }
+    
+    @media (max-width: 768px) {
+        .terminal-output {
+            font-size: 12px;
+            line-height: 1.6;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+    }
+    
+    .terminal-output a {
+        color: #58a6ff;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(88, 166, 255, 0.3);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+    
+    .terminal-output a:hover {
+        color: #79c0ff;
+        border-bottom-color: rgba(88, 166, 255, 0.6);
+        text-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
+    }
+    
+    .terminal-output .terminal-error {
+        color: #ff7b72;
+    }
+    
+    .terminal-output .terminal-success {
+        color: #7ee787;
+    }
+    
+    .terminal-output .terminal-info {
+        color: #79c0ff;
+    }
+    
+    .terminal-output .terminal-warning {
+        color: #d29922;
+    }
+    
+    @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+    }
+    
+    @media (prefers-color-scheme: light) {
+        .terminal-window {
+            background: #ffffff;
+            border-color: #d0d7de;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .terminal-window:hover {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(9, 105, 218, 0.1);
+        }
+        
+        .terminal-header {
+            background: linear-gradient(180deg, #f6f8fa 0%, #ffffff 100%);
+            border-bottom-color: #d0d7de;
+        }
+        
+        .terminal-header::after {
+            background: linear-gradient(90deg, transparent, rgba(9, 105, 218, 0.2), transparent);
+        }
+        
+        .terminal-body {
+            background: #ffffff;
+            scrollbar-color: #d0d7de #ffffff;
+        }
+        
+        .terminal-body::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+        
+        .terminal-body::-webkit-scrollbar-thumb {
+            background: #d0d7de;
+        }
+        
+        .terminal-body::-webkit-scrollbar-thumb:hover {
+            background: #8b949e;
+        }
+        
+        .terminal-content {
+            color: #24292f;
+        }
+        
+        .terminal-prompt {
+            color: #0969da;
+        }
+        
+        .terminal-cursor {
+            color: #0969da;
+        }
+        
+        .terminal-output {
+            color: #1a7f37;
+        }
+        
+        .terminal-output a {
+            color: #0969da;
+            border-bottom-color: rgba(9, 105, 218, 0.3);
+        }
+        
+        .terminal-output a:hover {
+            color: #0550ae;
+            border-bottom-color: rgba(9, 105, 218, 0.6);
+        }
+        
+        .terminal-output .terminal-error {
+            color: #cf222e;
+        }
+        
+        .terminal-output .terminal-success {
+            color: #1a7f37;
+        }
+        
+        .terminal-output .terminal-info {
+            color: #0969da;
+        }
+        
+        .terminal-output .terminal-warning {
+            color: #9a6700;
+        }
+        
+        .terminal-title {
+            color: #0969da;
+        }
+    }
+</style>
+

@@ -1,0 +1,14 @@
+{
+	"name": "SQL",
+	"description": "Structured Query Language for database management.",
+	"icon": "simple-icons:mysql",
+	"category": "backend",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#4479A1"
+}

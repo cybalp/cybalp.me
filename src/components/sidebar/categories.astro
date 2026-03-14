@@ -1,0 +1,112 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/sidebar/categories.astro
+// ❯ @desc Directories widget component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+// ❯ IMPORTS
+import { type CategoryTreeItem, getCategoryTree } from "@utils/content";
+import { getComponentConfig, widgetManager } from "@utils/widget";
+import CategoryItem from "./categoryItem.astro";
+import WidgetLayout from "./widgetLayout.astro";
+
+// ❯ DATA
+const categoriesTree = await getCategoryTree();
+
+// ❯ CONFIGURATION
+const COLLAPSED_HEIGHT = "7.5rem";
+
+// ❯ UTILITIES
+// ❯ @doc Counts total nodes in category tree recursively.
+const countNodes = (nodes: CategoryTreeItem[]): number =>
+	nodes.reduce((total, node) => total + 1 + countNodes(node.children), 0);
+
+// ❯ COMPUTED
+const categoriesComponent = getComponentConfig("categories");
+const totalCategoriesCount = countNodes(categoriesTree);
+const isCollapsed = categoriesComponent
+	? widgetManager.isCollapsed(categoriesComponent, totalCategoriesCount)
+	: false;
+
+// ❯ PROPS
+interface Props {
+	class?: string;
+	style?: string;
+	side?: string;
+	depth?: number;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { class: className, style, side = "default", depth } = Astro.props;
+---
+
+<!-- ❯ RENDER -->
+<WidgetLayout
+    name={i18n(I18nKey.categories)}
+    id={`categories-${side}`}
+    isCollapsed={isCollapsed}
+    collapsedHeight={COLLAPSED_HEIGHT}
+    class={className}
+    style={style}
+>
+    <div class="directories-container">
+        <CategoryItem nodes={categoriesTree} maxDepth={depth} />
+    </div>
+</WidgetLayout>
+
+<!-- ❯ STYLES -->
+<style>
+    .directories-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .directories-container :global(button) {
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 2px solid transparent;
+    }
+    
+    .directories-container :global(button:hover) {
+        border-left-color: var(--primary);
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .directories-container :global(button:active) {
+        transform: translateX(2px);
+    }
+    
+    .directories-container :global(div[style*="padding-left"]) {
+        position: relative;
+    }
+    
+    .directories-container :global(div[style*="padding-left"]:before) {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 60%;
+        background: var(--line-color);
+        opacity: 0.5;
+        transition: all 0.3s ease;
+    }
+    
+    .directories-container :global(div[style*="padding-left"]:hover:before) {
+        background: var(--primary);
+        opacity: 1;
+        height: 80%;
+    }
+    
+    .directories-container :global(div[style*="padding-left"] button:hover) {
+        background: linear-gradient(90deg, 
+            var(--btn-plain-bg-hover) 0%, 
+            transparent 100%);
+    }
+</style>

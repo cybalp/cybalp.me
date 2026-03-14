@@ -1,0 +1,14 @@
+{
+	"name": "TryHackMe",
+	"description": "Cybersecurity training platform with hands-on labs.",
+	"icon": "simple-icons:tryhackme",
+	"category": "cybersecurity",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#212C42"
+}

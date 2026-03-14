@@ -1,0 +1,286 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/data/projectCard.astro
+// ❯ @desc Project card component with status and tech stack.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import ImageWrapper from "@components/common/imageWrapper.astro";
+import I18nKey from "@i18n/i18nKey";
+// ❯ IMPORTS
+import { i18n } from "@i18n/translation";
+
+// ❯ PROPS
+export interface Props {
+	project: {
+		id: string;
+		title: string;
+		description: string;
+		image?: string;
+		category: string;
+		techStack: string[];
+		status: "completed" | "in-progress" | "planned";
+		demoUrl?: string;
+		sourceUrl?: string;
+		startDate: string;
+		endDate?: string;
+		featured?: boolean;
+		tags?: string[];
+		basePath?: string;
+	};
+	size?: "small" | "medium" | "large";
+	showImage?: boolean;
+	maxTechStack?: number;
+}
+
+// ❯ PROPS DESTRUCTURING
+const {
+	project,
+	size = "medium",
+	showImage = true,
+	maxTechStack = 4,
+} = Astro.props;
+
+// ❯ UTILITIES
+// ❯ @doc Maps project status to CSS classes.
+const getStatusStyle = (status: string) => {
+	switch (status) {
+		case "completed":
+			return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+		case "in-progress":
+			return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
+		case "planned":
+			return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
+		default:
+			return "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
+	}
+};
+
+// ❯ @doc Maps project status to localized text.
+const getStatusText = (status: string) => {
+	switch (status) {
+		case "completed":
+			return i18n(I18nKey.projectsCompleted);
+		case "in-progress":
+			return i18n(I18nKey.projectsInProgress);
+		case "planned":
+			return i18n(I18nKey.projectsPlanned);
+		default:
+			return status;
+	}
+};
+
+// ❯ @doc Maps size prop to responsive CSS classes.
+const getSizeClasses = (size: string) => {
+	switch (size) {
+		case "small":
+			return {
+				container: "p-4",
+				title: "text-lg",
+				description: "text-sm line-clamp-2",
+				tech: "text-xs",
+				links: "text-sm",
+			};
+		case "large":
+			return {
+				container: "p-6",
+				title: "text-xl",
+				description: "text-base line-clamp-3",
+				tech: "text-sm",
+				links: "text-base",
+			};
+		default: // medium
+			return {
+				container: "p-5",
+				title: "text-lg",
+				description: "text-sm line-clamp-2",
+				tech: "text-xs",
+				links: "text-sm",
+			};
+	}
+};
+
+// ❯ COMPUTED
+const sizeClasses = getSizeClasses(size);
+---
+
+<!-- ❯ RENDER -->
+<div class="project-card bg-white dark:bg-gray-800 rounded-2xl border border-neutral-200/80 dark:border-neutral-700/80 overflow-hidden transition-all duration-400 group cursor-pointer">
+    <!-- ❯ Project Image -->
+    {showImage && project.image && (
+        <div class={`overflow-hidden ${size === 'large' ? 'aspect-video' : 'aspect-4/3'}`}>
+            <ImageWrapper
+                src={project.image}
+                basePath={project.basePath}
+                alt={project.title}
+                class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+            />
+        </div>
+    )}
+    <!-- ❯ Project Content -->
+    <div class={sizeClasses.container}>
+        <!-- ❯ Title and Status -->
+        <div class="flex items-start justify-between mb-3">
+            <h3 class={`font-semibold text-black/90 dark:text-white/90 ${sizeClasses.title} ${size === 'small' ? 'line-clamp-1' : ''}`}>
+                {project.title}
+            </h3>
+            <span class={`px-2 py-1 text-xs rounded-full shrink-0 ml-2 ${getStatusStyle(project.status)}`}>
+                {getStatusText(project.status)}
+            </span>
+        </div>
+        <!-- ❯ Category Tag -->
+        {project.category && (
+            <div class="mb-2">
+                <span class="px-2 py-1 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 rounded-sm">
+                    {project.category}
+                </span>
+            </div>
+        )}
+        <!-- ❯ Project Description -->
+        <p class={`text-black/60 dark:text-white/60 mb-4 ${sizeClasses.description}`}>
+            {project.description}
+        </p>
+        <!-- ❯ Tech Stack -->
+        {project.techStack && project.techStack.length > 0 && (
+            <div class="flex flex-wrap gap-1 mb-4">
+                {project.techStack.slice(0, maxTechStack).map((tech) => (
+                    <span class={`px-2 py-1 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-sm ${sizeClasses.tech}`}>
+                        {tech}
+                    </span>
+                ))}
+                {project.techStack.length > maxTechStack && (
+                    <span class={`px-2 py-1 bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400 rounded-sm ${sizeClasses.tech}`}>
+                        +{project.techStack.length - maxTechStack}
+                    </span>
+                )}
+            </div>
+        )}
+        <!-- ❯ Alias -->
+        {project.tags && project.tags.length > 0 && (
+            <div class="flex flex-wrap gap-1 mb-4">
+                {project.tags.map((tag) => (
+                    <span class={`px-2 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 rounded-sm ${sizeClasses.tech}`}>
+                        #{tag}
+                    </span>
+                ))}
+            </div>
+        )}
+        <!-- ❯ Links -->
+        <div class="flex gap-2 flex-wrap">
+            {project.demoUrl && (
+                <a
+                    href={project.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class={`project-link project-link-demo inline-flex items-center px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${sizeClasses.links}`}
+                    onclick={(e) => e.stopPropagation()}
+                >
+                    {i18n(I18nKey.projectsDemo)}
+                </a>
+            )}
+            {project.sourceUrl && (
+                <a
+                    href={project.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class={`project-link project-link-source inline-flex items-center px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${sizeClasses.links}`}
+                    onclick={(e) => e.stopPropagation()}
+                >
+                    {i18n(I18nKey.projectsSource)}
+                </a>
+            )}
+        </div>
+    </div>
+</div>
+
+<style>
+    .project-card {
+        position: relative;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    :global(.dark) .project-card {
+        background: rgba(31, 41, 55, 0.95);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .project-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        opacity: 0;
+        transition: opacity 400ms;
+    }
+
+    .project-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .project-card:hover::before {
+        opacity: 1;
+    }
+
+    :global(.dark) .project-card:hover {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(96, 165, 250, 0.2);
+        border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    .project-link {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .project-link-demo {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+        color: rgb(37, 99, 235);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    :global(.dark) .project-link-demo {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+        color: rgb(96, 165, 250);
+        border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    .project-link-demo:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    :global(.dark) .project-link-demo:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.3));
+        box-shadow: 0 4px 6px -1px rgba(96, 165, 250, 0.4);
+    }
+
+    .project-link-source {
+        background: linear-gradient(135deg, rgba(107, 114, 128, 0.1), rgba(75, 85, 99, 0.1));
+        color: rgb(75, 85, 99);
+        border: 1px solid rgba(107, 114, 128, 0.3);
+    }
+
+    :global(.dark) .project-link-source {
+        background: linear-gradient(135deg, rgba(107, 114, 128, 0.2), rgba(75, 85, 99, 0.2));
+        color: rgb(209, 213, 219);
+        border-color: rgba(156, 163, 175, 0.4);
+    }
+
+    .project-link-source:hover {
+        background: linear-gradient(135deg, rgba(107, 114, 128, 0.2), rgba(75, 85, 99, 0.2));
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(107, 114, 128, 0.3);
+    }
+
+    :global(.dark) .project-link-source:hover {
+        background: linear-gradient(135deg, rgba(107, 114, 128, 0.3), rgba(75, 85, 99, 0.3));
+        box-shadow: 0 4px 6px -1px rgba(156, 163, 175, 0.4);
+    }
+</style>

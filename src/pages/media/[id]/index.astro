@@ -1,0 +1,196 @@
+---
+import BackwardButton from "@components/backwardButton.astro";
+import ImageWrapper from "@components/common/imageWrapper.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import GridLayout from "@layouts/grid.astro";
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/media/[id]/index.astro
+// ❯ @desc Individual album detail page.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ IMPORTS
+import type { AlbumGroup } from "@utils/media";
+import { sortedAlbums } from "@utils/media";
+
+// ❯ STATIC PATH GENERATION
+// ❯ @doc Generates static paths for visible albums.
+export const getStaticPaths = async () => {
+	return sortedAlbums
+		.filter((album) => album.visible)
+		.map((album) => ({
+			params: { id: album.id },
+			props: { album },
+		}));
+};
+
+// ❯ TYPES
+interface Props {
+	album: AlbumGroup;
+}
+
+// ❯ PROPS EXTRACTION
+const { album } = Astro.props;
+
+// ❯ VALIDATION
+if (!album) {
+	return Astro.redirect("/404");
+}
+
+// ❯ UTILITY FUNCTIONS
+// ❯ @doc Parses markdown link format [text](url) into structured object.
+function parseMarkdownLink(link: string): { text: string; url: string } | null {
+	const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/;
+	const match = link.match(markdownLinkRegex);
+	if (match) {
+		return { text: match[1], url: match[2] };
+	}
+	return null;
+}
+---
+
+<!-- ❯ PAGE LAYOUT -->
+<GridLayout title={album.title} description={album.description || album.title}>
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-9 py-6 relative w-full">
+            <!-- ❯ NAVIGATION -->
+            <BackwardButton href="/media/" text={i18n(I18nKey.mediaBackToList)} />
+            
+            <!-- ❯ HEADER SECTION -->
+            <header class="mb-8">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-3 arge-title">
+                    {album.title}
+                </h1>
+                {album.description && (
+                    <p class="text-neutral-600 dark:text-neutral-400 mb-4">
+                        {album.description}
+                    </p>
+                )}
+                
+                <!-- ❯ METADATA -->
+                <div class="flex flex-wrap items-center gap-4 text-sm text-neutral-500 dark:text-neutral-500">
+                    <span>{album.photos.length} {album.photos.length > 1 ? i18n(I18nKey.mediaPhotosCount) : i18n(I18nKey.mediaPhotoCount)}</span>
+                    <time>{new Date(album.date).toLocaleDateString('zh-CN')}</time>
+                    {album.location && (
+                        album.location.startsWith('http://') || album.location.startsWith('https://') ? (
+                            <a 
+                                href={album.location} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-1 hover:text-(--primary) transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
+                                {album.location}
+                            </a>
+                        ) : (
+                            <span class="flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
+                                {album.location}
+                            </span>
+                        )
+                    )}
+                    {album.url && (() => {
+                        const parsedLink = parseMarkdownLink(album.url);
+                        const linkUrl = parsedLink ? parsedLink.url : album.url;
+                        const linkText = parsedLink ? parsedLink.text : album.url;
+                        return (
+                            <a 
+                                href={linkUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-1 hover:text-(--primary) transition-colors"
+                            >
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
+                                </svg>
+                                {linkText}
+                            </a>
+                        );
+                    })()}
+                </div>
+                
+                <!-- ❯ ALIAS -->
+                {album.tags && album.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        {album.tags.map(tag => (
+                            <span class="btn-regular h-8 text-sm px-3 rounded-lg">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
+            </header>
+            
+            <!-- ❯ PHOTO GALLERY -->
+            <div
+                class={`photo-gallery moment-images ${album.layout === 'masonry' ? 'masonry-layout' : 'grid-layout'}`}
+                data-layout={album.layout || 'grid'} // "grid" | "masonry"
+                data-columns={album.columns || 3} // 2 | 3 | 4
+            >
+                {album.photos.map((photo, index) => (
+                    <figure class="photo-item group relative overflow-hidden rounded-lg">
+                        <ImageWrapper
+                            src={photo.src}
+                            basePath={album.basePath}
+                            alt={photo.alt}
+                            class="photo-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        />
+                    </figure>
+                ))}
+            </div>
+        </div>
+    </div>
+</GridLayout>
+
+<!-- ❯ STYLES -->
+<style>
+    /* ❯ GRID LAYOUT */
+    .grid-layout {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .grid-layout[data-columns="2"] {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .grid-layout[data-columns="3"] {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .grid-layout[data-columns="4"] {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    /* ❯ MASONRY LAYOUT */
+    .masonry-layout {
+        columns: 2;
+        column-gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+        .masonry-layout {
+            columns: 3;
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .masonry-layout[data-columns="4"] {
+            columns: 4;
+        }
+    }
+
+    .masonry-layout .photo-item {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+
+    .grid-layout .photo-container {
+        aspect-ratio: 1;
+    }
+</style>

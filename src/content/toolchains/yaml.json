@@ -1,0 +1,14 @@
+{
+	"name": "YAML",
+	"description": "Human-readable data serialization standard.",
+	"icon": "simple-icons:yaml",
+	"category": "backend",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#CB171E"
+}

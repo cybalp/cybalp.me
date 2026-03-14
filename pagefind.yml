@@ -1,0 +1,16 @@
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./pagefind.yml
+# ❯ @desc Pagefind static search indexer configuration — defines selectors excluded from the search index
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ❯ EXCLUDE SELECTORS
+# ❯ @docs These selectors are stripped before indexing to prevent math formulas, UI chrome,
+#         and explicitly ignored blocks from polluting search results
+# ❯ @gogogo new exclude selector
+exclude_selectors:
+    - "span.katex"
+    - "span.katex-display"
+    - "[data-pagefind-ignore]"
+    - ".search-panel"
+    - "#search-panel"

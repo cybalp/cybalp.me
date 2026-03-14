@@ -1,0 +1,121 @@
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./.dockerignore
+# ❯ @desc Docker ignore patterns
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ❯ VERSION CONTROL
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# ❯ DOCUMENTATION
+README.md
+LICENSE
+docs/
+*.md
+
+# ❯ DEPENDENCIES
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+.pnpm-store/
+
+# ❯ BUILD OUTPUTS
+dist/
+.astro/
+.vercel/
+.output/
+.vercel/output/
+pagefind/
+
+# ❯ ENVIRONMENT
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+# ❯ LOGS
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ❯ CACHE
+.cache/
+.parcel-cache/
+.turbo/
+.next/
+.nuxt/
+.vite/
+.swc/
+
+# ❯ IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ❯ CURSOR
+.cursor/
+
+# ❯ TEMPORARY FILES
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+.tmp/
+temp/
+tmp/
+terminals/
+
+# ❯ TESTING
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+test/
+tests/
+__tests__/
+*.test.*
+*.spec.*
+
+# ❯ TYPE CHECKING
+*.tsbuildinfo
+.tsbuildinfo
+
+# ❯ DOCKER
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ❯ CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# ❯ OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ❯ PROJECT SPECIFIC
+**/.templat*.*
+**/.syntax.*
+**/.logo.*
+**/.image.*
+**/.maintenance.astro.*
+src/pages/pages.*

@@ -1,0 +1,14 @@
+{
+	"name": "Java",
+	"description": "Object-oriented programming language and platform.",
+	"icon": "logos:java",
+	"category": "backend",
+	"level": "beginner",
+	"experience": {
+		"years": 0,
+		"months": 8
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#ED8B00"
+}

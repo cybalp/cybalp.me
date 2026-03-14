@@ -1,0 +1,14 @@
+{
+	"name": "Metasploit",
+	"description": "Penetration testing framework for security testing.",
+	"icon": "simple-icons:metasploit",
+	"category": "cybersecurity",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#E62C2C"
+}

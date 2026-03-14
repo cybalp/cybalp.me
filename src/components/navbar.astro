@@ -1,0 +1,221 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/navbar.astro
+// ❯ @desc Main navigation bar component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import DisplaySettings from "@components/navbar/displaySettings.svelte";
+import LightDarkSwitch from "@components/navbar/lightDarkSwitch.svelte";
+import NavLinks from "@components/navbar/navLinks.astro";
+import NavMenu from "@components/navbar/navMenu.svelte";
+import Search from "@components/navbar/search.svelte";
+import Translator from "@components/navbar/translator.svelte";
+import WallpaperSwitch from "@components/navbar/wallpaperSwitch.svelte";
+import { LinkPresets } from "@constants/link-presets";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { url } from "@utils/url";
+import {
+	getDefaultWallpaperMode,
+	getNavbarTransparentModeForWallpaperMode,
+} from "@utils/wallpaper";
+// ❯ IMPORTS
+import { navbarConfig, siteConfig } from "@/config";
+import { LinkPreset, type NavbarLink } from "@/types/config";
+
+// ❯ CONFIGURATION
+const className = Astro.props.class;
+
+// ❯ Transparent Mode
+// ❯ @doc Gets navbar transparent mode based on current wallpaper mode.
+const navbarTransparentMode = getNavbarTransparentModeForWallpaperMode(
+	getDefaultWallpaperMode(),
+);
+
+// ❯ Page Detection
+// ❯ @doc Checks if current page is main page.
+const isMainPage = Astro.url.pathname === "/" || Astro.url.pathname === "";
+
+// ❯ @doc Applies i18n to link name and description if they match known keys.
+const applyI18nToLink = (link: NavbarLink): NavbarLink => {
+	const i18nKeyMap: Record<string, I18nKey> = {
+		Dump: I18nKey.dump,
+		dump: I18nKey.dump,
+		"Public memory leaks": I18nKey.dumpSubtitle,
+		"public memory leaks": I18nKey.dumpSubtitle,
+		Identity: I18nKey.identity,
+		identity: I18nKey.identity,
+		"Who I am": I18nKey.identitySubtitle,
+		"who I am": I18nKey.identitySubtitle,
+		"Personal Log": I18nKey.personalLog,
+		"personal log": I18nKey.personalLog,
+		"Private area": I18nKey.personalLogSubtitle,
+		"private area": I18nKey.personalLogSubtitle,
+	};
+
+	const name =
+		link.name && i18nKeyMap[link.name]
+			? i18n(i18nKeyMap[link.name])
+			: link.name;
+	const description =
+		link.description && i18nKeyMap[link.description]
+			? i18n(i18nKeyMap[link.description])
+			: link.description;
+
+	return { ...link, name, description };
+};
+
+// ❯ Link Processing
+// ❯ @doc Maps navbar links, resolving LinkPreset numbers to actual link objects.
+let links: NavbarLink[] = navbarConfig.links.map(
+	(item: NavbarLink | LinkPreset): NavbarLink => {
+		if (typeof item === "number") {
+			return LinkPresets[item];
+		}
+		return applyI18nToLink(item);
+	},
+);
+---
+
+<!-- ❯ TEMPLATE -->
+<div id="navbar" class="z-50 onload-animation-down px-3 sm:px-6 md:px-0" data-transparent-mode={navbarTransparentMode} data-is-main={isMainPage}>
+    <div class="absolute h-8 left-0 right-0 -top-8 bg-(--card-bg) transition"></div>
+    <div class:list={[
+        className,
+        "overflow-visible! max-w-(--page-width) h-18 mx-auto flex items-center justify-between md:px-4"]}>
+        <a href={url('/')} class="btn-plain scale-animation rounded-lg h-13 px-3 font-bold active:scale-95">
+            <div class="flex flex-row items-center gap-2">
+                <img
+                    src="/assets/images/logo.webp"
+                    alt={siteConfig.title}
+                    class="h-10 w-auto object-contain"
+                    width="200"
+                    height="200"
+                    decoding="async"
+                />
+                <span class="text-(--primary) text-md">{siteConfig.title}</span>
+            </div>
+        </a>
+        <div class="hidden md:flex items-center navbar-nav-links">
+            {links.map((l) => {
+                return <NavLinks link={l} />;
+            })}
+        </div>
+        <div class="flex items-center navbar-buttons" id="navbar-buttons">
+            <Search client:load></Search>
+            <Translator client:load></Translator>
+            <DisplaySettings client:load></DisplaySettings>
+            <LightDarkSwitch client:load></LightDarkSwitch>
+            <WallpaperSwitch client:load></WallpaperSwitch>
+            <NavMenu client:load links={links}></NavMenu>
+        </div>
+    </div>
+</div>
+
+<!-- ❯ SCROLL DETECTION -->
+<script>
+// ❯ @doc Initializes scroll detection for semifull transparent mode.
+function initSemifullScrollDetection() {
+    const navbar = document.getElementById('navbar');
+    if (!navbar) return;
+
+    const transparentMode = navbar.getAttribute('data-transparent-mode');
+    if (transparentMode !== 'semifull') return;
+
+    const isMainPage = navbar.getAttribute('data-is-main') === 'true';
+
+    // ❯ Non-Main Page Handling
+    if (!isMainPage) {
+        if (window.semifullScrollHandler) {
+            window.removeEventListener('scroll', window.semifullScrollHandler);
+            window.semifullScrollHandler = null;
+        }
+        navbar.classList.add('scrolled');
+        return;
+    }
+
+    navbar.classList.remove('scrolled');
+
+    let ticking = false;
+
+    // ❯ State Update
+    // ❯ @doc Updates navbar scrolled state based on scroll position.
+    function updateNavbarState() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const threshold = 50; // 50px
+
+        if (scrollTop > threshold) {
+            navbar?.classList.add('scrolled');
+        } else {
+            navbar?.classList.remove('scrolled');
+        }
+
+        ticking = false;
+    }
+
+    // ❯ Animation Frame Request
+    // ❯ @doc Throttles scroll updates using requestAnimationFrame.
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateNavbarState);
+            ticking = true;
+        }
+    }
+
+    if (window.semifullScrollHandler) {
+        window.removeEventListener('scroll', window.semifullScrollHandler);
+    }
+
+    window.semifullScrollHandler = requestTick;
+    window.addEventListener('scroll', requestTick, { passive: true });
+    updateNavbarState();
+}
+
+window.initSemifullScrollDetection = initSemifullScrollDetection;
+
+// ❯ Initialization
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSemifullScrollDetection);
+} else {
+    initSemifullScrollDetection();
+}
+</script>
+
+{import.meta.env.PROD && <script is:inline define:vars={{scriptUrl: url('/pagefind/pagefind.js')}}>
+// ❯ @doc Loads and initializes Pagefind search library.
+async function loadPagefind() {
+    try {
+        const response = await fetch(scriptUrl, { method: 'HEAD' });
+        if (!response.ok) {
+            throw new Error(`Pagefind script not found: ${response.status}`);
+        }
+
+        const pagefind = await import(scriptUrl);
+
+        await pagefind.options({
+            excerptLength: 20 // 20 words
+        });
+
+        window.pagefind = pagefind;
+
+        document.dispatchEvent(new CustomEvent('pagefindready'));
+        console.log('Pagefind loaded and initialized successfully, event dispatched.');
+    } catch (error) {
+        console.error('Failed to load Pagefind:', error);
+        window.pagefind = {
+            search: () => Promise.resolve({ results: [] }),
+            options: () => Promise.resolve(),
+        };
+        document.dispatchEvent(new CustomEvent('pagefindloaderror'));
+        console.log('Pagefind load error, event dispatched.');
+    }
+}
+
+// ❯ Initialization
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadPagefind);
+} else {
+    loadPagefind();
+}
+</script>}

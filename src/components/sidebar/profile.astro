@@ -1,0 +1,138 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/sidebar/profile.astro
+// ❯ @desc Profile widget component with umami stats.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { url } from "@utils/url";
+// ❯ IMPORTS
+import { Icon } from "astro-icon/components";
+import ImageWrapper from "@/components/common/imageWrapper.astro";
+import { profileConfig, umamiConfig } from "@/config";
+
+// ❯ UMAMI CONFIGURATION
+const umamiEnabled = umamiConfig.enabled || false;
+const umamiWebsiteId =
+	umamiConfig.scripts.match(/data-website-id="([^"]+)"/)?.[1] || "";
+const umamiApiKey = umamiConfig.apiKey || "";
+const umamiBaseUrl = umamiConfig.baseUrl || "";
+
+// ❯ PROPS
+interface Props {
+	class?: string;
+	style?: string;
+	side?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { class: className, side = "default" } = Astro.props;
+const id = `profile-${side}`;
+
+// ❯ ICON COLOR MAPPING
+// ❯ @doc Returns brand color class for social media icons.
+const getIconColorClass = (icon: string): string => {
+	if (icon.includes("github")) {
+		return "text-[#181717] dark:text-[#f5f5f5]";
+	}
+	if (icon.includes("linkedin")) {
+		return "text-[#0077b5]";
+	}
+	if (icon.includes("instagram")) {
+		return "text-[#E4405F]";
+	}
+	return "";
+};
+---
+
+<!-- ❯ RENDER -->
+<div id={id} data-swup-persist={id} class:list={["card-base p-3", className]}>
+    <a aria-label="Go to Identity Page" href={url('/identity/')}
+       class="group block relative mx-auto mt-1 lg:mx-0 lg:mt-0 mb-3
+       max-w-48 lg:max-w-none overflow-hidden rounded-xl active:scale-95">
+        <div class="absolute transition pointer-events-none group-hover:bg-black/30 group-active:bg-black/50
+        w-full h-full z-50 flex items-center justify-center">
+            <Icon name="fa6-regular:address-card"
+                  class="transition opacity-0 scale-90 group-hover:scale-100 group-hover:opacity-100 text-white text-5xl">
+            </Icon>
+        </div>
+        <ImageWrapper src={profileConfig.avatar || ""} alt="Profile Image of the Author" class="mx-auto lg:w-full h-full lg:mt-0" loading="eager"></ImageWrapper>
+    </a>
+    <div class="px-2">
+        <div class="font-bold text-xl text-center mb-1 dark:text-neutral-50 transition">{profileConfig.name}</div>
+        <div class="h-1 w-5 bg-(--primary) mx-auto rounded-full mb-2 transition"></div>
+        <div class="text-center text-neutral-400 mb-2.5 transition">{profileConfig.bio}</div>
+        <div class="flex gap-2 justify-center mb-1">
+            {profileConfig.links.length > 1 && profileConfig.links.map(item =>
+                    <a rel="me" aria-label={item.name} href={item.url} target="_blank" class="btn-regular rounded-lg h-10 w-10 active:scale-90">
+                        <Icon name={item.icon} class={`text-[1.5rem] ${getIconColorClass(item.icon)}`}></Icon>
+                    </a>
+            )}
+            {profileConfig.links.length == 1 && <a rel="me" aria-label={profileConfig.links[0].name} href={profileConfig.links[0].url} target="_blank"
+                                            class="btn-regular rounded-lg h-10 gap-2 px-3 font-bold active:scale-95">
+                <Icon name={profileConfig.links[0].icon} class={`text-[1.5rem] ${getIconColorClass(profileConfig.links[0].icon)}`}></Icon>
+                {profileConfig.links[0].name}
+            </a>}
+        </div>
+        {umamiEnabled && (
+            <hr class="my-2 border-t border-dashed border-gray-300 dark:border-gray-700" />
+            <div class="text-sm text-gray-500 mt-2 text-center"
+                 id="site-stats-container"
+                 data-umami-base-url={umamiBaseUrl}
+                 data-umami-api-key={umamiApiKey}
+                 data-umami-website-id={umamiWebsiteId}
+                 data-i18n-error={i18n(I18nKey.statsError)}
+            >
+                <Icon name="fa6-solid:eye" class="inline-block mr-1 text-gray-400 text-sm align-middle" />
+                <span id="site-stats-display">统计加载中...</span>
+            </div>
+        )}
+    </div>
+</div>
+
+<!-- ❯ SCRIPTS -->
+{umamiEnabled && (
+    <script>
+        import "@/plugins/umami-share";
+
+        // ❯ @doc Generates statistics text from page views and visits.
+        function generateStatsText(pageViews: number, visits: number): string {
+            return `浏览量 ${pageViews} · 访问次数 ${visits}`;
+        }
+        // ❯ @doc Fetches site statistics from Umami API.
+        async function fetchSiteStats() {
+            const container = document.getElementById('site-stats-container');
+            if (!container) return;
+
+            const umamiBaseUrl = container.dataset.umamiBaseUrl;
+            const umamiApiKey = container.dataset.umamiApiKey;
+            const umamiWebsiteId = container.dataset.umamiWebsiteId;
+            const i18nError = container.dataset.i18nError;
+
+            try {
+                // ❯ call global utility to get Umami website stats
+                // @ts-ignore
+                const stats = await window.getUmamiWebsiteStats(umamiBaseUrl, umamiApiKey, umamiWebsiteId);
+                // ❯ extract pageviews and visits from response
+                const pageViews = stats.pageviews || 0;
+                const visits = stats.visits || 0;
+                // ❯ update display content
+                const displayElement = document.getElementById('site-stats-display');
+                if (displayElement) {
+                    displayElement.textContent = generateStatsText(pageViews, visits);
+                }
+            } catch (error) {
+                console.error('Error fetching site stats:', error);
+                const displayElement = document.getElementById('site-stats-display');
+                if (displayElement) {
+                    displayElement.textContent = i18nError || null;
+                }
+            }
+        }
+        // ❯ fetch stats after page load
+        fetchSiteStats();
+        document.addEventListener('astro:page-load', fetchSiteStats);
+    </script>
+)}

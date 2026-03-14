@@ -1,0 +1,14 @@
+{
+	"name": "WPScan",
+	"description": "WordPress security scanner for vulnerability detection.",
+	"icon": "simple-icons:wordpress",
+	"category": "cybersecurity",
+	"level": "intermediate",
+	"experience": {
+		"years": 0,
+		"months": 6
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#21759B"
+}

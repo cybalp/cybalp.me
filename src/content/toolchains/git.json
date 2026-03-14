@@ -1,0 +1,14 @@
+{
+	"name": "Git",
+	"description": "Distributed version control system.",
+	"icon": "logos:git-icon",
+	"category": "backend",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#F05032"
+}

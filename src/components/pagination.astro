@@ -1,0 +1,101 @@
+---
+import { url } from "@utils/url";
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/pagination.astro
+// ❯ @desc Pagination navigation component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ IMPORTS
+import type { Page } from "astro";
+import { Icon } from "astro-icon/components";
+
+// ❯ TYPES
+interface Props {
+	page: Page;
+	class?: string;
+	style?: string;
+}
+
+// ❯ PROPS
+const { page, style } = Astro.props;
+const className = Astro.props.class;
+
+// ❯ CONSTANTS
+const HIDDEN = -1;
+const ADJ_DIST = 2;
+const VISIBLE = ADJ_DIST * 2 + 1;
+
+// ❯ PAGINATION LOGIC
+// ❯ Calculate Visible Range
+let count = 1;
+let leftBound = page.currentPage;
+let rightBound = page.currentPage;
+
+while (
+	0 < leftBound - 1 &&
+	rightBound + 1 <= page.lastPage &&
+	count + 2 <= VISIBLE
+) {
+	count += 2;
+	leftBound--;
+	rightBound++;
+}
+while (0 < leftBound - 1 && count < VISIBLE) {
+	count++;
+	leftBound--;
+}
+while (rightBound + 1 <= page.lastPage && count < VISIBLE) {
+	count++;
+	rightBound++;
+}
+
+// ❯ Build Page Array
+let pages: number[] = [];
+if (leftBound > 1) pages.push(1);
+if (leftBound === 3) pages.push(2);
+if (leftBound > 3) pages.push(HIDDEN);
+for (let i = leftBound; i <= rightBound; i++) pages.push(i);
+if (rightBound < page.lastPage - 2) pages.push(HIDDEN);
+if (rightBound === page.lastPage - 2) pages.push(page.lastPage - 1);
+if (rightBound < page.lastPage) pages.push(page.lastPage);
+
+// ❯ UTILITIES
+// ❯ @doc Generates URL path for page number.
+const getPageUrl = (pageNum: number) => {
+	if (pageNum === 1) return "/";
+	return `/${pageNum}/`;
+};
+---
+
+<!--❯ TEMPLATE -->
+<div class:list={[className, "flex flex-row gap-3 justify-center"]} style={style}>
+    <a href={page.url.prev || ""} aria-label={page.url.prev ? "Previous Page" : null}
+       class:list={["btn-card overflow-hidden rounded-lg text-(--primary) w-11 h-11",
+           {"disabled": page.url.prev === undefined}
+       ]}
+    >
+        <Icon name="material-symbols:chevron-left-rounded" class="text-[1.75rem]"></Icon>
+    </a>
+    <div class="bg-(--card-bg) flex flex-row rounded-lg items-center text-neutral-700 dark:text-neutral-300 font-bold">
+        {pages.map((pageNum) => {
+            if (pageNum === HIDDEN)
+                return <Icon name="material-symbols:more-horiz" class="mx-1"/>;
+            if (pageNum === page.currentPage)
+                return <div class="h-11 w-11 rounded-lg bg-(--primary) flex items-center justify-center
+                    font-bold text-white dark:text-black/70"
+                >
+                    {pageNum}
+                </div>
+            return <a href={url(getPageUrl(pageNum))} aria-label={`Page ${pageNum}`}
+                class="btn-card w-11 h-11 rounded-lg overflow-hidden active:scale-[0.85]"
+            >{pageNum}</a>
+        })}
+    </div>
+    <a href={page.url.next || ""} aria-label={page.url.next ? "Next Page" : null}
+       class:list={["btn-card overflow-hidden rounded-lg text-(--primary) w-11 h-11",
+           {"disabled": page.url.next === undefined}
+       ]}
+    >
+        <Icon name="material-symbols:chevron-right-rounded" class="text-[1.75rem]"></Icon>
+    </a>
+</div>

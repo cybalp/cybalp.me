@@ -1,0 +1,14 @@
+{
+	"name": "KeePassXC",
+	"description": "Cross-platform password manager.",
+	"icon": "simple-icons:keepassxc",
+	"category": "others",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#6CAC4D"
+}

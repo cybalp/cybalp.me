@@ -1,0 +1,97 @@
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./.gitignore
+# ❯ @desc Git ignore patterns
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ❯ DEPENDENCIES
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+.pnpm-store/
+
+# ❯ BUILD OUTPUTS
+dist/
+.astro/
+.vercel/
+.output/
+.vercel/output/
+
+# ❯ ENVIRONMENT
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# ❯ LOGS
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ❯ CACHE
+.cache/
+.parcel-cache/
+.turbo/
+.next/
+.nuxt/
+.vite/
+.swc/
+
+# ❯ IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ❯ CURSOR
+.cursor/
+.cursor/hooks.json
+.cursor/hooks/
+
+# ❯ TEMPORARY FILES
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+.tmp/
+temp/
+tmp/
+
+# ❯ TESTING
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# ❯ TYPE CHECKING
+*.tsbuildinfo
+.tsbuildinfo
+
+# ❯ PAGE FIND
+pagefind/
+
+# ❯ PROJECT SPECIFIC
+**/.templat*.*
+**/.syntax.*
+**/.logo.*
+**/.image.*
+**/.maintenance.astro.*
+src/pages/pages.*
+
+# ❯ OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini

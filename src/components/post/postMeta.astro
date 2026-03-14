@@ -1,0 +1,213 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/post/postMeta.astro
+// ❯ @desc Post metadata component with umami stats.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { getCategoryPathParts } from "@utils/category";
+import { formatDateToYYYYMMDD, getRelativeTime } from "@utils/date";
+import { getCategoryUrl, getTagUrl, url } from "@utils/url";
+// ❯ IMPORTS
+import { Icon } from "astro-icon/components";
+import { umamiConfig } from "@/config";
+
+// ❯ PROPS
+export interface Props {
+	published: Date;
+	updated?: Date;
+	category?: string | string[] | null;
+	tags?: string[];
+	hideUpdateDate?: boolean;
+	hideTagsForMobile?: boolean;
+	isMain?: boolean;
+	className?: string;
+	slug?: string;
+	postUrl?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const {
+	published,
+	updated,
+	category,
+	tags,
+	hideUpdateDate,
+	hideTagsForMobile,
+	isMain,
+	className = "",
+	slug,
+	postUrl,
+} = Astro.props;
+
+// ❯ COMPUTED
+const finalPostUrl = postUrl || (slug ? url(`/posts/${slug}/`) : "");
+const categoryParts = getCategoryPathParts(category ?? null);
+
+// ❯ UMAMI CONFIGURATION
+const umamiEnabled = umamiConfig.enabled || false;
+const umamiWebsiteId =
+	umamiConfig.scripts.match(/data-website-id="([^"]+)"/)?.[1] || "";
+const umamiApiKey = umamiConfig.apiKey || "";
+const umamiBaseUrl = umamiConfig.baseUrl || "";
+---
+
+<!-- ❯ RENDER -->
+<div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-x-4 gap-y-2", className]}>
+    <!-- ❯ Publish Date -->
+    <div class="flex items-center group/date">
+        <div class="meta-icon">
+            <Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl"></Icon>
+        </div>
+        <span class="text-50 text-sm font-medium" title={formatDateToYYYYMMDD(published)}>
+            <span class="hidden md:inline">{formatDateToYYYYMMDD(published)}</span>
+            <span class="md:hidden">{getRelativeTime(published)}</span>
+        </span>
+    </div>
+    <!-- ❯ Update Date -->
+    {!hideUpdateDate && updated && updated.getTime() !== published.getTime() && (
+        <div class="flex items-center">
+            <div class="meta-icon">
+                <Icon name="material-symbols:edit-calendar-outline-rounded" class="text-xl"></Icon>
+            </div>
+            <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(updated)}</span>
+        </div>
+    )}
+    <!-- ❯ Directories -->
+    <div class="flex items-center">
+        <div class="meta-icon">
+            <Icon name="material-symbols:book-2-outline-rounded" class="text-xl"></Icon>
+        </div>
+        <div class="flex flex-row flex-nowrap items-center">
+            {categoryParts && categoryParts.length > 0 ? (
+                categoryParts.map((categoryName, index) => (
+                    <>
+                        {index > 0 && (
+                            <div class="mx-1.5 text-(--meta-divider) text-sm">/</div>
+                        )}
+                        <a
+                            href={getCategoryUrl(categoryParts.slice(0, index + 1))}
+                            aria-label={`View all posts in the ${categoryName} directory`}
+                            class="category-badge link-lg transition text-50 text-sm font-medium px-2 py-0.5 rounded-md
+                                        hover:text-(--primary) dark:hover:text-(--primary) 
+                                        hover:bg-[color-mix(in_oklch,var(--primary)_10%,transparent)]
+                                        whitespace-nowrap"
+                        >
+                            {categoryName}
+                        </a>
+                    </>
+                ))
+            ) : (
+                <a href={getCategoryUrl(null)} aria-label={`View all posts in the ${i18n(I18nKey.uncategorized)} directory`}
+                    class="category-badge link-lg transition text-50 text-sm font-medium px-2 py-0.5 rounded-md
+                                hover:text-(--primary) dark:hover:text-(--primary)
+                                hover:bg-[color-mix(in_oklch,var(--primary)_10%,transparent)]
+                                whitespace-nowrap">
+                    {i18n(I18nKey.uncategorized)}
+                </a>
+            )}
+        </div>
+    </div>
+    <!-- ❯ Alias -->
+    <div class:list={["items-center", {"flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile}]}>
+        <div class="meta-icon">
+            <Icon name="material-symbols:tag-rounded" class="text-xl"></Icon>
+        </div>
+        <div class="flex flex-row flex-nowrap items-center">
+            {(tags && tags.length > 0) && tags.map((tag, i) => (
+                <div class:list={[{"hidden": i == 0}, "mx-1.5 text-(--meta-divider) text-sm"]}>/</div>
+                <a href={getTagUrl(tag)} aria-label={`View all posts with the ${tag.trim()} alias`}
+                    class="link-lg transition text-50 text-sm font-medium
+                                hover:text-(--primary) dark:hover:text-(--primary) whitespace-nowrap">
+                    {tag.trim()}
+                </a>
+            ))}
+            {!(tags && tags.length > 0) && <div class="transition text-50 text-sm font-medium">{i18n(I18nKey.noTags)}</div>}
+        </div>
+    </div>
+    <!-- ❯ Page Views (hidden on main, shown when umami enabled) -->
+    {!isMain && umamiEnabled && finalPostUrl && (
+        <div class="flex items-center page-views-container"
+            data-page-url={finalPostUrl}
+            data-umami-base-url={umamiBaseUrl}
+            data-umami-api-key={umamiApiKey}
+            data-umami-website-id={umamiWebsiteId}
+            data-i18n-views={i18n(I18nKey.pageViews)}
+            data-i18n-visitors={i18n(I18nKey.visitors)}
+            data-i18n-error={i18n(I18nKey.statsError)}
+        >
+            <div class="meta-icon">
+                <Icon name="material-symbols:visibility-outline-rounded" class="text-xl"></Icon>
+            </div>
+            <span class="text-50 text-sm font-medium page-views-display">{i18n(I18nKey.statsLoading)}</span>
+        </div>
+    )}
+</div>
+
+<!-- ❯ SCRIPTS -->
+<!-- ❯ Load script only when not main, umami enabled, and finalPostUrl exists -->
+{!isMain && umamiEnabled && finalPostUrl && (
+    <script>
+        import "@/plugins/umami-share";
+
+        // ❯ @doc Generates statistics text from page views and visitors.
+        function generateStatsText(pageViews: number, visitors: number, i18n_views: string, i18n_visitors: string): string {
+            return `${i18n_views} ${pageViews} · ${i18n_visitors} ${visitors}`;
+        }
+        // ❯ @doc Fetches page view statistics from Umami API.
+        async function fetchPageViews() {
+            const containers = document.querySelectorAll('.page-views-container');
+            
+            containers.forEach(async (containerElement) => {
+                const container = containerElement;
+                if (container.hasAttribute('data-processed')) return;
+                container.setAttribute('data-processed', 'true');
+
+                const pageUrl = container.getAttribute('data-page-url');
+                const umamiBaseUrl = container.getAttribute('data-umami-base-url');
+                const umamiApiKey = container.getAttribute('data-umami-api-key');
+                const umamiWebsiteId = container.getAttribute('data-umami-website-id');
+                const i18n_views = container.getAttribute('data-i18n-views');
+                const i18n_visitors = container.getAttribute('data-i18n-visitors');
+                const i18n_error = container.getAttribute('data-i18n-error');
+
+                try {
+                    // ❯ dynamically load umami-share plugin
+                    // ❯ call global utility to get Umami stats for specific page
+                    // @ts-ignore
+                    const stats = await window.getUmamiPageStats(umamiBaseUrl, umamiApiKey, umamiWebsiteId, pageUrl);
+                    // ❯ extract pageviews and visitors from response
+                    const pageViews = stats.pageviews || 0;
+                    const visitors = stats.visitors || 0;
+                    // ❯ update display content
+                    const displayElement = container.querySelector('.page-views-display');
+                    if (displayElement) {
+                        displayElement.textContent = generateStatsText(pageViews, visitors, i18n_views, i18n_visitors);
+                    }
+                } catch (error) {
+                    console.error('Error fetching page views:', error);
+                    const displayElement = container.querySelector('.page-views-display');
+                    if (displayElement) {
+                        displayElement.textContent = i18n_error || null;
+                    }
+                }
+            });
+        }
+        // ❯ fetch stats after page load
+        fetchPageViews();
+        document.addEventListener('astro:page-load', fetchPageViews);
+    </script>
+)}
+
+<!-- ❯ STYLES -->
+<style>
+    .category-badge {
+        transition: all 0.2s ease;
+    }
+    
+    .category-badge:hover {
+        transform: translateY(-1px);
+    }
+</style>

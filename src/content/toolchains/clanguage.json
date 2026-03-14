@@ -1,0 +1,14 @@
+{
+	"name": "C Language",
+	"description": "General-purpose programming language for system programming.",
+	"icon": "simple-icons:c",
+	"category": "backend",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 6
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#A8B9CC"
+}

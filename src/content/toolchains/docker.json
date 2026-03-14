@@ -1,0 +1,14 @@
+{
+	"name": "Docker",
+	"description": "Containerization platform for application deployment.",
+	"icon": "simple-icons:docker",
+	"category": "backend",
+	"level": "beginner",
+	"experience": {
+		"years": 0,
+		"months": 5
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#2496ED"
+}

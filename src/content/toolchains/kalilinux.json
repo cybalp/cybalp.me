@@ -1,0 +1,14 @@
+{
+	"name": "Kali Linux",
+	"description": "Penetration testing and security auditing Linux distribution.",
+	"icon": "simple-icons:kalilinux",
+	"category": "cybersecurity",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#557C94"
+}

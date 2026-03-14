@@ -1,0 +1,18 @@
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./docker-compose.yml
+# ❯ @desc Docker Compose stack for local deployment of the Astro blog via nginx
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ❯ SERVICES
+# ❯ @docs Binds only to 127.0.0.1 to avoid unintentional public exposure; use a reverse proxy (e.g. nginx/caddy) in production
+# ❯ @gogogo new service
+services:
+  cybalp-blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cybalp-blog
+    ports:
+      - "127.0.0.1:8070:80"
+    restart: unless-stopped

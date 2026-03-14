@@ -1,0 +1,13 @@
+{
+	"title": "Blog",
+	"description": "A non-professional blog. Personal documentation and a graveyard of personal thoughts. ",
+	"category": "website",
+	"techStack": ["Astro", "Svelte", "Tailwind CSS"],
+	"status": "in-progress",
+	"liveDemo": "https://cybalp.me/",
+	"sourceCode": "https://github.com/cybalp/cybalp.me",
+	"startDate": "2026-01-01",
+	"endDate": "",
+	"featured": true,
+	"tags": ["Personal Project"]
+}

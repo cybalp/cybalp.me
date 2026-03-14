@@ -1,0 +1,14 @@
+{
+	"name": "Wireshark",
+	"description": "Network protocol analyzer for troubleshooting and analysis.",
+	"icon": "simple-icons:wireshark",
+	"category": "cybersecurity",
+	"level": "beginner",
+	"experience": {
+		"years": 0,
+		"months": 9
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#1679A7"
+}

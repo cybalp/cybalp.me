@@ -1,0 +1,14 @@
+{
+	"name": "Astro",
+	"description": "Modern static site generator",
+	"icon": "logos:astro-icon",
+	"category": "frontend",
+	"level": "beginner",
+	"experience": {
+		"years": 0,
+		"months": 3
+	},
+	"projects": ["Blog"],
+	"certifications": [],
+	"color": "#BC52EE"
+}

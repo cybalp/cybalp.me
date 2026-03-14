@@ -1,0 +1,14 @@
+{
+	"name": "WordPress",
+	"description": "Content management system for websites and blogs.",
+	"icon": "simple-icons:wordpress",
+	"category": "frontend",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#21759B"
+}

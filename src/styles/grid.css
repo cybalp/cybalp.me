@@ -1,0 +1,83 @@
+/* ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./src/styles/grid.css
+# ❯ @desc Layout grid styles.
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* ❯ CORE LOGIC */
+
+/* ❯ Footer Positioning */
+#swup-container {
+    min-height: 100%;
+}
+
+#content-wrapper {
+    min-height: 100%;
+}
+
+/* ❯ No Banner Layout */
+.no-banner-layout {
+    top: 5.5rem !important;
+    min-height: calc(100vh - 5.5rem) !important;
+}
+
+.no-banner-layout #banner-credit {
+    display: none !important;
+}
+
+/* ❯ RESPONSIVE DESIGN */
+
+@media (max-width: 768px) {
+    .mobile-no-sidebar {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .mobile-no-sidebar main {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .mobile-no-sidebar #content-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .mobile-both-sidebar {
+        grid-template-columns: 1fr !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .mobile-both-sidebar main {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    .mobile-both-sidebar .footer {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@media (max-width: 512px) {
+    .mobile-both-sidebar {
+        grid-template-columns: 1fr !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+
+    .mobile-both-sidebar main {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    .mobile-both-sidebar .footer {
+        grid-column: 1 / -1 !important;
+    }
+}

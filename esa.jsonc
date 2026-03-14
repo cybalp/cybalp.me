@@ -1,0 +1,20 @@
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./esa.jsonc
+// ❯ @desc EdgeOne Static Assets deployment configuration
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+{
+	// ❯ PROJECT
+	"name": "cybalp",
+	
+	// ❯ BUILD COMMANDS
+	"installCommand": "pnpm install",
+	"buildCommand": "pnpm run build",
+	
+	// ❯ ASSETS CONFIGURATION
+	"assets": {
+		"directory": "./dist",
+		"notFoundStrategy": "singlePageApplication"
+	}
+}

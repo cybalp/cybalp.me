@@ -1,0 +1,12 @@
+{
+	"title": "AttackDetector",
+	"description": "A modular Intrusion Detection System (IDS) with a rule engine for real-time network threat detection.",
+	"category": "security",
+	"techStack": ["Scapy", "Python", "YAML", "Discord Bot"],
+	"status": "in-progress",
+	"sourceCode": "https://github.com/cybalp/AttackDetector",
+	"startDate": "2026-01-01",
+	"endDate": "",
+	"featured": true,
+	"tags": ["Open Source Project", "MIT License"]
+}

@@ -1,0 +1,675 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/arge.astro
+// ❯ @desc AR-GE showcase page.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+export const prerender = true;
+
+import BackwardButton from "@components/backwardButton.astro";
+import ProjectCard from "@components/data/projectCard.astro";
+import { UNCATEGORIZED } from "@constants/constants";
+// ❯ IMPORTS
+import { LinkPresets } from "@constants/link-presets";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import GridLayout from "@layouts/grid.astro";
+import {
+	getAllTechStack,
+	getFeaturedProjects,
+	getProjectStats,
+	getProjectsByCategory,
+	projectsData,
+} from "@utils/arge";
+import { LinkPreset } from "@/types/config";
+
+// ❯ DATA INITIALIZATION
+const title = LinkPresets[LinkPreset.Arge].name;
+const subtitle = LinkPresets[LinkPreset.Arge].description;
+const stats = getProjectStats();
+const featuredProjects = getFeaturedProjects();
+const allTechStack = getAllTechStack();
+const categories = [
+	...new Set(projectsData.map((project) => project.category)),
+];
+const projectsByCategory = categories.reduce(
+	(acc, category) => {
+		acc[category] = getProjectsByCategory(category);
+		return acc;
+	},
+	{} as Record<string, typeof projectsData>,
+);
+
+// ❯ UTILITY FUNCTIONS
+// ❯ @doc Returns localized category display text.
+const getCategoryText = (category: string) => {
+	switch (category) {
+		case "web":
+			return i18n(I18nKey.projectsWeb);
+		case "mobile":
+			return i18n(I18nKey.projectsMobile);
+		case "desktop":
+			return i18n(I18nKey.projectsDesktop);
+		case "other":
+			return i18n(I18nKey.projectsOther);
+		case UNCATEGORIZED:
+			return i18n(I18nKey.uncategorized);
+		default:
+			return category;
+	}
+};
+---
+
+<GridLayout title={title} description={subtitle}>
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-6 py-8 md:px-12 md:py-12 relative w-full arge-page">
+            <BackwardButton currentPath={Astro.url.pathname} />
+            <!-- ❯ Hero Section -->
+            <div class="arge-hero mb-12">
+                <div class="flex flex-col items-start justify-center">
+                    <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4 arge-title">
+                        {i18n(I18nKey.arge)}
+                    </h1>
+                    <p class="text-base md:text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
+                        {i18n(I18nKey.argeSubtitle)}
+                    </p>
+                </div>
+            </div>
+            <!-- ❯ Statistics Cards -->
+            <div id="arge-stats-container" class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-16">
+                <button 
+                    id="arge-total-card"
+                    class="stat-card stat-card-blue group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{stats.total}</div>
+                        <div class="stat-label">{i18n(I18nKey.projectsTotal)}</div>
+                    </div>
+                </button>
+                <button 
+                    id="arge-completed-card"
+                    class="stat-card stat-card-green group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{stats.byStatus.completed}</div>
+                        <div class="stat-label">{i18n(I18nKey.projectsCompleted)}</div>
+                    </div>
+                </button>
+                <button 
+                    id="arge-inprogress-card"
+                    class="stat-card stat-card-yellow group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{stats.byStatus.inProgress}</div>
+                        <div class="stat-label">{i18n(I18nKey.projectsInProgress)}</div>
+                    </div>
+                </button>
+                <button 
+                    id="arge-techstack-card"
+                    class="stat-card stat-card-purple group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{allTechStack.length}</div>
+                        <div class="stat-label">{i18n(I18nKey.projectsTechStack)}</div>
+                    </div>
+                </button>
+            </div>
+            {featuredProjects.length > 0 && (
+                <div class="mb-16">
+                    <div class="section-header mb-8">
+                        <h2 class="section-title">
+                            {i18n(I18nKey.projectsFeatured)}
+                        </h2>
+                        <div class="section-divider"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+                        {featuredProjects.map((project) => (
+                            <div class="project-card-wrapper relative group">
+                                <a href={project.sourceUrl || project.demoUrl || "#"} target={project.sourceUrl || project.demoUrl ? "_blank" : undefined} rel={project.sourceUrl || project.demoUrl ? "noopener noreferrer" : undefined} class="block">
+                                    <ProjectCard project={project} size="large" showImage={true} maxTechStack={4} />
+                                </a>
+                                <div class="project-hover-overlay">
+                                    <a href={project.sourceUrl || project.demoUrl || "#"} target={project.sourceUrl || project.demoUrl ? "_blank" : undefined} rel={project.sourceUrl || project.demoUrl ? "noopener noreferrer" : undefined} class="block w-full h-full">
+                                        <div class="project-hover-content">
+                                            <svg class="w-8 h-8 mb-2" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                            </svg>
+                                            <span class="text-xl font-bold tracking-wide">GO! GitHub</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+            <div class="space-y-12">
+                {categories.map((category) => {
+                    const categoryProjects = projectsByCategory[category];
+                    if (categoryProjects.length === 0) return null;
+                    
+                    return (
+                        <div class="category-section">
+                            <div class="section-header mb-8">
+                                <h2 class="section-title">
+                                    {getCategoryText(category)}
+                                    <span class="section-count">
+                                        ({categoryProjects.length})
+                                    </span>
+                                </h2>
+                                <div class="section-divider"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                                {categoryProjects.map((project) => (
+                                    <div class="project-card-wrapper relative group">
+                                        <a href={project.sourceUrl || project.demoUrl || "#"} target={project.sourceUrl || project.demoUrl ? "_blank" : undefined} rel={project.sourceUrl || project.demoUrl ? "noopener noreferrer" : undefined} class="block">
+                                            <ProjectCard project={project} size="medium" showImage={true} maxTechStack={3} />
+                                        </a>
+                                        <div class="project-hover-overlay">
+                                            <a href={project.sourceUrl || project.demoUrl || "#"} target={project.sourceUrl || project.demoUrl ? "_blank" : undefined} rel={project.sourceUrl || project.demoUrl ? "noopener noreferrer" : undefined} class="block w-full h-full">
+                                                <div class="project-hover-content">
+                                                    <svg class="w-8 h-8 mb-2" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                                    </svg>
+                                                    <span class="text-xl font-bold tracking-wide">GO! GitHub</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            <div class="mt-20 pt-12 border-t border-neutral-200/50 dark:border-neutral-800/50">
+                <div class="section-header mb-8">
+                    <h2 class="section-title">
+                        {i18n(I18nKey.projectsTechStack)}
+                    </h2>
+                    <div class="section-divider"></div>
+                </div>
+                <div class="flex flex-wrap gap-3 lg:gap-4">
+                    {allTechStack.map((tech) => (
+                        <span class="tech-badge">
+                            {tech}
+                        </span>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+</GridLayout>
+
+<style>
+    /* ❯ Page Container */
+    .arge-page {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(147, 51, 234, 0.02) 100%);
+    }
+
+    :global(.dark) .arge-page {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+    }
+
+    /* ❯ Section Headers */
+    .section-header {
+        position: relative;
+    }
+
+    .section-title {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+        font-weight: 800;
+        color: rgb(23, 23, 23);
+        margin-bottom: 1rem;
+        display: inline-block;
+        position: relative;
+    }
+
+    :global(.dark) .section-title {
+        color: rgb(250, 250, 250);
+    }
+
+    .section-count {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: rgb(115, 115, 115);
+        margin-left: 0.5rem;
+    }
+
+    :global(.dark) .section-count {
+        color: rgb(163, 163, 163);
+    }
+
+    .section-divider {
+        height: 1px;
+        width: 100%;
+        background: linear-gradient(to right, 
+            transparent 0%, 
+            rgb(212, 212, 212) 20%, 
+            rgb(212, 212, 212) 80%, 
+            transparent 100%);
+        margin-top: 0.5rem;
+    }
+
+    :global(.dark) .section-divider {
+        background: linear-gradient(to right, 
+            transparent 0%, 
+            rgb(64, 64, 64) 20%, 
+            rgb(64, 64, 64) 80%, 
+            transparent 100%);
+    }
+
+
+    /* ❯ Project Cards Clickable */
+    .project-card-wrapper {
+        position: relative;
+        transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+        overflow: visible;
+    }
+
+    .project-card-wrapper:hover {
+        transform: translateY(-8px);
+    }
+
+    .project-card-wrapper :global(.project-card) {
+        transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .project-card-wrapper:hover :global(.project-card) {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    :global(.dark) .project-card-wrapper:hover :global(.project-card) {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(96, 165, 250, 0.2);
+        border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    /* ❯ Project Hover Overlay */
+    .project-hover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.5) 100%);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 1rem;
+        z-index: 50;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    :global(.dark) .project-hover-overlay {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.6) 100%);
+    }
+
+    .project-card-wrapper:hover .project-hover-overlay {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .project-hover-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transform: translateY(10px);
+        transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        height: 100%;
+    }
+
+    .project-card-wrapper:hover .project-hover-content {
+        transform: translateY(0);
+    }
+
+    .project-hover-content svg {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-bottom: 0.75rem;
+        color: white;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+    }
+
+    .project-hover-content span {
+        color: white;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ❯ Category Cards (same overlay effect) */
+    .group\/card {
+        position: relative;
+        transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+    }
+
+    .group\/card:hover {
+        transform: translateY(-8px);
+    }
+
+    .group\/card :global(.bg-white) {
+        transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .group\/card:hover :global(.bg-white) {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    :global(.dark) .group\/card:hover :global(.bg-white) {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(96, 165, 250, 0.2);
+        border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    /* ❯ Tech Badges */
+    .tech-badge {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(250, 250, 250, 0.9));
+        backdrop-filter: blur(10px);
+        color: rgb(64, 64, 64);
+        border-radius: 9999px;
+        border: 1px solid rgba(212, 212, 212, 0.5);
+        transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: default;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    :global(.dark) .tech-badge {
+        background: linear-gradient(135deg, rgba(38, 38, 38, 0.9), rgba(23, 23, 23, 0.9));
+        color: rgb(212, 212, 212);
+        border-color: rgba(64, 64, 64, 0.5);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .tech-badge:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-color: rgba(59, 130, 246, 0.5);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+    }
+
+    :global(.dark) .tech-badge:hover {
+        border-color: rgba(96, 165, 250, 0.6);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ❯ Category Sections */
+    .category-section {
+        scroll-margin-top: 2rem;
+    }
+</style>
+
+<!-- ❯ Modals -->
+<!-- ❯ Total Projects Modal -->
+<div id="arge-total-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.projectsTotal)} - All Projects
+            </h2>
+            <button id="close-arge-total-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {stats.total} Projects</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projectsData.map((project) => (
+                    <ProjectCard project={project} size="small" showImage={false} maxTechStack={3} />
+                ))}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ❯ Completed Projects Modal -->
+<div id="arge-completed-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.projectsCompleted)} - Completed Projects
+            </h2>
+            <button id="close-arge-completed-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {stats.byStatus.completed} Completed Projects</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projectsData.filter(project => project.status === 'completed').map((project) => (
+                    <ProjectCard project={project} size="small" showImage={false} maxTechStack={3} />
+                ))}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ❯ In Progress Projects Modal -->
+<div id="arge-inprogress-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.projectsInProgress)} - In Progress Projects
+            </h2>
+            <button id="close-arge-inprogress-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {stats.byStatus.inProgress} In Progress Projects</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {projectsData.filter(project => project.status === 'in-progress').map((project) => (
+                    <ProjectCard project={project} size="small" showImage={false} maxTechStack={3} />
+                ))}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ❯ Tech Stack Modal -->
+<div id="arge-techstack-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+        <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                {i18n(I18nKey.projectsTechStack)} - All Technologies
+            </h2>
+            <button id="close-arge-techstack-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {allTechStack.length} Technologies</h3>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                {allTechStack.map((tech) => (
+                    <span class="tech-badge">
+                        {tech}
+                    </span>
+                ))}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ❯ SCRIPTS -->
+<script>
+    // ❯ Stats Cards Click Handlers
+    (window as any).initArgePage = function initArgePage() {
+        const isArgePage = window.location.pathname.includes('/arge');
+        if (!isArgePage) {
+            return;
+        }
+        
+        // ❯ Modal Management
+        const openModal = (modalId: string) => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        };
+
+        const closeModal = (modalId: string) => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+        };
+
+        // ❯ Event Handler Setup
+        const statsContainer = document.getElementById('arge-stats-container');
+        if (!statsContainer) {
+            setTimeout(() => initArgePage(), 100);
+            return;
+        }
+        
+        const oldHandler = (statsContainer as any).__argeCardClickHandler;
+        if (oldHandler) {
+            try {
+                statsContainer.removeEventListener('click', oldHandler);
+            } catch (e) {
+                // Ignore errors
+            }
+        }
+        
+        const clickHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            const card = target.closest('button[id$="-card"]') as HTMLElement;
+            if (card) {
+                const cardId = card.id;
+                if (cardId === 'arge-total-card') {
+                    openModal('arge-total-modal');
+                } else if (cardId === 'arge-completed-card') {
+                    openModal('arge-completed-modal');
+                } else if (cardId === 'arge-inprogress-card') {
+                    openModal('arge-inprogress-modal');
+                } else if (cardId === 'arge-techstack-card') {
+                    openModal('arge-techstack-modal');
+                }
+            }
+        };
+        
+        (statsContainer as any).__argeCardClickHandler = clickHandler;
+        statsContainer.addEventListener('click', clickHandler);
+
+        const setupCloseHandlers = (modalId: string, closeBtnId: string) => {
+            const modal = document.getElementById(modalId);
+            const closeBtn = document.getElementById(closeBtnId);
+            
+            if (closeBtn) {
+                const oldHandler = (closeBtn as any).__closeHandler;
+                if (oldHandler) {
+                    closeBtn.removeEventListener('click', oldHandler);
+                }
+                const handler = () => closeModal(modalId);
+                (closeBtn as any).__closeHandler = handler;
+                closeBtn.addEventListener('click', handler);
+            }
+            
+            if (modal) {
+                const oldHandler = (modal as any).__backdropHandler;
+                if (oldHandler) {
+                    modal.removeEventListener('click', oldHandler);
+                }
+                const handler = (e: Event) => {
+                    if (e.target === modal) closeModal(modalId);
+                };
+                (modal as any).__backdropHandler = handler;
+                modal.addEventListener('click', handler);
+            }
+        };
+
+        setupCloseHandlers('arge-total-modal', 'close-arge-total-modal');
+        setupCloseHandlers('arge-completed-modal', 'close-arge-completed-modal');
+        setupCloseHandlers('arge-inprogress-modal', 'close-arge-inprogress-modal');
+        setupCloseHandlers('arge-techstack-modal', 'close-arge-techstack-modal');
+
+        // ❯ Keyboard Handler
+        const oldEscapeHandler = (document as any).__argeEscapeHandler;
+        if (oldEscapeHandler) {
+            document.removeEventListener('keydown', oldEscapeHandler);
+        }
+        const escapeHandler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                const modals = ['arge-total-modal', 'arge-completed-modal', 'arge-inprogress-modal', 'arge-techstack-modal'];
+                for (const modalId of modals) {
+                    const modal = document.getElementById(modalId);
+                    if (modal && !modal.classList.contains('hidden')) {
+                        closeModal(modalId);
+                        break;
+                    }
+                }
+            }
+        };
+        (document as any).__argeEscapeHandler = escapeHandler;
+        document.addEventListener('keydown', escapeHandler);
+    };
+    
+    const initArgePage = (window as any).initArgePage;
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            initArgePage();
+        });
+    } else {
+        setTimeout(() => {
+            initArgePage();
+        }, 50);
+    }
+</script>

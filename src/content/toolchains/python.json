@@ -1,0 +1,14 @@
+{
+	"name": "Python",
+	"description": "High-level programming language for general-purpose development.",
+	"icon": "simple-icons:python",
+	"category": "backend",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#3776AB"
+}

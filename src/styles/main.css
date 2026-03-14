@@ -1,0 +1,966 @@
+@import 'tailwindcss';
+
+/* 导入相册样式 */
+@import './media.css' layer(base);
+
+/* 导入动过渡样式 */
+@import './transition.css' layer(base);
+
+@plugin '@tailwindcss/typography';
+
+
+@theme {
+    --breakpoint-sm: 512px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1280px;
+    --breakpoint-xl: 1920px;
+
+    --transition-duration-300: 300ms;
+    --transition-duration-600: 600ms;
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+    }
+}
+
+
+@utility is-theme-transitioning {
+    & * {
+    transition: none !important;
+    }
+    & *::before {
+    transition: none !important;
+    }
+    & *::after {
+    transition: none !important;
+    }
+
+    & svg use {
+    transition: none;
+    fill: currentColor;
+    }
+
+    & #navbar > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #navbar[data-transparent-mode] > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #navbar[data-transparent-mode].scrolled > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & body.wallpaper-transparent #navbar > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & body.wallpaper-transparent #navbar[data-transparent-mode] > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & body.wallpaper-transparent #navbar[data-transparent-mode].scrolled > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #banner-wrapper ~ * #navbar > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #banner-wrapper ~ * #navbar[data-transparent-mode] > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & body:has(#banner-wrapper) #navbar > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & body:has(#banner-wrapper) #navbar[data-transparent-mode] > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    & .dropdown-content {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & .float-panel {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #display-setting {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #nav-menu-panel {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #translate-panel {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    & #search-panel {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    & #header-waves {
+    color: var(--page-bg);
+    isolation: isolate;
+    contain: none;
+    translate: 0 0 0;
+    background: transparent;
+    }
+
+    & #header-waves use {
+    will-change: transform;
+    translate: 0 0 0;
+    }
+}
+
+@utility scrolled {
+    .is-theme-transitioning &#navbar[data-transparent-mode] > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    .is-theme-transitioning
+    body.wallpaper-transparent
+    &#navbar[data-transparent-mode]
+    > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+}
+
+@utility wallpaper-transparent {
+    .is-theme-transitioning &body #navbar > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    .is-theme-transitioning &body #navbar[data-transparent-mode] > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    .is-theme-transitioning &body #navbar[data-transparent-mode].scrolled > div {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    & .card-base {
+    @apply bg-(--card-bg-transparent);
+    }
+
+    & .float-panel {
+    @apply bg-(--card-bg-transparent);
+    }
+
+    & #navbar > div {
+    @apply bg-(--card-bg-transparent) backdrop-blur-xs;
+    }
+
+    & .btn-card {
+    @apply bg-(--card-bg-transparent);
+    }
+
+    & ~ * .music-player .mini-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    & ~ * .music-player .expanded-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    & ~ * .music-player .playlist-panel {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    & body .music-player .mini-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    & body .music-player .expanded-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    & body .music-player .playlist-panel {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+}
+
+@utility dropdown-content {
+    /* 导航栏相关浮动面板的过渡禁用 */
+    .is-theme-transitioning & {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+    @apply bg-(--float-panel-bg) rounded-(--radius-large) shadow-xl dark:shadow-none border border-black/5 dark:border-white/10 py-2 min-w-48;
+}
+
+@utility float-panel {
+    .is-theme-transitioning & {
+    transition: none !important;
+    backdrop-filter: none !important;
+    }
+
+    .wallpaper-transparent & {
+    @apply bg-(--card-bg-transparent);
+    }
+    @apply top-21 rounded-(--radius-large) overflow-hidden bg-(--float-panel-bg) transition-colors duration-150 shadow-xl dark:shadow-none;
+}
+
+@utility card-base {
+    @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg) transition-colors duration-150;
+
+    .wallpaper-transparent & {
+    @apply bg-(--card-bg-transparent);
+    }
+}
+
+@utility card-base-transparent {
+    @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg-transparent) backdrop-blur-xs transition-colors duration-150;
+}
+
+@utility btn-card {
+    .wallpaper-transparent & {
+    @apply bg-(--card-bg-transparent);
+    }
+    @apply transition-colors duration-150 flex items-center justify-center bg-(--card-bg) hover:bg-(--btn-card-bg-hover)
+        active:bg-(--btn-card-bg-active);
+    &.disabled {
+    @apply pointer-events-none text-black/10 dark:text-white/10;
+    }
+}
+
+@utility music-player {
+    .wallpaper-transparent ~ * & .mini-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    .wallpaper-transparent ~ * & .expanded-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    .wallpaper-transparent ~ * & .playlist-panel {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    body.wallpaper-transparent & .mini-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    body.wallpaper-transparent & .expanded-player {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    body.wallpaper-transparent & .playlist-panel {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+}
+
+@utility mini-player {
+    .wallpaper-transparent ~ * .music-player & {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    body.wallpaper-transparent .music-player & {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+}
+
+@utility expanded-player {
+    .wallpaper-transparent ~ * .music-player & {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    body.wallpaper-transparent .music-player & {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+}
+
+@utility playlist-panel {
+    .wallpaper-transparent ~ * .music-player & {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+
+    body.wallpaper-transparent .music-player & {
+    background-color: var(--card-bg-transparent) !important;
+    backdrop-filter: blur(8px) !important;
+    }
+}
+
+@utility card-shadow {
+    @apply drop-shadow-sm;
+}
+
+@utility expand-animation {
+    @apply relative before:ease-out before:transition active:bg-none hover:before:bg-(--btn-plain-bg-hover) active:before:bg-(--btn-plain-bg-active) z-0
+        before:absolute before:rounded-[inherit] before:inset-0 before:scale-[0.85] hover:before:scale-100 before:-z-10;
+}
+
+@utility link {
+    @apply transition-colors duration-150 rounded-md p-1 -m-1 expand-animation;
+}
+
+@utility link-lg {
+    @apply transition-colors duration-150 rounded-md p-1.5 -m-1.5 expand-animation;
+}
+
+@utility float-panel-closed {
+    @apply -translate-y-1 opacity-0 pointer-events-none;
+}
+
+@utility search-panel {
+    & mark {
+    @apply bg-transparent text-(--primary);
+    }
+}
+
+@utility disabled {
+    &.btn-card {
+    @apply pointer-events-none text-black/10 dark:text-white/10;
+    }
+}
+
+@utility btn-plain {
+    @apply transition-colors duration-150 relative flex items-center justify-center bg-none
+        text-black/75 hover:text-(--primary) dark:text-white/75 dark:hover:text-(--primary);
+    &:not(.scale-animation) {
+    @apply hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active);
+    }
+    &.scale-animation {
+    @apply expand-animation;
+    }
+    &:hover .iconify {
+    @apply text-(--primary)!;
+    }
+    &:hover svg {
+    @apply text-(--primary)!;
+    }
+    &:hover span {
+    @apply text-(--primary)!;
+    }
+}
+
+@utility iconify {
+    .btn-plain:hover & {
+    @apply text-(--primary)!;
+    }
+    .current-theme-btn & {
+    @apply text-(--primary)!;
+    }
+}
+
+@utility btn-regular {
+    @apply transition-colors duration-150 flex items-center justify-center bg-(--btn-regular-bg) hover:bg-(--btn-regular-bg-hover) active:bg-(--btn-regular-bg-active)
+        text-(--btn-content) dark:text-white/75;
+}
+
+@utility current-theme-btn {
+    @apply text-(--primary)! bg-(--btn-plain-bg-hover)! hover:bg-(--btn-plain-bg-hover)! active:bg-(--btn-plain-bg-hover)!;
+    & .iconify {
+    @apply text-(--primary)!;
+    }
+    & svg {
+    @apply text-(--primary)!;
+    }
+    & span {
+    @apply text-(--primary)!;
+    }
+    & .text-sm {
+    @apply text-(--primary)!;
+    }
+    & .text-lg {
+    @apply text-(--primary)!;
+    }
+}
+
+@utility text-sm {
+    .current-theme-btn & {
+    @apply text-(--primary)!;
+    }
+}
+
+@utility text-lg {
+    .current-theme-btn & {
+    @apply text-(--primary)!;
+    }
+}
+
+@utility link-underline {
+    @apply transition-colors duration-150 underline decoration-2 decoration-dashed decoration-(--link-underline)
+        hover:decoration-(--link-hover) active:decoration-(--link-active) underline-offset-4;
+}
+
+@utility hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+    display: none;
+    }
+}
+
+@utility text-90 {
+    @apply text-black/90 dark:text-white/90;
+}
+
+@utility text-75 {
+    @apply text-black/75 dark:text-white/75;
+}
+
+@utility text-50 {
+    @apply text-black/50 dark:text-white/50;
+}
+
+@utility text-30 {
+    @apply text-black/30 dark:text-white/30;
+}
+
+@utility text-25 {
+    @apply text-black/25 dark:text-white/25;
+}
+
+@utility dropdown-container {
+    /* 下拉菜单样式 */
+    @apply relative;
+
+    &:hover .dropdown-menu {
+    @apply opacity-100 visible pointer-events-auto translate-y-0;
+    }
+
+    &:focus-within .dropdown-menu {
+    @apply opacity-100 visible pointer-events-auto translate-y-0;
+    }
+
+    &:hover .dropdown-arrow {
+    @apply rotate-180;
+    }
+
+    &:focus-within .dropdown-arrow {
+    @apply rotate-180;
+    }
+
+    /* 无障碍支持 */
+    &:focus-within .dropdown-menu {
+    @apply opacity-100 visible pointer-events-auto translate-y-0;
+    }
+}
+
+@utility dropdown-menu {
+    @apply absolute top-full left-0 pt-2 opacity-0 invisible pointer-events-none transition-all duration-200 ease-out translate-y-[-8px] z-50;
+
+    .dropdown-container:hover & {
+    @apply opacity-100 visible pointer-events-auto translate-y-0;
+    }
+
+    .dropdown-container:focus-within & {
+    @apply opacity-100 visible pointer-events-auto translate-y-0;
+    }
+
+    /* 无障碍支持 */
+    .dropdown-container:focus-within & {
+    @apply opacity-100 visible pointer-events-auto translate-y-0;
+    }
+}
+
+@utility dropdown-arrow {
+    .dropdown-container:hover & {
+    @apply rotate-180;
+    }
+
+    .dropdown-container:focus-within & {
+    @apply rotate-180;
+    }
+}
+
+@utility dropdown-item {
+    @apply flex items-center justify-between px-4 py-2.5 text-black/75 dark:text-white/75 hover:text-(--primary) hover:bg-(--btn-plain-bg-hover) transition-colors duration-150 font-medium;
+
+    &:first-child {
+    @apply rounded-t-[calc(var(--radius-large)-0.5rem)];
+    }
+
+    &:last-child {
+    @apply rounded-b-[calc(var(--radius-large)-0.5rem)];
+    }
+
+    &:focus {
+    @apply outline-hidden;
+    }
+}
+
+@utility mobile-submenu {
+    /* 移动端菜单样式 */
+    @apply max-h-0 overflow-hidden transition-all duration-300 ease-in-out;
+
+    .mobile-dropdown[data-expanded='true'] & {
+    @apply max-h-96;
+    }
+}
+
+@utility mobile-dropdown {
+    &[data-expanded='true'] .mobile-submenu {
+    @apply max-h-96;
+    }
+
+    &[data-expanded='true'] .mobile-dropdown-arrow {
+    @apply rotate-180;
+    }
+
+    & button:focus {
+    @apply outline-hidden;
+    }
+}
+
+@utility mobile-dropdown-arrow {
+    .mobile-dropdown[data-expanded='true'] & {
+    @apply rotate-180;
+    }
+}
+
+@utility meta-icon {
+    @apply w-8 h-8 transition-colors duration-150 rounded-md flex items-center justify-center bg-(--btn-regular-bg)
+        text-(--btn-content) mr-2;
+}
+
+@utility with-divider {
+    @apply before:content-['/'] before:ml-1.5 before:mr-1.5 before:text-(--meta-divider) before:text-sm
+        before:font-medium first-of-type:before:hidden before:transition-colors before:duration-150;
+}
+
+@utility btn-regular-dark {
+    @apply flex items-center justify-center
+        bg-[oklch(0.45_0.01_var(--hue))] hover:bg-[oklch(0.50_0.01_var(--hue))] active:bg-[oklch(0.55_0.01_var(--hue))]
+        dark:bg-[oklch(0.30_0.02_var(--hue))] dark:hover:bg-[oklch(0.35_0.03_var(--hue))] dark:active:bg-[oklch(0.40_0.03_var(--hue))];
+    &.success {
+    @apply bg-[oklch(0.75_0.14_var(--hue))] dark:bg-[oklch(0.75_0.14_var(--hue))];
+    }
+}
+
+@utility success {
+    &.btn-regular-dark {
+    @apply bg-[oklch(0.75_0.14_var(--hue))] dark:bg-[oklch(0.75_0.14_var(--hue))];
+    }
+}
+
+@layer utilities {
+    html {
+    height: 100%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    }
+
+    body {
+    min-height: 100%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    }
+
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    }
+
+    html::-webkit-scrollbar-track,
+    body::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+    }
+
+    html::-webkit-scrollbar-thumb,
+    body::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--primary) 40%, transparent);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background 0.2s ease;
+    }
+
+    html::-webkit-scrollbar-thumb:hover,
+    body::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklch, var(--primary) 60%, transparent);
+    }
+
+    html::-webkit-scrollbar-thumb:active,
+    body::-webkit-scrollbar-thumb:active {
+    background: color-mix(in oklch, var(--primary) 80%, transparent);
+    }
+
+    :root.dark html::-webkit-scrollbar-thumb,
+    :root.dark body::-webkit-scrollbar-thumb {
+    background: color-mix(in oklch, var(--primary) 50%, transparent);
+    }
+
+    :root.dark html::-webkit-scrollbar-thumb:hover,
+    :root.dark body::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklch, var(--primary) 70%, transparent);
+    }
+
+    :root.dark html::-webkit-scrollbar-thumb:active,
+    :root.dark body::-webkit-scrollbar-thumb:active {
+    background: color-mix(in oklch, var(--primary) 90%, transparent);
+    }
+
+    html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--primary) 40%, transparent) transparent;
+    }
+
+    :root.dark html {
+    scrollbar-color: color-mix(in oklch, var(--primary) 50%, transparent) transparent;
+    }
+
+    .top-gradient-highlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.3) 30%,
+        rgba(255, 255, 255, 0.15) 60%,
+        rgba(255, 255, 255, 0.05) 80%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 20;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    :root.dark .top-gradient-highlight {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.3) 30%,
+        rgba(0, 0, 0, 0.15) 60%,
+        rgba(0, 0, 0, 0.05) 80%,
+        transparent 100%
+    );
+    }
+}
+
+@layer components {
+    h1, h2, h3, h4, h5, h6, p, a, span, li, ul, ol, blockquote, code, pre, table, th, td, strong {
+        @apply transition-colors duration-150;
+    }
+}
+
+.custom-md img, #post-cover img {
+    @apply cursor-zoom-in
+}
+
+::selection {
+    background-color: var(--selection-bg)
+}
+
+.dash-line {
+    position: relative;
+}
+
+.dash-line::before {
+    content: "";
+    position: absolute;
+    width: 10%;
+    height: 100%;
+    left: calc(50% - 1px);
+    border-left: 2px dashed var(--line-color);
+    pointer-events: none;
+    transition: all 0.3s;
+    translate: 0 -50%;
+}
+
+.collapsed {
+    height: var(--collapsedHeight);
+}
+
+.custom-md spoiler {
+    --_spoiler-mask: var(--primary);
+    @apply hover:bg-transparent px-1 py-0.5 overflow-hidden rounded-md transition-all duration-150;
+    background-color: var(--_spoiler-mask);
+
+    &:not(:hover) {
+    color: var(--_spoiler-mask);
+    * {
+        color: var(--_spoiler-mask);
+    }
+    }
+}
+
+:root:not(.dark) .custom-md spoiler {
+    --_spoiler-mask: color-mix(in oklch, var(--primary) 55%, white 45%);
+}
+
+/* ❯ Gradient Animated Title (from AR-GE) */
+h1.arge-title,
+.arge-title {
+    background: linear-gradient(135deg, rgb(23, 23, 23) 0%, rgb(82, 82, 82) 50%, rgb(23, 23, 23) 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 6s ease-in-out infinite;
+}
+
+.dark h1.arge-title,
+.dark .arge-title {
+    background: linear-gradient(135deg, rgb(250, 250, 250) 0%, rgb(163, 163, 163) 50%, rgb(250, 250, 250) 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* ❯ Statistics Cards (from AR-GE) */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(229, 229, 229, 0.5);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.dark .stat-card {
+    background: rgba(38, 38, 38, 0.8);
+    border-color: rgba(64, 64, 64, 0.5);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, currentColor, transparent);
+    opacity: 0;
+    transition: opacity 400ms;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: rgba(212, 212, 212, 0.8);
+}
+
+.stat-card:hover::before {
+    opacity: 0.6;
+}
+
+.dark .stat-card:hover {
+    border-color: rgba(115, 115, 115, 0.8);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card-blue::before {
+    color: rgb(37, 99, 235);
+}
+
+.stat-card-blue:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1));
+}
+
+.dark .stat-card-blue:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.15));
+}
+
+.stat-card-green::before {
+    color: rgb(22, 163, 74);
+}
+
+.stat-card-green:hover {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(22, 163, 74, 0.1));
+}
+
+.dark .stat-card-green:hover {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(22, 163, 74, 0.15));
+}
+
+.stat-card-yellow::before {
+    color: rgb(202, 138, 4);
+}
+
+.stat-card-yellow:hover {
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1));
+}
+
+.dark .stat-card-yellow:hover {
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(202, 138, 4, 0.15));
+}
+
+.stat-card-purple::before {
+    color: rgb(147, 51, 234);
+}
+
+.stat-card-purple:hover {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(147, 51, 234, 0.1));
+}
+
+.dark .stat-card-purple:hover {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(147, 51, 234, 0.15));
+}
+
+.stat-card-red::before {
+    color: rgb(220, 38, 38);
+}
+
+.stat-card-red:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+}
+
+.dark .stat-card-red:hover {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(220, 38, 38, 0.15));
+}
+
+.stat-card-orange::before {
+    color: rgb(234, 88, 12);
+}
+
+.stat-card-orange:hover {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(234, 88, 12, 0.1));
+}
+
+.dark .stat-card-orange:hover {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 88, 12, 0.15));
+}
+
+.stat-icon {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    opacity: 0.15;
+    transition: all 400ms;
+    transform: scale(1);
+}
+
+.stat-card:hover .stat-icon {
+    opacity: 0.4;
+    transform: scale(1.1) rotate(5deg);
+}
+
+.stat-card-blue .stat-icon {
+    color: rgb(37, 99, 235);
+}
+
+.dark .stat-card-blue .stat-icon {
+    color: rgb(96, 165, 250);
+}
+
+.stat-card-green .stat-icon {
+    color: rgb(22, 163, 74);
+}
+
+.dark .stat-card-green .stat-icon {
+    color: rgb(74, 222, 128);
+}
+
+.stat-card-yellow .stat-icon {
+    color: rgb(202, 138, 4);
+}
+
+.dark .stat-card-yellow .stat-icon {
+    color: rgb(234, 179, 8);
+}
+
+.stat-card-purple .stat-icon {
+    color: rgb(147, 51, 234);
+}
+
+.dark .stat-card-purple .stat-icon {
+    color: rgb(196, 181, 253);
+}
+
+.stat-card-red .stat-icon {
+    color: rgb(220, 38, 38);
+}
+
+.dark .stat-card-red .stat-icon {
+    color: rgb(248, 113, 113);
+}
+
+.stat-card-orange .stat-icon {
+    color: rgb(234, 88, 12);
+}
+
+.dark .stat-card-orange .stat-icon {
+    color: rgb(251, 146, 60);
+}
+
+.stat-value {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 800;
+    color: rgb(23, 23, 23);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.dark .stat-value {
+    color: rgb(250, 250, 250);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    color: rgb(115, 115, 115);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dark .stat-label {
+    color: rgb(163, 163, 163);
+}
+
+/* ❯ Stat Card as Button */
+button.stat-card {
+    border: none;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+}
+
+.dark button.stat-card {
+    background: rgba(38, 38, 38, 0.8);
+}

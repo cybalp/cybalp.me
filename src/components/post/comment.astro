@@ -1,0 +1,43 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/post/comment.astro
+// ❯ @desc Comment component with service selection.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import type { CollectionEntry } from "astro:content";
+
+import { getPostUrl } from "@utils/url";
+import { postConfig } from "@/config";
+import Twikoo from "./twikoo.astro";
+
+// ❯ PROPS
+interface Props {
+	post: CollectionEntry<"posts">;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { post } = Astro.props;
+
+// ❯ COMPUTED
+const path = getPostUrl(post);
+
+// ❯ COMMENT SERVICE DETECTION
+let commentService = "";
+if (
+	postConfig.comment?.enable &&
+	post.data.comment &&
+	postConfig.comment?.twikoo
+) {
+	commentService = "twikoo";
+}
+---
+
+<!-- ❯ RENDER -->
+{postConfig.comment?.enable && post.data.comment && (
+    <div class="card-base p-6 mb-4">
+        {commentService === 'twikoo' && <Twikoo path={path} />}
+        {commentService === '' && null}
+    </div>
+)}

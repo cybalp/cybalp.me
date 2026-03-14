@@ -1,0 +1,14 @@
+{
+	"name": "HackTheBox",
+	"description": "Online platform for practicing penetration testing skills.",
+	"icon": "simple-icons:hackthebox",
+	"category": "cybersecurity",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#9FEF00"
+}

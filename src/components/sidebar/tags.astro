@@ -1,0 +1,49 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/sidebar/tags.astro
+// ❯ @desc Alias widget component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { getTagList } from "@utils/content";
+import { getTagUrl } from "@utils/url";
+import { getComponentConfig, widgetManager } from "@utils/widget";
+import ButtonTag from "@/components/common/buttonTag.astro";
+import WidgetLayout from "./widgetLayout.astro";
+
+// ❯ DATA
+const tags = await getTagList();
+
+// ❯ CONFIGURATION
+const COLLAPSED_HEIGHT = "7.5rem";
+
+// ❯ COMPUTED
+const tagsComponent = getComponentConfig("tags");
+const isCollapsed = tagsComponent
+	? widgetManager.isCollapsed(tagsComponent, tags.length)
+	: false;
+
+// ❯ PROPS
+interface Props {
+	class?: string;
+	style?: string;
+	side?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { class: className, style, side = "default" } = Astro.props;
+---
+
+<!-- ❯ RENDER -->
+<WidgetLayout name={i18n(I18nKey.tags)} id={`tags-${side}`} isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT} class={className} style={style}>
+    <div class="flex gap-2 flex-wrap">
+        {tags.map(t => (
+            <ButtonTag href={getTagUrl(t.name)} label={`View all posts with the ${t.name.trim()} alias`}>
+                {t.name.trim()}
+            </ButtonTag>
+        ))}
+    </div>
+</WidgetLayout>

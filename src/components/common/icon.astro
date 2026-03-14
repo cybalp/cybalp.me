@@ -1,0 +1,80 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/common/icon.astro
+// ❯ @desc Icon component with build-time SVG inline.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import { getIconSvg, hasIcon } from "@utils/icons";
+
+// ❯ PROPS
+export interface Props {
+	icon: string;
+	class?: string;
+	style?: string;
+	size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+	color?: string;
+	fallback?: string;
+	loading?: "lazy" | "eager";
+}
+
+// ❯ PROPS DESTRUCTURING
+const {
+	icon,
+	class: className = "",
+	style = "",
+	size = "md",
+	color,
+	loading = "lazy",
+} = Astro.props;
+
+// ❯ CONFIGURATION
+// ❯ @doc Size mapping for icon classes.
+const sizeClasses = {
+	xs: "text-xs",
+	sm: "text-sm",
+	md: "text-base",
+	lg: "text-lg",
+	xl: "text-xl",
+	"2xl": "text-2xl",
+};
+
+// ❯ COMPUTED
+const sizeClass = sizeClasses[size] || sizeClasses.md;
+const colorStyle = color ? `color: ${color};` : "";
+const combinedStyle = `${colorStyle}${style}`;
+const combinedClass = `${sizeClass} ${className}`.trim();
+
+// ❯ @doc Gets static SVG or fallback to runtime iconify.
+const staticSvg = getIconSvg(icon);
+const isStatic = hasIcon(icon);
+---
+
+<!-- ❯ RENDER -->
+{isStatic ? (
+    <span
+        class={`inline-flex items-center justify-center inline-icon ${combinedClass}`}
+        style={combinedStyle}
+        aria-hidden="true"
+        set:html={staticSvg}
+    />
+) : (
+    <span
+        class={`inline-flex items-center justify-center ${combinedClass}`}
+        style={combinedStyle}
+    >
+        <iconify-icon
+            icon={icon}
+            loading={loading}
+        ></iconify-icon>
+    </span>
+)}
+
+<style is:global>
+    .inline-icon svg {
+        width: 1em;
+        height: 1em;
+        fill: currentColor;
+    }
+</style>

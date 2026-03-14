@@ -1,0 +1,14 @@
+{
+	"name": "HTML & CSS & JavaScript",
+	"description": "Markup and styling languages for web development.",
+	"icon": "simple-icons:html5",
+	"category": "frontend",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#E34F26"
+}

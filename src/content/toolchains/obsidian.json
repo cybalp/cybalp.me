@@ -1,0 +1,14 @@
+{
+	"name": "Obsidian",
+	"description": "Knowledge base and note-taking application.",
+	"icon": "simple-icons:obsidian",
+	"category": "others",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#483699"
+}

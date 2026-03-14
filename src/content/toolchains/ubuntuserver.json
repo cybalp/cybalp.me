@@ -1,0 +1,14 @@
+{
+	"name": "Ubuntu Server",
+	"description": "Server-oriented Linux distribution based on Debian.",
+	"icon": "simple-icons:ubuntu",
+	"category": "others",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#E95420"
+}

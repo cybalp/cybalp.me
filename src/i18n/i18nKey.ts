@@ -1,0 +1,271 @@
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/i18n/i18nKey.ts
+// ❯ @desc Internationalization key enum definitions.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ ENUM DEFINITION
+enum I18nKey {
+	// ❯ LOADING
+	loading = "loading",
+
+	// ❯ NAVIGATION
+	main = "main",
+	mainSubtitle = "mainSubtitle",
+	vault = "vault",
+	vaultSubtitle = "vaultSubtitle",
+	dump = "dump",
+	dumpSubtitle = "dumpSubtitle",
+	identity = "identity",
+	identitySubtitle = "identitySubtitle",
+	search = "search",
+
+	// ❯ POSTS
+	tags = "tags",
+	categories = "categories",
+	series = "series",
+	posts = "posts",
+	recentPosts = "recentPosts",
+	postList = "postList",
+	statistics = "statistics",
+	tableOfContents = "tableOfContents",
+
+	// ❯ STATISTICS
+	pageViews = "pageViews",
+	visitors = "visitors",
+	statsLoading = "statsLoading",
+	statsError = "statsError",
+
+	// ❯ WALL
+	wall = "wall",
+	wallClose = "wallClose",
+
+	comments = "comments",
+
+	untitled = "untitled",
+	uncategorized = "uncategorized",
+	noTags = "noTags",
+
+	wordCount = "wordCount",
+	wordsCount = "wordsCount",
+	minuteCount = "minuteCount",
+	minutesCount = "minutesCount",
+	postCount = "postCount",
+	postsCount = "postsCount",
+
+	themeColor = "themeColor",
+
+	lightMode = "lightMode",
+	darkMode = "darkMode",
+	systemMode = "systemMode",
+
+	wallpaperMode = "wallpaperMode",
+	wallpaperFullscreen = "wallpaperFullscreen",
+	wallpaperBanner = "wallpaperBanner",
+	wallpaperNone = "wallpaperNone",
+
+	more = "more",
+
+	backTo = "backTo",
+
+	author = "author",
+	publishedAt = "publishedAt",
+	license = "license",
+
+	// ❯ ERROR PAGES
+	notFound = "notFound",
+	notFoundTitle = "notFoundTitle",
+	notFoundDescription = "notFoundDescription",
+	backToMain = "backToMain",
+
+	// ❯ AR-GE
+	arge = "arge",
+	argeSubtitle = "argeSubtitle",
+	// ❯ PROJECTS (legacy - for backward compatibility)
+	projects = "projects",
+	projectsSubtitle = "projectsSubtitle",
+	projectsAll = "projectsAll",
+	projectsWeb = "projectsWeb",
+	projectsMobile = "projectsMobile",
+	projectsDesktop = "projectsDesktop",
+	projectsOther = "projectsOther",
+	projectTechStack = "projectTechStack",
+	projectLiveDemo = "projectLiveDemo",
+	projectSourceCode = "projectSourceCode",
+	projectDescription = "projectDescription",
+	projectStatus = "projectStatus",
+	projectStatusCompleted = "projectStatusCompleted",
+	projectStatusInProgress = "projectStatusInProgress",
+	projectStatusPlanned = "projectStatusPlanned",
+	projectsTotal = "projectsTotal",
+	projectsCompleted = "projectsCompleted",
+	projectsInProgress = "projectsInProgress",
+	projectsTechStack = "projectsTechStack",
+	projectsFeatured = "projectsFeatured",
+	projectsPlanned = "projectsPlanned",
+	projectsDemo = "projectsDemo",
+	projectsSource = "projectsSource",
+
+	// ❯ TOOLCHAINS
+	toolchains = "toolchains",
+	toolchainsSubtitle = "toolchainsSubtitle",
+	// ❯ SKILLS (legacy - for backward compatibility)
+	skills = "skills",
+	skillsSubtitle = "skillsSubtitle",
+	skillsAI = "skillsAI",
+	skillsBackend = "skillsBackend",
+	skillsClient = "skillsClient",
+	skillsFrontend = "skillsFrontend",
+	skillsDatabase = "skillsDatabase",
+	skillsEngines = "skillsEngines",
+	skillsTools = "skillsTools",
+	skillsOthers = "skillsOthers",
+	skillLevel = "skillLevel",
+	skillLevelBeginner = "skillLevelBeginner",
+	skillLevelIntermediate = "skillLevelIntermediate",
+	skillLevelAdvanced = "skillLevelAdvanced",
+	skillLevelExpert = "skillLevelExpert",
+	skillExperience = "skillExperience",
+	skillYears = "skillYears",
+	skillMonths = "skillMonths",
+	skillsTotal = "skillsTotal",
+	skillsExpert = "skillsExpert",
+	skillsAdvanced = "skillsAdvanced",
+	skillsIntermediate = "skillsIntermediate",
+	skillsBeginner = "skillsBeginner",
+	skillsAdvancedTitle = "skillsAdvancedTitle",
+	skillsProjects = "skillsProjects",
+	skillsDistribution = "skillsDistribution",
+	skillsByLevel = "skillsByLevel",
+	skillsByCategory = "skillsByCategory",
+
+	// ❯ TIMELINE
+	timeline = "timeline",
+	timelineSubtitle = "timelineSubtitle",
+	timelineEducation = "timelineEducation",
+	timelineWork = "timelineWork",
+	timelineProject = "timelineProject",
+	timelineAchievement = "timelineAchievement",
+	timelinePresent = "timelinePresent",
+	timelineLocation = "timelineLocation",
+	timelineDescription = "timelineDescription",
+	timelineMonths = "timelineMonths",
+	timelineYears = "timelineYears",
+	timelineTotal = "timelineTotal",
+	timelineProjects = "timelineProjects",
+	timelineExperience = "timelineExperience",
+	timelineCurrent = "timelineCurrent",
+	timelineHistory = "timelineHistory",
+	timelineAchievements = "timelineAchievements",
+	timelineStatistics = "timelineStatistics",
+	timelineByType = "timelineByType",
+	timelineWorkExperience = "timelineWorkExperience",
+	timelineTotalExperience = "timelineTotalExperience",
+	timelineWorkPositions = "timelineWorkPositions",
+	timelineCurrentRole = "timelineCurrentRole",
+	timelineEmployed = "timelineEmployed",
+	timelineAvailable = "timelineAvailable",
+
+	// ❯ PERSONAL LOG
+	personalLog = "personalLog",
+	personalLogSubtitle = "personalLogSubtitle",
+	personalLogCount = "personalLogCount",
+	personalLogImage = "personalLogImage",
+	personalLogReply = "personalLogReply",
+	personalLogTips = "personalLogTips",
+	personalLogMinutesAgo = "personalLogMinutesAgo",
+	personalLogHoursAgo = "personalLogHoursAgo",
+	personalLogDaysAgo = "personalLogDaysAgo",
+
+	// ❯ MEDIA
+	media = "media",
+	mediaSubtitle = "mediaSubtitle",
+	mediaEmpty = "mediaEmpty",
+	mediaEmptyDesc = "mediaEmptyDesc",
+	mediaBackToList = "mediaBackToList",
+	mediaPhotoCount = "mediaPhotoCount",
+	mediaPhotosCount = "mediaPhotosCount",
+
+	// ❯ RSS
+	rss = "rss",
+	rssDescription = "rssDescription",
+	rssSubtitle = "rssSubtitle",
+	rssLink = "rssLink",
+	rssCopyToReader = "rssCopyToReader",
+	rssCopyLink = "rssCopyLink",
+	rssLatestPosts = "rssLatestPosts",
+	rssWhatIsRSS = "rssWhatIsRSS",
+	rssWhatIsRSSDescription = "rssWhatIsRSSDescription",
+	rssBenefit1 = "rssBenefit1",
+	rssBenefit2 = "rssBenefit2",
+	rssBenefit3 = "rssBenefit3",
+	rssBenefit4 = "rssBenefit4",
+	rssHowToUse = "rssHowToUse",
+	rssCopied = "rssCopied",
+	rssCopyFailed = "rssCopyFailed",
+
+	// ❯ ATOM
+	atom = "atom",
+	atomDescription = "atomDescription",
+	atomSubtitle = "atomSubtitle",
+	atomLink = "atomLink",
+	atomCopyToReader = "atomCopyToReader",
+	atomCopyLink = "atomCopyLink",
+	atomLatestPosts = "atomLatestPosts",
+	atomWhatIsAtom = "atomWhatIsAtom",
+	atomWhatIsAtomDescription = "atomWhatIsAtomDescription",
+	atomBenefit1 = "atomBenefit1",
+	atomBenefit2 = "atomBenefit2",
+	atomBenefit3 = "atomBenefit3",
+	atomBenefit4 = "atomBenefit4",
+	atomHowToUse = "atomHowToUse",
+	atomCopied = "atomCopied",
+	atomCopyFailed = "atomCopyFailed",
+
+	// ❯ PASSWORD PROTECTION
+	passwordProtected = "passwordProtected",
+	passwordProtectedTitle = "passwordProtectedTitle",
+	passwordProtectedDescription = "passwordProtectedDescription",
+	passwordPlaceholder = "passwordPlaceholder",
+	passwordUnlock = "passwordUnlock",
+	passwordUnlocking = "passwordUnlocking",
+	passwordIncorrect = "passwordIncorrect",
+	passwordDecryptError = "passwordDecryptError",
+	passwordRequired = "passwordRequired",
+	passwordVerifying = "passwordVerifying",
+	passwordDecryptFailed = "passwordDecryptFailed",
+	passwordDecryptRetry = "passwordDecryptRetry",
+	passwordUnlockButton = "passwordUnlockButton",
+	copyFailed = "copyFailed",
+	syntaxHighlightFailed = "syntaxHighlightFailed",
+	autoSyntaxHighlightFailed = "autoSyntaxHighlightFailed",
+	decryptionError = "decryptionError",
+
+	// ❯ LAST MODIFIED
+	lastModifiedPrefix = "lastModifiedPrefix",
+	lastModifiedOutdated = "lastModifiedOutdated",
+	year = "year",
+	month = "month",
+	day = "day",
+	hour = "hour",
+	minute = "minute",
+	second = "second",
+
+	// ❯ MUSIC PLAYER
+	playlist = "playlist",
+	musicEmptyPlaylist = "musicEmptyPlaylist",
+	musicNoSongsAvailable = "musicNoSongsAvailable",
+	musicPlayFailed = "musicPlayFailed",
+	musicAutoplayBlocked = "musicAutoplayBlocked",
+	musicMetingFailed = "musicMetingFailed",
+	musicUnknownArtist = "musicUnknownArtist",
+	musicUnknownTrack = "musicUnknownTrack",
+	musicSwitchToLocal = "musicSwitchToLocal",
+	musicSwitchToMeting = "musicSwitchToMeting",
+	musicProgress = "musicProgress",
+	musicCollapse = "musicCollapse",
+	musicVolume = "musicVolume",
+	musicExpand = "musicExpand",
+}
+
+export default I18nKey;

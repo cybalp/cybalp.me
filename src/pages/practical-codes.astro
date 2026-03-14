@@ -1,0 +1,850 @@
+
+---
+
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/practical-codes.astro
+// ❯ @desc Practical code snippets gallery page.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+export const prerender = true;
+
+import BackwardButton from "@components/backwardButton.astro";
+// ❯ IMPORTS
+import { LinkPresets } from "@constants/link-presets";
+import GridLayout from "@layouts/grid.astro";
+import {
+	getAllLanguages,
+	getAllTags,
+	getPracticalCodesByLanguage,
+	getPracticalCodesByTag,
+	getSortedPracticalCodes,
+} from "@utils/practical-codes";
+import { LinkPreset } from "@/types/config";
+
+// ❯ DATA INITIALIZATION
+const title = LinkPresets[LinkPreset.PracticalCodes].name;
+const subtitle = LinkPresets[LinkPreset.PracticalCodes].description;
+const sortedCodes = getSortedPracticalCodes();
+const languages = getAllLanguages();
+const tags = getAllTags();
+const codesByLanguage = getPracticalCodesByLanguage();
+const codesByTag = getPracticalCodesByTag();
+
+// ❯ UTILITY FUNCTIONS
+// ❯ @doc Formats date string to readable format.
+function formatDate(dateString: string): string {
+	const date = new Date(dateString);
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+
+// ❯ @doc Returns Tailwind color classes for programming language.
+function getLanguageColor(language: string): string {
+	const colors: Record<string, string> = {
+		bash: "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200",
+		javascript:
+			"bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200",
+		typescript:
+			"bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
+		python:
+			"bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200",
+		java: "bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-200",
+		cpp: "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
+		c: "bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200",
+		html: "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200",
+		css: "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
+		sql: "bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-200",
+		docker: "bg-cyan-100 dark:bg-cyan-900/20 text-cyan-800 dark:text-cyan-200",
+		other: "bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200",
+	};
+	return colors[language.toLowerCase()] || colors.other;
+}
+---
+
+<GridLayout title={title} description={subtitle}>
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-9 py-6 relative w-full">
+            <BackwardButton currentPath={Astro.url.pathname} />
+            <div class="flex flex-col items-start justify-center mb-8">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-2 arge-title">
+                    {title}
+                </h1>
+                <p class="text-lg text-black/60 dark:text-white/60">
+                    {subtitle}
+                </p>
+            </div>
+
+            <!-- netstat -->
+            <div id="codes-stats-container" class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-8">
+                <button 
+                    id="codes-total-card"
+                    class="stat-card stat-card-blue group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{sortedCodes.length}</div>
+                        <div class="stat-label">Total Code Snippets</div>
+                    </div>
+                </button>
+                <button 
+                    id="codes-languages-card"
+                    class="stat-card stat-card-green group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{languages.length}</div>
+                        <div class="stat-label">Languages</div>
+                    </div>
+                </button>
+                <button 
+                    id="codes-tags-card"
+                    class="stat-card stat-card-purple group text-left w-full"
+                >
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{tags.length}</div>
+                        <div class="stat-label">Alias</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-6">
+                <div class="relative">
+                    <input
+                        type="text"
+                        id="code-search-input"
+                        placeholder="Search by title, description, language, or alias..."
+                        class="w-full px-4 py-3 pl-10 pr-10 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-black/90 dark:text-white/90 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all"
+                    />
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <button
+                        id="clear-search-btn"
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hidden"
+                        type="button"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Code Snippets Gallery -->
+            <div class="space-y-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                        All Code Snippets
+                    </h2>
+                    <span id="results-count" class="text-sm text-black/60 dark:text-white/60">
+                        {sortedCodes.length} {sortedCodes.length === 1 ? 'snippet' : 'snippets'}
+                    </span>
+                </div>
+                <div id="codes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sortedCodes.map((code, index) => (
+                        <div 
+                            class="code-card card-base p-6 hover:shadow-lg transition-all cursor-pointer group"
+                            data-code-index={index}
+                            data-title={code.title.toLowerCase()}
+                            data-description={(code.description || '').toLowerCase()}
+                            data-language={code.language.toLowerCase()}
+                            data-tags={(code.tags || []).join(' ').toLowerCase()}
+                            data-code={code.code.replace(/"/g, '&quot;').replace(/\n/g, '\\n')}
+                        >
+                            <div class="flex items-start justify-between mb-3">
+                                <h3 class="text-lg font-bold text-black/90 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    {code.title}
+                                </h3>
+                                <span class={`px-2 py-1 rounded text-xs font-medium ${getLanguageColor(code.language)}`}>
+                                    {code.language}
+                                </span>
+                            </div>
+                            {code.description && (
+                                <p class="text-sm text-black/60 dark:text-white/60 mb-4 line-clamp-2">
+                                    {code.description}
+                                </p>
+                            )}
+                            <div class="mb-4 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 code-snippet" data-code={code.code}>
+                                <div class="bg-gray-50 dark:bg-gray-900/50 px-3 py-2 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase">{code.language}</span>
+                                    <button 
+                                        class="copy-btn text-xs text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                                        type="button"
+                                        onclick="event.stopPropagation()"
+                                    >
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre class="bg-gray-900 dark:bg-gray-950 p-4 text-sm overflow-x-auto m-0 max-h-32"><code class="text-gray-100 font-mono whitespace-pre">{code.code}</code></pre>
+                            </div>
+                            {code.tags && code.tags.length > 0 && (
+                                <div class="flex flex-wrap gap-2 mb-3">
+                                    {code.tags.map((tag) => (
+                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs text-black/70 dark:text-white/70">
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                            <div class="text-xs text-black/50 dark:text-white/50">
+                                {formatDate(code.date)}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div id="no-results" class="hidden text-center py-12">
+                    <p class="text-black/60 dark:text-white/60 text-lg">
+                        No code snippets found. Try a different search term.
+                    </p>
+                </div>
+            </div>
+
+            {sortedCodes.length === 0 && (
+                <div class="text-center py-12">
+                    <p class="text-black/60 dark:text-white/60 text-lg">
+                        No code snippets yet. Start adding your practical codes!
+                    </p>
+                </div>
+            )}
+        </div>
+    </div>
+
+    <!-- ❯ Stats Modals -->
+    <!-- ❯ Total Codes Modal -->
+    <div id="codes-total-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+            <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                    Total Code Snippets - All Codes
+                </h2>
+                <button id="close-codes-total-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-black/80 dark:text-white/80 mb-4">Total: {sortedCodes.length} Code Snippets</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {sortedCodes.map((code) => (
+                        <div class="code-card card-base p-4 hover:shadow-lg transition-all cursor-pointer group" data-code-index={sortedCodes.indexOf(code)}>
+                            <div class="flex items-start justify-between mb-2">
+                                <h3 class="text-base font-bold text-black/90 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    {code.title}
+                                </h3>
+                                <span class={`px-2 py-1 rounded text-xs font-medium ${getLanguageColor(code.language)}`}>
+                                    {code.language}
+                                </span>
+                            </div>
+                            {code.description && (
+                                <p class="text-sm text-black/60 dark:text-white/60 mb-2 line-clamp-2">
+                                    {code.description}
+                                </p>
+                            )}
+                            {code.tags && code.tags.length > 0 && (
+                                <div class="flex flex-wrap gap-1">
+                                    {code.tags.slice(0, 3).map((tag) => (
+                                        <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-xs text-black/70 dark:text-white/70">
+                                            #{tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ❯ Languages Modal -->
+    <div id="codes-languages-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+            <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                    Languages - {languages.length} Languages
+                </h2>
+                <button id="close-codes-languages-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {Object.entries(codesByLanguage).map(([language, codes]) => (
+                        <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class={`px-2 py-1 rounded text-sm font-medium ${getLanguageColor(language)}`}>
+                                    {language}
+                                </span>
+                                <span class="text-sm font-semibold text-black/70 dark:text-white/70">{codes.length}</span>
+                            </div>
+                            <div class="text-xs text-black/60 dark:text-white/60">
+                                {codes.length} {codes.length === 1 ? 'snippet' : 'snippets'}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ❯ Alias Modal -->
+    <div id="codes-tags-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
+            <div class="sticky top-0 bg-white dark:bg-slate-800 border-b border-black/10 dark:border-white/10 p-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-black/90 dark:text-white/90">
+                    Alias - {tags.length} Tags
+                </h2>
+                <button id="close-codes-tags-modal" class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-wrap gap-3">
+                    {Object.entries(codesByTag).map(([tag, codes]) => (
+                        <div class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-3 flex items-center justify-between min-w-[150px]">
+                            <span class="text-sm font-semibold text-black/90 dark:text-white/90">#{tag}</span>
+                            <span class="text-xs text-black/60 dark:text-white/60">{codes.length}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Modal -->
+    <div id="code-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex-1">
+                <h3 id="modal-title" class="text-2xl font-bold text-black/90 dark:text-white/90 mb-2"></h3>
+                <div class="flex items-center gap-3">
+                    <span id="modal-language" class="px-3 py-1 rounded text-sm font-medium"></span>
+                    <span id="modal-date" class="text-sm text-black/60 dark:text-white/60"></span>
+                </div>
+            </div>
+            <button 
+                id="close-code-modal" 
+                class="text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                type="button"
+            >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto flex-1">
+            <p id="modal-description" class="text-black/70 dark:text-white/70 mb-6"></p>
+            <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 code-snippet-modal">
+                <div class="bg-gray-50 dark:bg-gray-900/50 px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                    <span id="modal-code-language" class="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase"></span>
+                    <button 
+                        id="modal-copy-btn"
+                        class="text-sm text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors px-3 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                        type="button"
+                    >
+                        Copy
+                    </button>
+                </div>
+                <pre class="bg-gray-900 dark:bg-gray-950 p-6 text-sm overflow-x-auto m-0"><code id="modal-code" class="text-gray-100 font-mono whitespace-pre"></code></pre>
+            </div>
+            <div id="modal-tags" class="flex flex-wrap gap-2 mt-6"></div>
+        </div>
+    </div>
+    </div>
+
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+
+    <script>
+        // ❯ @doc Initializes practical codes page functionality.
+        (window as any).initPracticalCodes = function initPracticalCodes() {
+            if (!window.location.pathname.includes('/practical-codes')) {
+                return;
+            }
+            
+            const searchInput = document.getElementById('code-search-input');
+            const clearSearchBtn = document.getElementById('clear-search-btn');
+            const codesGrid = document.getElementById('codes-grid');
+            const noResults = document.getElementById('no-results');
+            const resultsCount = document.getElementById('results-count');
+            const codeModal = document.getElementById('code-modal');
+            const closeModalBtn = document.getElementById('close-code-modal');
+            const modalCopyBtn = document.getElementById('modal-copy-btn');
+            
+            if (!codesGrid) {
+                setTimeout(() => initPracticalCodes(), 100);
+                return;
+            }
+            
+            const allCodes = Array.from(document.querySelectorAll('.code-card')) as HTMLElement[];
+            let filteredCodes = allCodes;
+
+            // ❯ Search Functionality
+            // ❯ @doc Filters code cards based on search query.
+            function performSearch(query) {
+                const currentAllCodes = Array.from(document.querySelectorAll('.code-card')) as HTMLElement[];
+                const searchTerm = query.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    filteredCodes = currentAllCodes;
+                    clearSearchBtn?.classList.add('hidden');
+                } else {
+                    filteredCodes = currentAllCodes.filter(card => {
+                        const title = card.dataset.title || '';
+                        const description = card.dataset.description || '';
+                        const language = card.dataset.language || '';
+                        const tags = card.dataset.tags || '';
+                        
+                        return title.includes(searchTerm) || 
+                               description.includes(searchTerm) || 
+                               language.includes(searchTerm) || 
+                               tags.includes(searchTerm);
+                    });
+                    clearSearchBtn?.classList.remove('hidden');
+                }
+
+                currentAllCodes.forEach(card => {
+                    if (filteredCodes.includes(card)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                if (filteredCodes.length === 0) {
+                    codesGrid?.classList.add('hidden');
+                    noResults?.classList.remove('hidden');
+                } else {
+                    codesGrid?.classList.remove('hidden');
+                    noResults?.classList.add('hidden');
+                }
+
+                if (resultsCount) {
+                    resultsCount.textContent = `${filteredCodes.length} ${filteredCodes.length === 1 ? 'snippet' : 'snippets'}`;
+                }
+            }
+
+            if (searchInput) {
+                const oldSearchHandler = (searchInput as any).__searchHandler;
+                if (oldSearchHandler) {
+                    searchInput.removeEventListener('input', oldSearchHandler);
+                }
+                const searchHandler = (e: Event) => {
+                    performSearch((e.target as HTMLInputElement).value);
+                };
+                (searchInput as any).__searchHandler = searchHandler;
+                searchInput.addEventListener('input', searchHandler);
+            }
+
+            if (clearSearchBtn) {
+                const oldClearHandler = (clearSearchBtn as any).__clearHandler;
+                if (oldClearHandler) {
+                    clearSearchBtn.removeEventListener('click', oldClearHandler);
+                }
+                const clearHandler = () => {
+                    if (searchInput) {
+                        (searchInput as HTMLInputElement).value = '';
+                        performSearch('');
+                    }
+                };
+                (clearSearchBtn as any).__clearHandler = clearHandler;
+                clearSearchBtn.addEventListener('click', clearHandler);
+            }
+
+            // ❯ Copy Functionality
+            // ❯ @doc Sets up copy-to-clipboard button handler.
+            function setupCopyButton(button: HTMLElement, code: string) {
+                button.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    try {
+                        await navigator.clipboard.writeText(code);
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        button.classList.add('text-green-600', 'dark:text-green-400');
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove('text-green-600', 'dark:text-green-400');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Failed to copy:', err);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                const codeSnippet = btn.closest('.code-snippet');
+                const code = codeSnippet?.getAttribute('data-code') || '';
+                setupCopyButton(btn as HTMLElement, code);
+            });
+
+            // ❯ @doc Returns Tailwind color classes for language badge.
+            function getLanguageColorClass(language: string): string {
+                const colors: Record<string, string> = {
+                    bash: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200',
+                    javascript: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200',
+                    typescript: 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200',
+                    python: 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200',
+                    java: 'bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-200',
+                    cpp: 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200',
+                    c: 'bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200',
+                    html: 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200',
+                    css: 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200',
+                    sql: 'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-200',
+                    docker: 'bg-cyan-100 dark:bg-cyan-900/20 text-cyan-800 dark:text-cyan-200',
+                    other: 'bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200',
+                };
+                return colors[language.toLowerCase()] || colors.other;
+            }
+
+            // ❯ Modal Management
+            // ❯ @doc Opens modal with code snippet details.
+            function openModal(codeCard: HTMLElement) {
+                const title = codeCard.querySelector('h3')?.textContent || '';
+                const descriptionEl = codeCard.querySelector('p.text-sm');
+                const description = descriptionEl?.textContent || '';
+                const languageEl = codeCard.querySelector('span[class*="bg-"]');
+                const language = languageEl?.textContent?.trim() || '';
+                const codeAttr = codeCard.getAttribute('data-code');
+                const code = codeAttr ? codeAttr.replace(/\\n/g, '\n').replace(/&quot;/g, '"') : '';
+                const tagElements = codeCard.querySelectorAll('span[class*="bg-gray"]');
+                const tags = Array.from(tagElements).map(t => {
+                    const text = t.textContent || '';
+                    return text.replace('#', '').trim();
+                }).filter(t => t);
+                const dateEl = codeCard.querySelector('.text-xs.text-black\\/50, .text-xs.text-white\\/50');
+                const date = dateEl?.textContent || '';
+
+                const modalTitle = document.getElementById('modal-title');
+                const modalDescription = document.getElementById('modal-description');
+                const modalLanguage = document.getElementById('modal-language');
+                const modalCodeLanguage = document.getElementById('modal-code-language');
+                const modalCode = document.getElementById('modal-code');
+                const modalDate = document.getElementById('modal-date');
+                const modalTags = document.getElementById('modal-tags');
+
+                if (modalTitle) modalTitle.textContent = title;
+                if (modalDescription) {
+                    modalDescription.textContent = description || '';
+                    modalDescription.style.display = description ? 'block' : 'none';
+                }
+                if (modalLanguage) {
+                    modalLanguage.textContent = language;
+                    modalLanguage.className = `px-3 py-1 rounded text-sm font-medium ${getLanguageColorClass(language)}`;
+                }
+                if (modalCodeLanguage) modalCodeLanguage.textContent = language.toUpperCase();
+                if (modalCode) modalCode.textContent = code;
+                if (modalDate) modalDate.textContent = date;
+
+                if (modalTags) {
+                    modalTags.innerHTML = '';
+                    tags.forEach(tag => {
+                        const tagSpan = document.createElement('span');
+                        tagSpan.className = 'px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm text-black/70 dark:text-white/70';
+                        tagSpan.textContent = `#${tag}`;
+                        modalTags.appendChild(tagSpan);
+                    });
+                }
+
+                if (modalCopyBtn) {
+                    const originalHandler = modalCopyBtn.onclick;
+                    modalCopyBtn.onclick = async () => {
+                        try {
+                            await navigator.clipboard.writeText(code);
+                            const originalText = modalCopyBtn.textContent;
+                            if (modalCopyBtn.textContent) modalCopyBtn.textContent = 'Copied!';
+                            modalCopyBtn.classList.add('text-green-600', 'dark:text-green-400');
+                            setTimeout(() => {
+                                if (modalCopyBtn.textContent) modalCopyBtn.textContent = originalText || 'Copy';
+                                modalCopyBtn.classList.remove('text-green-600', 'dark:text-green-400');
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    };
+                }
+
+                codeModal?.classList.remove('hidden');
+                codeModal?.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ❯ @doc Closes code modal and restores body scroll.
+            function closeModal() {
+                codeModal?.classList.add('hidden');
+                codeModal?.classList.remove('flex');
+                document.body.style.overflow = '';
+            }
+
+            const oldHandler = (codesGrid as any).__practicalCodesClickHandler;
+            if (oldHandler) {
+                try {
+                    codesGrid.removeEventListener('click', oldHandler);
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
+            
+            const clickHandler = (e: Event) => {
+                const target = e.target as HTMLElement;
+                const card = target.closest('.code-card') as HTMLElement;
+                if (card && !target.closest('.copy-btn')) {
+                    openModal(card);
+                }
+            };
+            
+            (codesGrid as any).__practicalCodesClickHandler = clickHandler;
+            codesGrid.addEventListener('click', clickHandler);
+
+            if (closeModalBtn) {
+                const oldHandler = (closeModalBtn as any).__closeHandler;
+                if (oldHandler) {
+                    closeModalBtn.removeEventListener('click', oldHandler);
+                }
+                const handler = closeModal;
+                (closeModalBtn as any).__closeHandler = handler;
+                closeModalBtn.addEventListener('click', handler);
+            }
+            
+            if (codeModal) {
+                const oldBackdropHandler = (codeModal as any).__backdropHandler;
+                if (oldBackdropHandler) {
+                    codeModal.removeEventListener('click', oldBackdropHandler);
+                }
+                const backdropHandler = (e: Event) => {
+                    if (e.target === codeModal) closeModal();
+                };
+                (codeModal as any).__backdropHandler = backdropHandler;
+                codeModal.addEventListener('click', backdropHandler);
+            }
+
+            const oldEscapeHandler = (document as any).__practicalCodesEscapeHandler;
+            if (oldEscapeHandler) {
+                document.removeEventListener('keydown', oldEscapeHandler);
+            }
+            const escapeHandler = (e: KeyboardEvent) => {
+                if (e.key === 'Escape' && codeModal && !codeModal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            };
+            (document as any).__practicalCodesEscapeHandler = escapeHandler;
+            document.addEventListener('keydown', escapeHandler);
+            
+            // ❯ Stats Cards Click Handlers
+            const openStatsModal = (modalId: string) => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+
+            const closeStatsModal = (modalId: string) => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }
+            };
+
+            const statsContainer = document.getElementById('codes-stats-container');
+            if (statsContainer) {
+                const statsClickHandler = (e: Event) => {
+                    const target = e.target as HTMLElement;
+                    const card = target.closest('button[id$="-card"]') as HTMLElement;
+                    if (card) {
+                        const cardId = card.id;
+                        if (cardId === 'codes-total-card') {
+                            openStatsModal('codes-total-modal');
+                        } else if (cardId === 'codes-languages-card') {
+                            openStatsModal('codes-languages-modal');
+                        } else if (cardId === 'codes-tags-card') {
+                            openStatsModal('codes-tags-modal');
+                        }
+                    }
+                };
+                
+                const oldStatsHandler = (statsContainer as any).__codesStatsClickHandler;
+                if (oldStatsHandler) {
+                    statsContainer.removeEventListener('click', oldStatsHandler);
+                }
+                
+                (statsContainer as any).__codesStatsClickHandler = statsClickHandler;
+                statsContainer.addEventListener('click', statsClickHandler);
+            }
+
+            const setupStatsCloseHandlers = (modalId: string, closeBtnId: string) => {
+                const modal = document.getElementById(modalId);
+                const closeBtn = document.getElementById(closeBtnId);
+                
+                if (closeBtn) {
+                    const oldHandler = (closeBtn as any).__closeHandler;
+                    if (oldHandler) {
+                        closeBtn.removeEventListener('click', oldHandler);
+                    }
+                    const handler = () => closeStatsModal(modalId);
+                    (closeBtn as any).__closeHandler = handler;
+                    closeBtn.addEventListener('click', handler);
+                }
+                
+                if (modal) {
+                    const oldHandler = (modal as any).__backdropHandler;
+                    if (oldHandler) {
+                        modal.removeEventListener('click', oldHandler);
+                    }
+                    const handler = (e: Event) => {
+                        if (e.target === modal) closeStatsModal(modalId);
+                    };
+                    (modal as any).__backdropHandler = handler;
+                    modal.addEventListener('click', handler);
+                }
+            };
+
+            setupStatsCloseHandlers('codes-total-modal', 'close-codes-total-modal');
+            setupStatsCloseHandlers('codes-languages-modal', 'close-codes-languages-modal');
+            setupStatsCloseHandlers('codes-tags-modal', 'close-codes-tags-modal');
+
+            // ❯ Keyboard Handler for Stats Modals
+            const oldStatsEscapeHandler = (document as any).__codesStatsEscapeHandler;
+            if (oldStatsEscapeHandler) {
+                document.removeEventListener('keydown', oldStatsEscapeHandler);
+            }
+            const statsEscapeHandler = (e: KeyboardEvent) => {
+                if (e.key === 'Escape') {
+                    const modals = ['codes-total-modal', 'codes-languages-modal', 'codes-tags-modal'];
+                    for (const modalId of modals) {
+                        const modal = document.getElementById(modalId);
+                        if (modal && !modal.classList.contains('hidden')) {
+                            closeStatsModal(modalId);
+                            break;
+                        }
+                    }
+                }
+            };
+            (document as any).__codesStatsEscapeHandler = statsEscapeHandler;
+            document.addEventListener('keydown', statsEscapeHandler);
+        };
+    
+        const initPracticalCodes = (window as any).initPracticalCodes;
+    
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initPracticalCodes();
+            });
+        } else {
+            initPracticalCodes();
+        }
+    
+        if (!(window as any).__practicalCodesHooksSetup) {
+            (window as any).__practicalCodesHooksSetup = true;
+            
+            // ❯ Swup Integration
+            // ❯ @doc Sets up Swup page transition hooks.
+            const setupSwupHooks = () => {
+                if (window.swup && window.swup.hooks) {
+                    window.swup.hooks.on('page:view', () => {
+                        if (window.location.pathname.includes('/practical-codes')) {
+                            requestAnimationFrame(() => {
+                                setTimeout(() => {
+                                    let initFn = (window as any).initPracticalCodes;
+                                    
+                                    if (!initFn) {
+                                        setTimeout(() => {
+                                            const scripts = document.querySelectorAll('script');
+                                            let foundScript = false;
+                                            scripts.forEach((script) => {
+                                                if (script.textContent && 
+                                                    script.textContent.includes('initPracticalCodes') && 
+                                                    !script.src &&
+                                                    !(script as any).__swupExecuted) {
+                                                    foundScript = true;
+                                                    try {
+                                                        (script as any).__swupExecuted = true;
+                                                        const newScript = document.createElement('script');
+                                                        newScript.textContent = script.textContent;
+                                                        Array.from(script.attributes).forEach(attr => {
+                                                            newScript.setAttribute(attr.name, attr.value);
+                                                        });
+                                                        document.head.appendChild(newScript);
+                                                        setTimeout(() => {
+                                                            if (newScript.parentNode) {
+                                                                document.head.removeChild(newScript);
+                                                            }
+                                                            setTimeout(() => {
+                                                                initFn = (window as any).initPracticalCodes;
+                                                                if (initFn) {
+                                                                    initFn();
+                                                                }
+                                                            }, 50);
+                                                        }, 100);
+                                                    } catch (e) {
+                                                        // Ignore errors
+                                                    }
+                                                }
+                                            });
+                                        }, 100);
+                                    } else {
+                                        initFn();
+                                    }
+                                }, 100);
+                            });
+                        }
+                    });
+                    
+                    return true;
+                }
+                return false;
+            };
+
+            if (!setupSwupHooks()) {
+                const checkSwup = setInterval(() => {
+                    if (window.swup && window.swup.hooks) {
+                        clearInterval(checkSwup);
+                        setupSwupHooks();
+                    }
+                }, 100);
+                
+                setTimeout(() => {
+                    clearInterval(checkSwup);
+                }, 5000);
+            }
+            
+            document.addEventListener('swup:enable', () => {
+                setupSwupHooks();
+            });
+        }
+    </script>
+</GridLayout>
+

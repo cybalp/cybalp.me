@@ -1,0 +1,14 @@
+{
+	"name": "Nmap",
+	"description": "Network discovery and security auditing tool.",
+	"icon": "mdi:network",
+	"category": "cybersecurity",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#FF6600"
+}

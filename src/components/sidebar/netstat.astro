@@ -1,0 +1,34 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/sidebar/netstat.astro
+// ❯ @desc Netstat widget wrapper component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import {
+	getCategoryList,
+	getSortedPostsList,
+	getTagList,
+} from "@utils/content";
+import StatsCharts from "./netstat.svelte";
+
+// ❯ DATA
+const posts = await getSortedPostsList();
+const categories = await getCategoryList();
+const tags = await getTagList();
+
+// ❯ PROPS
+interface Props {
+	class?: string;
+	style?: string;
+	side?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { class: className, style, side } = Astro.props;
+---
+
+<!-- ❯ RENDER -->
+<StatsCharts client:load {posts} {categories} {tags} class={className} style={style} {side} />
+

@@ -1,0 +1,601 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/layouts/base.astro
+// ❯ @desc Base HTML layout wrapper.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ IMPORTS
+import "katex/dist/katex.css";
+import ConfigCarrier from "@components/configCarrier.astro";
+import FontLoader from "@components/fontLoader.astro";
+import LoadingOverlay from "@components/loadingOverlay.astro";
+import AnnouncementBanner from "@components/AnnouncementBanner.svelte";
+import MusicPlayer from "@components/musicPlayer.svelte";
+import {
+	BANNER_HEIGHT,
+	BANNER_HEIGHT_EXTEND,
+	BANNER_HEIGHT_MAIN,
+	DARK_MODE,
+	LIGHT_MODE,
+	NAVBAR_HEIGHT,
+	PAGE_WIDTH,
+	SYSTEM_MODE,
+} from "@constants/constants";
+import { defaultFavicons } from "@constants/icon";
+import { pathsEqual, url } from "@utils/url";
+import {
+	announcementConfig,
+	musicPlayerConfig,
+	profileConfig,
+	siteConfig,
+	umamiConfig,
+} from "@/config";
+import type { Favicon } from "@/types/config";
+import "@styles/navbar.css";
+import "@styles/banner.css";
+import "@styles/fancybox.css";
+
+// ❯ TYPES
+interface Props {
+	title?: string;
+	banner?: string;
+	description?: string;
+	lang?: string;
+	setOGTypeArticle?: boolean;
+	postSlug?: string;
+}
+
+// ❯ PROPS
+let { title, banner, description, lang, setOGTypeArticle, postSlug } =
+	Astro.props;
+
+// ❯ PAGE CONFIGURATION
+// ❯ @doc Determines if current page is main page.
+const isMainPage = pathsEqual(Astro.url.pathname, url("/"));
+
+// ❯ THEME CONFIGURATION
+// ❯ @doc Defines global CSS variables (in BaseLayout instead of GlobalStyles: https://github.com/withastro/astro/issues/6728#issuecomment-1502203757)
+const configHue = siteConfig.themeColor.hue;
+
+// ❯ NAVBAR CONFIGURATION
+// ❯ @doc Gets navbar transparent mode configuration.
+const navbarTransparentMode =
+	siteConfig.wallpaper.banner?.navbar?.transparentMode || "semi"; // "full" | "semifull" | "semi"
+// ❯ @doc Determines if top highlight should be shown.
+const shouldShowTopHighlight =
+	navbarTransparentMode === "full" || navbarTransparentMode === "semifull";
+
+// ❯ BANNER CONFIGURATION
+// ❯ @doc Gets default banner image path from config.
+const getDefaultBanner = (): string => {
+	const src = siteConfig.wallpaper.src;
+	if (typeof src === "string") {
+		return src;
+	}
+	if (Array.isArray(src)) {
+		return src[0] || "";
+	}
+	if (src && typeof src === "object") {
+		const desktopSrc = src.desktop;
+		const mobileSrc = src.mobile;
+		if (typeof desktopSrc === "string") {
+			return desktopSrc;
+		}
+		if (Array.isArray(desktopSrc) && desktopSrc.length > 0) {
+			return desktopSrc[0];
+		}
+		if (typeof mobileSrc === "string") {
+			return mobileSrc;
+		}
+		if (Array.isArray(mobileSrc) && mobileSrc.length > 0) {
+			return mobileSrc[0];
+		}
+	}
+	return "";
+};
+
+// ❯ @doc Extracts first mobile banner path for separate mobile preload hint.
+const getFirstMobileBanner = (): string => {
+	const src = siteConfig.wallpaper.src;
+	if (!src || typeof src === "string" || Array.isArray(src)) return "";
+	const mobileSrc = (src as { mobile?: string | string[] }).mobile;
+	if (typeof mobileSrc === "string") return mobileSrc;
+	if (Array.isArray(mobileSrc) && mobileSrc.length > 0) return mobileSrc[0];
+	return "";
+};
+
+banner = getDefaultBanner();
+const enableBanner = siteConfig.wallpaper.mode === "banner";
+
+// ❯ PRELOAD CONFIGURATION
+// ❯ @doc Critical above-the-fold resources for LCP optimisation.
+// ❯ @hint only preload images that are visible on first paint.
+const firstDesktopBanner = banner;
+const firstMobileBanner = getFirstMobileBanner();
+const hasSeparateMobileBanner =
+	firstMobileBanner && firstMobileBanner !== firstDesktopBanner;
+const preloadProfileAvatar = profileConfig.avatar || "";
+const isWebP = (p: string) => p.endsWith(".webp");
+const preloadType = (p: string) =>
+	isWebP(p) ? "image/webp" : p.endsWith(".avif") ? "image/avif" : "image/png";
+
+// ❯ METADATA
+let pageTitle: string;
+if (title) {
+	pageTitle = `${title} - ${siteConfig.title}`;
+} else {
+	pageTitle = siteConfig.subtitle
+		? `${siteConfig.title} - ${siteConfig.subtitle}`
+		: siteConfig.title;
+}
+
+let ogImageUrl: string | undefined;
+if (siteConfig.generateOgImages && postSlug) {
+	ogImageUrl = new URL(`/og/${postSlug}.png`, Astro.site).toString();
+}
+
+const favicons: Favicon[] =
+	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
+
+if (!lang) {
+	lang = `${siteConfig.lang}`;
+}
+const siteLang = lang.replace("_", "-");
+
+// ❯ BANNER POSITIONING
+const bannerOffsetByPosition = {
+	top: `${BANNER_HEIGHT_EXTEND}vh`,
+	center: `${BANNER_HEIGHT_EXTEND / 2}vh`,
+	bottom: "0",
+};
+const bannerOffset =
+	bannerOffsetByPosition[siteConfig.wallpaper.position || "center"];
+
+// ❯ ANALYTICS
+const umamiEnabled = umamiConfig.enabled || false;
+const umamiScripts = umamiConfig.scripts || "";
+---
+
+<!DOCTYPE html>
+<html lang={siteLang} class="bg-(--page-bg) text-[14px] md:text-[16px] is-loading"
+>
+    <head>
+        <meta charset="UTF-8" />
+        <!-- Resource Preconnect -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://code.iconify.design">
+        <!-- ❯ Critical Image Preloads — LCP optimisation -->
+        <!-- ❯ @hint banner preload only when banner mode is active -->
+        {enableBanner && firstDesktopBanner && (
+            hasSeparateMobileBanner ? (
+                <>
+                    <link rel="preload" as="image" href={firstDesktopBanner} type={preloadType(firstDesktopBanner)} fetchpriority="high" media="(min-width: 768px)" />
+                    <link rel="preload" as="image" href={firstMobileBanner} type={preloadType(firstMobileBanner)} fetchpriority="high" media="(max-width: 767px)" />
+                </>
+            ) : (
+                <link rel="preload" as="image" href={firstDesktopBanner} type={preloadType(firstDesktopBanner)} fetchpriority="high" />
+            )
+        )}
+        {preloadProfileAvatar && (
+            <link rel="preload" as="image" href={preloadProfileAvatar} type={preloadType(preloadProfileAvatar)} />
+        )}
+        <!-- Font Loader -->
+        <FontLoader />
+        <!-- title -->
+        <title>{pageTitle}</title>
+        <!-- description -->
+        <meta name="description" content={description || pageTitle}>
+        <!-- keywords -->
+        {siteConfig.keywords && siteConfig.keywords.length > 0 && (
+            <meta name="keywords" content={siteConfig.keywords.join(', ')} />
+        )}
+        <!-- author -->
+        <meta name="author" content={profileConfig.name}>
+        <!-- Open Graph -->
+        <meta property="og:site_name" content={siteConfig.title}>
+        <meta property="og:url" content={Astro.url}>
+        <meta property="og:title" content={pageTitle}>
+        <meta property="og:description" content={description || pageTitle}>
+        {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+        {
+            setOGTypeArticle ? (
+                <meta property="og:type" content="article" />
+            ) : (
+                <meta property="og:type" content="website" />
+            )
+        }
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content={Astro.url}>
+        <meta name="twitter:title" content={pageTitle}>
+        <meta name="twitter:description" content={description || pageTitle}>
+        <!-- viewport -->
+        <meta name="viewport" content="width=device-width" />
+        <!-- generator -->
+        <meta name="generator" content={Astro.generator} />
+        <!-- favicons -->
+        {favicons.map(favicon => (
+            <link rel="icon"
+                  href={favicon.src.startsWith('/') ? url(favicon.src) : favicon.src}
+                  sizes={favicon.sizes}
+                  media={favicon.theme && `(prefers-color-scheme: ${favicon.theme})`}
+            />
+        ))}
+        <script is:inline define:vars={{LIGHT_MODE, DARK_MODE, SYSTEM_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, NAVBAR_HEIGHT, configHue, defaultTheme: siteConfig.defaultTheme}}>
+            const theme = localStorage.getItem('theme') || defaultTheme;
+            let isDark = false;
+            switch (theme) {
+                case LIGHT_MODE:
+                    document.documentElement.classList.remove('dark');
+                    isDark = false;
+                    break
+                case DARK_MODE:
+                    document.documentElement.classList.add('dark');
+                    isDark = true;
+                    break
+                case SYSTEM_MODE:
+                    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.classList.add('dark');
+                        isDark = true;
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        isDark = false;
+                    }
+            }
+            const expressiveTheme = isDark ? "github-dark" : "github-light";
+            document.documentElement.setAttribute("data-theme", expressiveTheme);
+            const hue = localStorage.getItem('hue') || configHue;
+            document.documentElement.style.setProperty('--hue', hue);
+            let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+            offset = offset - offset % 4;
+            document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+        </script>
+        <style define:vars={{
+            configHue,
+            'page-width': `${PAGE_WIDTH}rem`,
+        }}></style>
+        <!-- custom head -->
+        <slot name="head"></slot>
+        <!-- rss feed -->
+        <link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
+        <!-- Umami Analytics -->
+        {umamiEnabled && umamiScripts && <Fragment set:html={umamiScripts} />}
+    </head>
+
+    <body class=" min-h-screen " class:list={[{"is-main": isMainPage, "enable-banner": enableBanner}]}
+    >
+        <LoadingOverlay />
+        <ConfigCarrier />
+        {shouldShowTopHighlight && <div class="top-gradient-highlight"></div>}
+        <!-- ❯ @gogogo announcement — 3/4 render: pass new props to the component here -->
+        {announcementConfig.enable && (
+            <AnnouncementBanner
+                client:load
+                message={announcementConfig.message}
+                href={announcementConfig.href}
+                ctaText={announcementConfig.ctaText}
+                icon={announcementConfig.icon}
+            />
+        )}
+        <slot />
+        {musicPlayerConfig.enable && <MusicPlayer client:idle />}
+        <div id="page-height-extend" class="hidden h-[300vh]"></div>
+    </body>
+</html>
+
+
+<style is:global define:vars={{
+    bannerOffset,
+    'banner-height-main': `${BANNER_HEIGHT_MAIN}vh`,
+    'banner-height': `${BANNER_HEIGHT}vh`,
+}}>
+@reference "../styles/main.css";
+@layer components {
+    .enable-banner.is-main #banner-wrapper {
+        @apply h-(--banner-height-main) translate-y-(--banner-height-extend)
+    }
+    .enable-banner #banner-wrapper {
+        @apply h-(--banner-height-main)
+    }
+    .enable-banner.is-main #banner {
+        @apply h-(--banner-height-main) translate-y-0
+    }
+    .enable-banner #banner {
+        @apply h-(--banner-height-main) translate-y-(--bannerOffset)
+    }
+    .enable-banner.is-main #main-grid {
+        translate: 0 var(--banner-height-extend);
+    }
+    .enable-banner #top-row {
+        height: calc(var(--banner-height-main) - 5.5rem);
+    }
+    .enable-banner.is-main #sidebar-sticky {
+        top: calc(1rem - var(--banner-height-extend)) !important;
+    }
+}
+</style>
+
+
+<script>
+// ❯ IMPORTS
+import {
+    NAVBAR_HEIGHT,
+    BANNER_HEIGHT,
+    BANNER_HEIGHT_MAIN,
+    BANNER_HEIGHT_EXTEND,
+} from "@/constants/constants";
+import { pathsEqual, url } from "@utils/url";
+import { initWallpaperMode } from "@utils/wallpaper";
+import { initTheme } from "@utils/theme";
+import { initHue } from "@utils/hue";
+import { initMarkdownActions } from "@/utils/markdown";
+import { initFancybox, cleanupFancybox } from "@utils/fancybox";
+import { loadAndInitTranslate } from "@utils/language";
+import { setupParticleEffects } from "@/utils/particle";
+
+// ❯ ERROR HANDLING
+// ❯ @doc Suppresses CSS preload errors for inline stylesheets.
+if (typeof window !== 'undefined') {
+    // Suppress CSS preload errors in console
+    const originalConsoleError = console.error;
+    console.error = function(...args: any[]) {
+        const message = args.join(' ');
+        if (message.includes('Unable to preload CSS') || 
+            (message.includes('Personal') && message.includes('.css')) ||
+            message.includes('preload CSS')) {
+            return; // Suppress CSS preload errors
+        }
+        originalConsoleError.apply(console, args);
+    };
+    
+    // Handle unhandled promise rejections
+    window.addEventListener('unhandledrejection', (event) => {
+        const reason = event.reason?.message || event.reason?.toString() || String(event.reason) || '';
+        if (reason.includes('Unable to preload CSS') || 
+            (reason.includes('Personal') && reason.includes('.css')) ||
+            reason.includes('preload CSS')) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+    });
+    
+    // Handle regular errors
+    window.addEventListener('error', (event) => {
+        const message = event.message || '';
+        if (message.includes('Unable to preload CSS') || 
+            (message.includes('Personal') && message.includes('.css')) ||
+            message.includes('preload CSS')) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        }
+    }, true);
+    
+    // Override fetch to suppress 404 errors for CSS files
+    const originalFetch = window.fetch;
+    window.fetch = function(...args: any[]) {
+        const url = args[0]?.toString() || '';
+        if (url.includes('Personal') && url.includes('.css') && url.includes('_astro')) {
+            // Return a fake successful response for non-existent CSS files
+            return Promise.resolve(new Response('', {
+                status: 200,
+                statusText: 'OK',
+                headers: { 'Content-Type': 'text/css' }
+            }));
+        }
+        return originalFetch.apply(this, args);
+    };
+}
+
+// ❯ SWUP SETUP
+// ❯ @doc Configures Swup hooks for page transitions.
+const setup = () => {
+    window.swup.hooks.on('link:click', () => {
+        const bannerEnabled = !!document.getElementById('banner-wrapper')
+        if (bannerEnabled) {
+            const navbar = document.getElementById('navbar-wrapper')
+            if (navbar && document.body.classList.contains('is-main')) {
+                const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - NAVBAR_HEIGHT
+                if (document.documentElement.scrollTop >= threshold) {
+                    navbar.classList.add('navbar-hidden')
+                }
+            }
+        }
+    })
+    window.swup.hooks.on('content:replace', () => {
+        const gridClassCarrier = document.getElementById("grid-class-carrier");
+        if (gridClassCarrier) {
+            const gridClass = gridClassCarrier.getAttribute("data-grid-class");
+            const mainGrid = document.getElementById("main-grid");
+            if (mainGrid && gridClass) {
+                const currentClasses = mainGrid.className.split(" ");
+                const newClasses = currentClasses.filter(c => !c.startsWith("lg:grid-cols-") && !c.startsWith("md:grid-cols-") && !c.startsWith("grid-cols-"));
+                const gridClasses = gridClass.split(" ");
+                mainGrid.className = [...newClasses, ...gridClasses].join(" ");
+            }
+        }
+        const navbar = document.getElementById('navbar')
+        if (navbar) {
+            const transparentMode = navbar.getAttribute('data-transparent-mode')
+            if (transparentMode === 'semifull') {
+                if (typeof (window as any).initSemifullScrollDetection === 'function') {
+                    (window as any).initSemifullScrollDetection()
+                }
+            }
+        }
+    })
+    window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
+        if ((window as any).scrollProtectionManager && typeof (window as any).scrollProtectionManager.disable === 'function') {
+            (window as any).scrollProtectionManager.disable();
+        }
+        const bodyElement = document.querySelector('body')
+        const isMainPage = pathsEqual(visit.to.url, url('/'))
+        if (isMainPage) {
+            bodyElement!.classList.add('is-main');
+        } else {
+            bodyElement!.classList.remove('is-main');
+        }
+        const bannerTextOverlay = document.querySelector('.banner-text-overlay')
+        if (bannerTextOverlay) {
+            if (isMainPage) {
+                bannerTextOverlay.classList.remove('hidden')
+            } else {
+                bannerTextOverlay.classList.add('hidden')
+            }
+        }
+        const navbar = document.getElementById('navbar')
+        if (navbar) {
+            navbar.setAttribute('data-is-main', isMainPage.toString())
+            const transparentMode = navbar.getAttribute('data-transparent-mode')
+            if (transparentMode === 'semifull') {
+                if (typeof window.initSemifullScrollDetection === 'function') {
+                    window.initSemifullScrollDetection()
+                }
+            }
+        }
+        const heightExtend = document.getElementById('page-height-extend')
+        if (heightExtend) {
+            heightExtend.classList.remove('hidden')
+        }
+    });
+    window.swup.hooks.on('visit:end', (_visit: {to: {url: string}}) => {
+        setTimeout(() => {
+            const heightExtend = document.getElementById('page-height-extend')
+            if (heightExtend) {
+                heightExtend.classList.add('hidden')
+            }
+        }, 300)
+    });
+    window.swup.hooks.on('page:view', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        setTimeout(() => {
+            if (document.getElementById('tcomment')) {
+                const pageLoadedEvent = new CustomEvent('cybalp:page:loaded', {
+                    detail: {
+                        path: window.location.pathname,
+                        timestamp: Date.now()
+                    }
+                });
+                document.dispatchEvent(pageLoadedEvent);
+            }
+        }, 300);
+        initFancybox();
+    });
+    initFancybox();
+    window.swup.hooks.on("content:replace", () => {
+            cleanupFancybox();
+        },
+        { before: true },
+    );
+    
+    
+}
+if (window?.swup?.hooks) {
+    setup()
+} else {
+    document.addEventListener('swup:enable', setup)
+}
+
+// ❯ SCROLL HANDLING
+let navbar = document.getElementById('navbar-wrapper')
+let backToTopBtn = document.getElementById('back-to-top-btn');
+
+// ❯ Throttle
+// ❯ @doc Limits function execution frequency.
+function throttle(func: (...args: any[]) => void, limit: number) {
+    let inThrottle: boolean;
+    return function(this: any, ...args: any[]) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+// ❯ Scroll Handler
+// ❯ @doc Controls back-to-top button and navbar visibility on scroll.
+let scrollTicking = false;
+function scrollFunction() {
+    if (scrollTicking) return;
+    
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+        const scrollTop = document.documentElement.scrollTop || window.pageYOffset;
+        const bannerHeight = window.innerHeight * (BANNER_HEIGHT / 100);
+        const bannerEnabled = !!document.getElementById('banner-wrapper')
+        
+        if (backToTopBtn) {
+            if (scrollTop > bannerHeight) {
+                backToTopBtn.classList.remove('hide')
+            } else {
+                backToTopBtn.classList.add('hide')
+            }
+        }
+        if (bannerEnabled && navbar) {
+            const isMain = document.body.classList.contains('is-main');
+            const currentBannerHeight = isMain ? BANNER_HEIGHT_MAIN : BANNER_HEIGHT;
+            const threshold = window.innerHeight * (currentBannerHeight / 100) - NAVBAR_HEIGHT;
+            if (scrollTop >= threshold) {
+                navbar.classList.add('navbar-hidden')
+            } else {
+                navbar.classList.remove('navbar-hidden')
+            }
+        }
+        
+        scrollTicking = false;
+    });
+}
+
+if (window.addEventListener) {
+    window.addEventListener('scroll', scrollFunction, { passive: true, capture: false });
+} else {
+    window.onscroll = throttle(scrollFunction, 16);
+}
+
+// ❯ RESIZE HANDLER
+// ❯ @doc Updates banner height CSS variable on window resize.
+window.onresize = () => {
+    let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
+    offset = offset - offset % 4;
+    document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+}
+
+// ❯ INITIALIZATION
+initTheme();
+initHue();
+initWallpaperMode();
+initMarkdownActions();
+
+// ❯ LOADING OVERLAY
+// ❯ @doc Removes is-loading so the overlay hides when the page is ready.
+function removeLoadingState() {
+    document.documentElement.classList.remove("is-loading");
+}
+if (document.readyState === "complete") {
+    removeLoadingState();
+} else {
+    window.addEventListener("load", removeLoadingState);
+}
+
+// ❯ @doc Lazy load translate.js to improve initial page load performance.
+// ❯ Check translate config from config carrier element
+const configCarrier = document.getElementById('config-carrier');
+const translateEnabled = configCarrier?.dataset.translateEnabled === 'true';
+if (translateEnabled) {
+    // ❯ Load translate.js only when needed (user interaction or after page load)
+    const loadTranslateOnInteraction = () => {
+        loadAndInitTranslate();
+        // ❯ Remove listeners after first load
+        document.removeEventListener('click', loadTranslateOnInteraction);
+        document.removeEventListener('keydown', loadTranslateOnInteraction);
+    };
+    document.addEventListener('click', loadTranslateOnInteraction);
+    document.addEventListener('keydown', loadTranslateOnInteraction);
+}
+</script>

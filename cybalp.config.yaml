@@ -1,0 +1,243 @@
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./cybalp.config.yaml
+# ❯ @desc Main site configuration
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ❯ SITE CORE
+site:
+    siteURL: "https://cybalp.me/"
+    title: "CybAlp"
+    subtitle: "Root"
+    keywords: ["cybersecurity", "linux", "code", "blog", "documentation"]
+    lang: "en"
+    
+    # ❯ Translation
+    translate:
+        enable: true
+        service: "client.edge"
+        showSelectTag: true
+        autoDiscriminate: true
+        ignoreClasses: ["ignore", "banner-title", "banner-subtitle"]
+        ignoreTags: ["script", "style", "code", "pre"]
+    
+    timeZone: 11 # -12 to 12 -> 11 - Turkey
+    
+    # ❯ Fonts
+    font:
+        "Exo":
+            src: "https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap"
+            family: "Exo"
+    
+    # ❯ Theme
+    themeColor:
+        hue: 255
+    defaultTheme: "system" # "system" | "light" | "dark"
+    
+    # ❯ Wallpaper
+    wallpaper:
+        mode: "banner" # "fullscreen" | "banner" | "none"
+        src:
+            desktop: ["/assets/images/wallpaper.webp", "/assets/images/red.webp"]
+            mobile: ["/assets/images/wallpaper.webp", "/assets/images/red.webp"]
+        position: "center" # "top" | "center" | "bottom"
+        
+        # ❯ Carousel
+        carousel:
+            enable: false
+            interval: 3.6
+            kenBurns: false # enable Ken Burns effect
+        
+        # ❯ Banner
+        banner:
+            mainText:
+                enable: true
+                title: "CybAlp"
+                subtitle: ["ᴀ ᴄʏʙᴇʀꜱᴇᴄᴜʀɪᴛʏ ⚔ - ᴀ ʟɪɴᴜx ᴇɴᴛʜᴜꜱɪᴀꜱᴛ 𓅷 - ᴀ ᴄᴏᴅᴇʀ </>"]
+                typewriter:
+                    enable: true
+                    speed: 100
+                    deleteSpeed: 50
+                    pauseTime: 1000
+            credit:
+                enable: true
+                text: "Support Me ∞ ♡"
+                url: "https://github.com/cybalp#supports-me--"
+            navbar:
+                transparentMode: "full" # "semi" | "full" | "semifull"
+            waves:
+                enable: true
+                performanceMode: true
+        fullscreen:
+            zIndex: -1
+            opacity: 0.9
+            blur: 25
+            navbar:
+                transparentMode: "semi" # "semi" | "full" | "semifull"
+    loadingOverlay:
+        enable: true
+        title:
+            enable: true
+            content: "RUN!"
+            interval: 1.5
+        spinner:
+            enable: true
+            interval: 3
+    favicon: []
+    generateOgImages: true
+
+# ❯ UMAMI ANALYTICS
+# ❯ @doc for env
+umami:
+    enabled: false
+    baseUrl: "https://api.umami.is"
+    apiKey: ""
+    scripts: ""
+
+# ❯ NAVBAR
+navbar:
+    links:
+        - "Main"
+        - "Vault"
+        - name: "Dump"
+          url: "/dump/"
+          icon: "material-symbols:storage"
+          description: "Public memory leaks"
+          children: ["PersonalLog", "Media", "PracticalCodes", "Netstat"]
+        - name: "Identity"
+          url: "/identity/"
+          icon: "material-symbols:fingerprint"
+          description: "Who I am"
+          children: ["Arge", "Toolchains"]
+
+# ❯ SIDEBAR
+sidebar:
+    components:
+        left:
+            - type: "profile"
+              enable: true
+              position: "top"
+            - type: "wall"
+              enable: true
+              position: "top"
+            - type: "categories"
+              enable: true
+              position: "sticky"
+              responsive:
+                  collapseThreshold: 5
+              depth: 3
+            - type: "tags"
+              enable: true
+              position: "sticky"
+              responsive:
+                  collapseThreshold: 20
+        right:
+            - type: "toc"
+              enable: true
+              position: "sticky"
+              depth: 3
+            - type: "statistics"
+              enable: true
+              position: "sticky"
+              visibility:
+                  mode: "include"
+                  paths: ["^/$", "^/vault$"]
+
+# ❯ PROFILE
+profile:
+    avatar: "/assets/images/profile.webp"
+    name: "Alp"
+    bio: "A non-professional blog. Personal documentation and a graveyard of personal thoughts."
+    links:
+        - name: "GitHub"
+          icon: "fa6-brands:github"
+          url: "https://github.com/cybalp"
+        - name: "LinkedIn"
+          icon: "fa6-brands:linkedin"
+          url: "https://www.linkedin.com/in/alpulkegul"
+        - name: "IG"
+          icon: "fa6-brands:instagram"
+          url: "https://instagram.com/cybalp"
+
+# ❯ WALL
+wall:
+    title: "Wall"
+    content: "Identity updated!"
+    closable: false
+    link:
+        enable: true
+        text: "RUN! Identity"
+        url: "/identity/"
+        external: false
+
+# ❯ POST
+post:
+    showLastModified: true
+    expressiveCode:
+        theme: "github-dark"
+    license:
+        enable: true
+        name: "CC BY-NC-SA 4.0"
+        url: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+    comment:
+        enable: false
+        twikoo:
+            envId: "https://cybalp.vercel.app"
+            lang: "en"
+
+# ❯ FOOTER
+footer:
+    enable: false
+    customHtml: ""
+
+# ❯ PARTICLE
+particle:
+    enable: true
+    particleNum: 12
+    limitTimes: -1
+    size:
+        min: 0.3
+        max: 0.9
+    opacity:
+        min: 0.3
+        max: 0.9
+    speed:
+        horizontal:
+            min: -0.9
+            max: 0.9
+        vertical:
+            min: 0.15
+            max: 0.3
+        rotation: 0.12
+        fadeSpeed: 0.12
+    zIndex: 100
+
+# ❯ ANNOUNCEMENT BANNER
+# ❯ @gogogo announcement new banner — edit message/href/ctaText/icon to publish a new announcement
+# ❯ @gogogo announcement — add new YAML fields here to extend the banner's capabilities
+announcement:
+    enable: false
+    message: "NEW POST"
+    href: "/"
+    ctaText: "GO! →"
+    icon: "⟡"
+
+# ❯ MUSIC PLAYER
+musicPlayer:
+    enable: false
+    mode: "meting"
+    meting:
+        meting_api: "https://api.i-meto.com/meting/api"
+        server: "netease"
+        type: "playlist"
+        id: "2161912966"
+    local:
+        playlist:
+            - id: 1
+              title: "Music"
+              artist: "Youzee Music"
+              cover: "https://p1.music.126.net/PhKOqFtljgHDDpKYM2ADUA==/109951169858309716.jpg"
+              url: "assets/music/music.m4a"
+              lrc: "assets/music/music.lrc"
+              duration: 146
+    autoplay: false

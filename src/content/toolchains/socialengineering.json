@@ -1,0 +1,13 @@
+{
+	"name": "Social Engineering",
+	"description": "Psychological manipulation techniques in cybersecurity.",
+	"icon": "mdi:account-alert",
+	"category": "cybersecurity",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#FF6B6B"
+}

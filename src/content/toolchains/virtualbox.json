@@ -1,0 +1,14 @@
+{
+	"name": "VirtualBox",
+	"description": "Cross-platform virtualization software.",
+	"icon": "simple-icons:virtualbox",
+	"category": "others",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#183A61"
+}

@@ -1,0 +1,14 @@
+{
+	"name": "Arch Linux",
+	"description": "Primary operating system",
+	"icon": "simple-icons:archlinux",
+	"category": "others",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#1793D1"
+}

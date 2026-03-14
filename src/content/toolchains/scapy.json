@@ -1,0 +1,14 @@
+{
+	"name": "Scapy",
+	"description": "Python library for packet manipulation and network analysis.",
+	"icon": "mdi:security-network",
+	"category": "cybersecurity",
+	"level": "beginner",
+	"experience": {
+		"years": 0,
+		"months": 3
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#3776AB"
+}

@@ -1,0 +1,242 @@
+/* ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ❯ @status OK!
+# ❯ @path ./src/styles/navbar.css
+# ❯ @desc Navigation bar styles.
+# ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* ❯ CORE LOGIC */
+
+.navbar-nav-links {
+    min-width: 0;
+    flex-shrink: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s, gap 0.3s ease;
+}
+
+.nav-link-container {
+    position: relative;
+}
+
+/* ❯ Navbar Container */
+#navbar > div {
+    background: var(--card-bg);
+    border-radius: var(--radius-large);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-buttons {
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+/* ❯ Transparent Modes */
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="semi"] > div {
+    backdrop-filter: blur(20px) !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="semi"] > div {
+    background: rgba(0, 0, 0, 0.55) !important;
+    border: 1px solid rgba(0, 0, 0, 0.55) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="full"] > div {
+    backdrop-filter: none !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="full"] > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="semifull"] > div {
+    backdrop-filter: none !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="semifull"] > div {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="semifull"].scrolled > div {
+    backdrop-filter: blur(20px) !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #navbar[data-transparent-mode="semifull"].scrolled > div {
+    background: rgba(0, 0, 0, 0.55) !important;
+    border: 1px solid rgba(0, 0, 0, 0.55) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) .dropdown-content,
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #display-setting,
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #nav-menu-panel,
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #translate-panel,
+:is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #search-panel {
+    backdrop-filter: blur(20px) !important;
+    background: rgba(255, 255, 255, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.55) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) .dropdown-content,
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #display-setting,
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #nav-menu-panel,
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #translate-panel,
+:root.dark :is(#banner-wrapper ~ *, body:has(#banner-wrapper)) #search-panel {
+    background: rgba(0, 0, 0, 0.55) !important;
+    border: 1px solid rgba(0, 0, 0, 0.55) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ❯ RESPONSIVE DESIGN */
+
+@media (max-width: 1279px) {
+    .nav-link-item {
+        width: 2.75rem;
+        padding-left: 0;
+        padding-right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-link-text {
+        display: none;
+    }
+
+    .nav-link-icon {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 1280px) {
+    .nav-link-item {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .nav-link-text {
+        display: inline;
+    }
+}
+
+@media (min-width: 768px) {
+    #navbar > div {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        justify-content: space-between;
+        align-items: center;
+    }
+    #navbar > div > a:first-child {
+        justify-self: start;
+    }
+
+    #navbar .navbar-nav-links {
+        position: static;
+        left: unset;
+        translate: none;
+        justify-self: center;
+        gap: clamp(0.12rem, 1vw, 0.36rem);
+    }
+
+    #navbar .navbar-buttons {
+        justify-self: end;
+        gap: clamp(0.12rem, 1vw, 0.36rem);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+    #navbar .navbar-nav-links {
+        gap: 0.2rem;
+    }
+
+    #navbar .navbar-buttons {
+        gap: 0.2rem;
+    }
+    #navbar.is-searching .navbar-nav-links {
+        opacity: 0;
+        scale: 0.9;
+        pointer-events: none;
+        visibility: hidden;
+    }
+}
+
+@media (max-width: 768px) {
+    #navbar > div {
+        max-width: none !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
+
+@media (max-width: 512px) {
+    #navbar > div {
+        border-radius: 0.3rem !important;
+        margin: 0 !important;
+        padding-left: 0.6rem !important;
+        padding-right: 0.6rem !important;
+        max-width: none !important;
+        width: 100% !important;
+    }
+
+    #navbar-buttons {
+        gap: 0.123rem !important;
+    }
+    #navbar-buttons button:not(.float-panel *) {
+        width: 2.4rem !important;
+        height: 2.4rem !important;
+        padding: 0 !important;
+    }
+
+    #navbar > div > a:first-child {
+        width: 7.2rem !important;
+        height: 2.4rem !important;
+        padding: 0 !important;
+    }
+}
+
+@media (min-width: 333px) and (max-width: 444px) {
+    #navbar-buttons {
+        gap: 0.111rem !important;
+    }
+    #navbar-buttons button:not(.float-panel *) {
+        width: 2.1rem !important;
+        height: 2.1rem !important;
+        padding: 0 !important;
+    }
+
+    #navbar > div > a:first-child {
+        width: 6.3rem !important;
+        height: 2.1rem !important;
+        padding: 0 !important;
+    }
+}
+
+@media (max-width: 333px) {
+    #navbar-buttons {
+        gap: 0 !important;
+        justify-content: flex-end !important;
+    }
+
+    #navbar > div > a:first-child > div {
+        font-size: 0 !important;
+    }
+}

@@ -1,0 +1,25 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/common/markdown.astro
+// ❯ @desc Markdown content wrapper component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import "@fontsource-variable/jetbrains-mono";
+
+// ❯ PROPS
+interface Props {
+	class: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const className = Astro.props.class;
+---
+
+<!-- ❯ RENDER -->
+<div data-pagefind-body class={`prose dark:prose-invert prose-base max-w-none! custom-md ${className}`}>
+    <!--<div class="prose dark:prose-invert max-w-none custom-md">-->
+    <!--<div class="max-w-none custom-md">-->
+    <slot/>
+</div>

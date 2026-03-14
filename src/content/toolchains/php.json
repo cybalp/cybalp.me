@@ -1,0 +1,14 @@
+{
+	"name": "PHP",
+	"description": "Server-side scripting language for web development.",
+	"icon": "simple-icons:php",
+	"category": "backend",
+	"level": "intermediate",
+	"experience": {
+		"years": 1,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#777BB4"
+}

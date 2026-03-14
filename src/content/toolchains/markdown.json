@@ -1,0 +1,14 @@
+{
+	"name": "Markdown",
+	"description": "Lightweight markup language for formatted text.",
+	"icon": "simple-icons:markdown",
+	"category": "backend",
+	"level": "advanced",
+	"experience": {
+		"years": 2,
+		"months": 0
+	},
+	"projects": [],
+	"certifications": [],
+	"color": "#000000"
+}

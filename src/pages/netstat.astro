@@ -1,0 +1,50 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/netstat.astro
+// ❯ @desc Netstat statistics page.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import BackwardButton from "@components/backwardButton.astro";
+import NetstatCharts from "@components/data/netstatCharts.svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import GridLayout from "@layouts/grid.astro";
+// ❯ IMPORTS
+import {
+	getCategoryList,
+	getSortedPostsList,
+	getTagList,
+} from "@utils/content";
+
+// ❯ DATA
+const posts = await getSortedPostsList();
+const categories = await getCategoryList();
+const tags = await getTagList();
+
+// ❯ PAGE INFO
+const pageTitle = i18n(I18nKey.statistics);
+const pageDescription = "Comprehensive statistics and analytics";
+---
+
+<GridLayout title={pageTitle} description={pageDescription}>
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-6 py-8 md:px-9 md:py-10 relative w-full">
+            <BackwardButton currentPath={Astro.url.pathname} />
+            <!-- ❯ Page Header -->
+            <header class="mb-10">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-3 arge-title">
+                    {pageTitle}
+                </h1>
+                {pageDescription && (
+                    <p class="text-neutral-600 dark:text-neutral-300 text-base md:text-lg">
+                        {pageDescription}
+                    </p>
+                )}
+            </header>
+            <!-- ❯ Charts -->
+            <NetstatCharts client:load {posts} {categories} {tags} />
+        </div>
+    </div>
+</GridLayout>
+

@@ -1,0 +1,168 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/common/typewriterText.astro
+// ❯ @desc Typewriter text effect component.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ PROPS
+export interface Props {
+	text: string | string[];
+	speed?: number;
+	deleteSpeed?: number;
+	pauseTime?: number;
+	class?: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const {
+	text,
+	speed = 100,
+	deleteSpeed = 50,
+	pauseTime = 2000,
+	class: className = "",
+} = Astro.props;
+
+// ❯ COMPUTED
+const textData = Array.isArray(text) ? JSON.stringify(text) : text;
+---
+
+<!-- ❯ RENDER -->
+<span class={`typewriter ${className}`} data-text={textData} data-speed={speed} data-delete-speed={deleteSpeed} data-pause-time={pauseTime}></span>
+
+<!-- ❯ SCRIPTS -->
+<script>
+// ❯ @doc Typewriter effect class for animated text display.
+class TypewriterEffect {
+    private element: HTMLElement;
+    private texts: string[];
+    private currentTextIndex: number = 0;
+    private speed: number;
+    private deleteSpeed: number;
+    private pauseTime: number;
+    private currentIndex: number = 0;
+    private isDeleting: boolean = false;
+    private timeoutId: number | null = null;
+
+    constructor(element: HTMLElement) {
+        this.element = element;
+        const textData = element.dataset.text || '';
+
+        // ❯ parse JSON array or use as single string
+        try {
+            const parsed = JSON.parse(textData);
+            this.texts = Array.isArray(parsed) ? parsed : [textData];
+        } catch {
+            this.texts = [textData];
+        }
+
+        this.speed = parseInt(element.dataset.speed || '100');
+        this.deleteSpeed = parseInt(element.dataset.deleteSpeed || '50');
+        this.pauseTime = parseInt(element.dataset.pauseTime || '2000');
+
+        // ❯ show random text if multiple texts and typewriter disabled
+        if (this.texts.length > 1 && !this.isTypewriterEnabled()) {
+            this.showRandomText();
+        } else {
+            this.start();
+        }
+    }
+
+    private isTypewriterEnabled(): boolean {
+        // ❯ check for typewriter data attributes
+        return this.element.dataset.speed !== undefined ||
+               this.element.dataset.deleteSpeed !== undefined ||
+               this.element.dataset.pauseTime !== undefined;
+    }
+
+    private showRandomText() {
+        const randomIndex = Math.floor(Math.random() * this.texts.length);
+        this.element.textContent = this.texts[randomIndex];
+    }
+
+    private start() {
+        if (this.texts.length === 0) return;
+        this.type();
+    }
+
+    private getCurrentText(): string {
+        return this.texts[this.currentTextIndex] || '';
+    }
+
+    private type() {
+        const currentText = this.getCurrentText();
+
+        if (this.isDeleting) {
+            // ❯ delete characters
+            if (this.currentIndex > 0) {
+                this.currentIndex--;
+                this.element.textContent = currentText.substring(0, this.currentIndex);
+                this.timeoutId = window.setTimeout(() => this.type(), this.deleteSpeed);
+            } else {
+                // ❯ deletion complete, switch to next text
+                this.isDeleting = false;
+                this.currentTextIndex = (this.currentTextIndex + 1) % this.texts.length;
+                this.timeoutId = window.setTimeout(() => this.type(), this.speed);
+            }
+        } else {
+            // ❯ add characters
+            if (this.currentIndex < currentText.length) {
+                this.currentIndex++;
+                this.element.textContent = currentText.substring(0, this.currentIndex);
+                this.timeoutId = window.setTimeout(() => this.type(), this.speed);
+            } else {
+                // ❯ typing complete, pause then delete if multiple texts
+                if (this.texts.length > 1) {
+                    this.isDeleting = true;
+                    this.timeoutId = window.setTimeout(() => this.type(), this.pauseTime);
+                }
+                // ❯ single text stays displayed
+            }
+        }
+    }
+
+    public destroy() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+        }
+    }
+}
+
+// ❯ initialize all typewriter effects
+document.addEventListener('DOMContentLoaded', () => {
+    const typewriterElements = document.querySelectorAll('.typewriter');
+    typewriterElements.forEach((element) => {
+        new TypewriterEffect(element as HTMLElement);
+    });
+});
+
+// ❯ reinitialize on page transition
+document.addEventListener('swup:contentReplaced', () => {
+    const typewriterElements = document.querySelectorAll('.typewriter');
+    typewriterElements.forEach((element) => {
+        new TypewriterEffect(element as HTMLElement);
+    });
+    });
+</script>
+
+<!-- ❯ STYLES -->
+<style>
+.typewriter {
+    position: relative;
+}
+
+.typewriter::after {
+    content: '|';
+    animation: blink 1s infinite;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
+}
+</style>

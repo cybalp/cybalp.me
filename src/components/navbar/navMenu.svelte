@@ -125,7 +125,7 @@ onMount(() => {
         class="float-panel fixed transition-all right-4 px-2 py-2 max-h-[85vh] overflow-y-auto w-72"
         class:float-panel-closed={!isOpen}
     >
-        <!-- ❯ NAV LINKS -->
+        <!-- ❯ NAV LINKS — close menu on click so new page loads with menu closed -->
         {#each links as link}
             <div class="mobile-menu-item">
                 <a
@@ -133,6 +133,7 @@ onMount(() => {
                     class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
                            hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active) transition"
                     target={link.external ? "_blank" : null}
+                    onclick={() => { isOpen = false; }}
                 >
                     <div class="flex items-center transition text-black/75 dark:text-white/75 font-bold
                                 group-hover:text-(--primary) group-active:text-(--primary)">

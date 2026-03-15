@@ -21,8 +21,27 @@
     min-height: calc(100vh - 5.5rem) !important;
 }
 
+/* ❯ Support Me: visible on main page */
+body.is-main.enable-banner #banner-credit {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ❯ Main + Support Me: visible in no-banner mode, not hidden behind navbar */
 .no-banner-layout #banner-credit {
-    display: none !important;
+    top: 0.5rem !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+@media (max-width: 767px) {
+    .no-banner-layout #mobile-btm-btn {
+        top: 0.5rem !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
 }
 
 /* ❯ RESPONSIVE DESIGN */

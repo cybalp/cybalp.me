@@ -138,10 +138,6 @@ const {
         <div
             class="relative max-w-(--page-width) mx-auto pointer-events-auto"
         >
-            {/* ❯ Mobile Back to Main: pill button — LEFT side of banner, non-main pages only.
-                  Always rendered so Swup navigation doesn't orphan it; visibility managed by JS.
-                  absolute positioning is relative to this .relative wrapper. */}
-            <MobileBackToMain isMainPage={isMainPage} />
             {/* ❯ Profile popup overlay — global overlay, always in DOM, opened by back-to-main btn */}
             <MobileProfilePopup />
 
@@ -149,8 +145,13 @@ const {
                     id="main-grid"
                     class={`transition-all duration-600 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto] mx-auto gap-4 px-0 md:px-4 ${!hasAnyComponents ? "mobile-no-sidebar" : ""} ${(hasLeftSidebar || hasRightSidebar) ? "mobile-both-sidebar" : ""}`}
                 >
-                {
-                    hasBannerCredit && (
+                {/* ❯ Banner buttons bar — outside main to avoid overflow-hidden clipping; visible in all wallpaper modes */}
+                <div
+                    id="banner-buttons-bar"
+                    class="relative min-h-12 col-span-full w-full shrink-0"
+                >
+                    <MobileBackToMain />
+                    {hasBannerCredit && (
                         <a
                             href={siteConfig.wallpaper.banner?.credit?.url}
                             id="banner-credit"
@@ -161,8 +162,7 @@ const {
                                 "group onload-animation-up transition-all absolute flex justify-center items-center rounded-full " +
                                     "px-3 right-4 -top-13 bg-black/60 hover:bg-black/70 h-9",
                                 {
-                                    "hover:pr-9 active:bg-black/80":
-                                        hasBannerLink,
+                                    "hover:pr-9 active:bg-black/80": hasBannerLink,
                                 },
                             ]}
                         >
@@ -184,8 +184,8 @@ const {
                                 name="fa6-solid:arrow-up-right-from-square"
                             />
                         </a>
-                    )
-                }
+                    )}
+                </div>
 
                 {/* ❯ Mobile Top Zone: profile (and any mobilePosition:"top" widgets) — only on mobile */}
                 {/* ❯ @hint transparentClass intentionally omitted here — outer wrapper manages

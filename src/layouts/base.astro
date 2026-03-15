@@ -331,7 +331,7 @@ import { initTheme } from "@utils/theme";
 import { initHue } from "@utils/hue";
 import { initMarkdownActions } from "@/utils/markdown";
 import { initFancybox, cleanupFancybox } from "@utils/fancybox";
-import { loadAndInitTranslate } from "@utils/language";
+import { loadAndInitTranslate, reExecuteTranslationIfActive } from "@utils/language";
 import { setupParticleEffects } from "@/utils/particle";
 
 // ❯ ERROR HANDLING
@@ -425,6 +425,8 @@ const setup = () => {
                 }
             }
         }
+        // ❯ Re-translate new content when user has a target language selected.
+        reExecuteTranslationIfActive();
     })
     window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
         if ((window as any).scrollProtectionManager && typeof (window as any).scrollProtectionManager.disable === 'function') {
@@ -458,6 +460,9 @@ const setup = () => {
         const heightExtend = document.getElementById('page-height-extend')
         if (heightExtend) {
             heightExtend.classList.remove('hidden')
+        }
+        if (typeof (window as any).updateMobileBackToMainVisibility === 'function') {
+            (window as any).updateMobileBackToMainVisibility();
         }
     });
     window.swup.hooks.on('visit:end', (_visit: {to: {url: string}}) => {

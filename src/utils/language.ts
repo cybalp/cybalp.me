@@ -189,3 +189,17 @@ export function toggleLanguage(langCode: string): void {
 	translate.changeLanguage(langCode);
 	setStoredLanguage(langCode);
 }
+
+// ❯ @doc Re-executes translation after Swup replaces content. Ensures new page
+// content is translated when user has a target language selected.
+// @hint Called from base.astro on content:replace.
+export function reExecuteTranslationIfActive(): void {
+	if (typeof window === "undefined" || !siteConfig.translate?.enable) return;
+	const translate = (window as any).translate;
+	if (!translate) return;
+	const targetLang = translate.to;
+	const sourceLang = translate.language?.getLocal?.();
+	if (targetLang && sourceLang && targetLang !== sourceLang) {
+		setTimeout(() => translate.execute(), 50);
+	}
+}

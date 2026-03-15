@@ -2,37 +2,32 @@
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ @status OK!
 // ❯ @path ./src/components/mobileBackToMain.astro
-// ❯ @desc Mobile-only pill button in the banner area. Always visible on all pages.
-//        Clicking opens the mobileProfilePopup overlay (profile card).
+// ❯ @desc Banner-strip pill button (same rules as Support Me). Opens profile popup on click.
+//        Mobile-only; shares .banner-strip__btn styling with Support Me for consistency.
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ❯ IMPORTS
 import { Icon } from "astro-icon/components";
 import { profileConfig } from "@/config";
 
+// ❯ PROPS
+// ❯ @hint isMainPage kept for potential future use (e.g. different behavior on main).
+interface Props {
+    isMainPage?: boolean;
+}
+const { isMainPage = false } = Astro.props;
+
 // ❯ DATA
 const avatar = profileConfig.avatar;
 ---
 
-<!-- ❯ RENDER
-     - absolute: positioned relative to the .relative wrapper in grid.astro
-     - left-4 / -top-13: mirrors banner-credit position on opposite side
-     - z-[60]: above the banner (z-10) and navbar (z-50)
-     - initial style: server-rendered visibility — JS updates on page transitions
-     - NO onload-animation-up: avoids opacity:0 initial state
-     - NO "block" class: only "flex" so there is no display: conflict with md:hidden
-     - initial style: server-rendered visibility — JS updates on page transitions
-     - NO onload-animation-up: avoids opacity:0 initial state
-     - NO "block" class: only "flex" so there is no display: conflict with md:hidden
--->
+<!-- ❯ RENDER — same base as Support Me (.banner-strip__btn), only Main opens profile popup -->
 <button
     id="mobile-btm-btn"
+    type="button"
     aria-label="Open profile card"
     aria-expanded="false"
-    class="group transition-all absolute flex items-center gap-2 rounded-full
-           pl-1.5 pr-3 left-4 -top-13 h-9 z-[60]
-           bg-black/60 hover:bg-black/75 active:bg-black/85
-           md:hidden cursor-pointer"
+    class="banner-strip__btn group onload-animation-up transition-all flex justify-center items-center gap-2 rounded-full pl-1.5 pr-3 h-9 bg-black/60 hover:bg-black/70 active:bg-black/85 md:hidden cursor-pointer pointer-events-auto"
 >
     {avatar ? (
         <img
@@ -90,4 +85,13 @@ document.addEventListener('astro:page-load', () => {
     }
     initBackToMainBtn();
 });
+
+// ❯ @doc Placeholder for any future visibility logic. Main button is now shown on all pages in mobile view.
+function updateMobileBackToMainVisibility() {
+    const btn = document.getElementById('mobile-btm-btn');
+    if (!btn) return;
+    // Main button always visible on mobile; no hide-on-main logic.
+}
+window.updateMobileBackToMainVisibility = updateMobileBackToMainVisibility;
+updateMobileBackToMainVisibility();
 </script>

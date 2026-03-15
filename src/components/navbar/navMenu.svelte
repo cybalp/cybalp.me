@@ -125,7 +125,7 @@ onMount(() => {
         class="float-panel fixed transition-all right-4 px-2 py-2 max-h-[85vh] overflow-y-auto w-72"
         class:float-panel-closed={!isOpen}
     >
-        <!-- ❯ NAV LINKS — close menu on click so new page loads with menu closed -->
+        <!-- ❯ close menu on click so new page loads with menu closed -->
         {#each links as link}
             <div class="mobile-menu-item">
                 <a

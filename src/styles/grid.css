@@ -21,27 +21,24 @@
     min-height: calc(100vh - 5.5rem) !important;
 }
 
-/* ❯ Support Me: visible on main page */
-body.is-main.enable-banner #banner-credit {
+/* ❯ Banner strip — container for Main + Support Me; same rules for both (modular). */
+.banner-strip > * {
+    pointer-events: auto;
+}
+
+/* ❯ Banner mode: strip visible on main page (main-grid translate moves whole strip) */
+body.enable-banner.is-main .banner-strip {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
-/* ❯ Main + Support Me: visible in no-banner mode, not hidden behind navbar */
-.no-banner-layout #banner-credit {
+/* ❯ No-banner mode: strip at top of content area */
+.no-banner-layout .banner-strip {
     top: 0.5rem !important;
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-}
-@media (max-width: 767px) {
-    .no-banner-layout #mobile-btm-btn {
-        top: 0.5rem !important;
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
 }
 
 /* ❯ RESPONSIVE DESIGN */

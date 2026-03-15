@@ -16,7 +16,7 @@ site:
     translate:
         enable: true
         service: "client.edge"
-        showSelectTag: true
+        showSelectTag: false
         autoDiscriminate: true
         ignoreClasses: ["ignore", "banner-title", "banner-subtitle"]
         ignoreTags: ["script", "style", "code", "pre"]

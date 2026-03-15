@@ -145,12 +145,12 @@ const {
                     id="main-grid"
                     class={`transition-all duration-600 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto] mx-auto gap-4 px-0 md:px-4 ${!hasAnyComponents ? "mobile-no-sidebar" : ""} ${(hasLeftSidebar || hasRightSidebar) ? "mobile-both-sidebar" : ""}`}
                 >
-                {/* ❯ Banner buttons bar — outside main to avoid overflow-hidden clipping; visible in all wallpaper modes */}
+                {/* ❯ Banner strip — fixed row: Main (left) + Support Me (right). Same rules for both; only Main opens profile popup. */}
                 <div
-                    id="banner-buttons-bar"
-                    class="relative min-h-12 col-span-full w-full shrink-0"
+                    id="banner-strip"
+                    class="banner-strip absolute left-0 right-0 -top-13 z-[60] flex justify-between items-center px-4 min-h-9 pointer-events-none"
                 >
-                    <MobileBackToMain />
+                    <MobileBackToMain isMainPage={isMainPage} />
                     {hasBannerCredit && (
                         <a
                             href={siteConfig.wallpaper.banner?.credit?.url}
@@ -159,8 +159,7 @@ const {
                             rel="noopener"
                             aria-label="Visit image source"
                             class:list={[
-                                "group onload-animation-up transition-all absolute flex justify-center items-center rounded-full " +
-                                    "px-3 right-4 -top-13 bg-black/60 hover:bg-black/70 h-9",
+                                "banner-strip__btn group onload-animation-up transition-all flex justify-center items-center rounded-full h-9 px-3 bg-black/60 hover:bg-black/70 pointer-events-auto ml-auto",
                                 {
                                     "hover:pr-9 active:bg-black/80": hasBannerLink,
                                 },
@@ -186,6 +185,8 @@ const {
                         </a>
                     )}
                 </div>
+                {/* ❯ Banner area spacer — maintains layout height */}
+                <div class="min-h-12 col-span-full w-full shrink-0" aria-hidden="true"></div>
 
                 {/* ❯ Mobile Top Zone: profile (and any mobilePosition:"top" widgets) — only on mobile */}
                 {/* ❯ @hint transparentClass intentionally omitted here — outer wrapper manages

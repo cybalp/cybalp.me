@@ -1,11 +1,11 @@
 ---
 title: "Linus Torvalds"
 published: 2026-03-16
-description: "Linus Torvalds mind analysis — the man who runs the world's largest open source project with zero tolerance for bullshit."
+description: "Linus Torvalds mind analysis"
 cover: "img/linus-torvalds.webp"
 coverInContent: false
 pinned: false
-tags: ["Linux", "Open Source", "Git"]
+tags: ["Linux", "Git"]
 category: "WHO!"
 draft: false
 comment: true
@@ -19,6 +19,9 @@ sourceLink: ""
 # relationships:
 # target: Entry
 ---
+
+| <div align="center">![Linus Torvalds](img/linus-torvalds-thumbnail.webp)</div> |
+| :---: |
 
 :::tip
 "Talk is cheap. Show me the code."
@@ -44,8 +47,7 @@ Linus Torvalds didn't just create Linux. He created a **culture**. A culture whe
 
 In 2025, he proved it again. Bcachefs — a modern filesystem with ~117,000 lines of code — was **completely removed** from the Linux kernel. Not because the code was bad. Because the maintainer, Kent Overstreet, violated the rules: substantive changes during release candidates, emotional responses to feedback, and a breakdown of the trust that keeps the kernel stable. Torvalds didn't hesitate. Out. The message was clear: :spoiler[**The process protects billions of devices. Your feelings don't.**]
 
-| <div align="center">![Linus Torvalds](img/linus-torvalds.webp)</div> |
-| :---: |
+
 
 ## Talk is cheap. Show me the code.
 

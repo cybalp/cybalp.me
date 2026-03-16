@@ -33,10 +33,12 @@ interface Props {
 	sortedPosts?: VaultPost[];
 	categoryList?: Category[];
 	tagList?: Tag[];
+	title?: string;
+	description?: string;
 }
 
 // ❯ PROPS EXTRACTION
-let { sortedPosts = [], categoryList = [], tagList = [] }: Props = $props();
+let { sortedPosts = [], categoryList = [], tagList = [], title = "", description = "" }: Props = $props();
 
 // ❯ STATE MANAGEMENT
 let tags = $state<string[]>([]);
@@ -167,6 +169,12 @@ const showExpandCollapse = $derived(tree.length >= EXPAND_COLLAPSE_THRESHOLD);
 const vaultBaseUrl = url("/vault/");
 const availableYears = $derived(getYearsFromPosts(sortedPosts));
 const totalPostsCount = $derived(sortedPosts.length);
+// Filtered/total format: "2/6" when filtered, "6" when not
+const countDisplay = $derived(
+	hasActiveFilters && totalFilteredCount !== totalPostsCount
+		? `${totalFilteredCount}/${totalPostsCount}`
+		: String(totalPostsCount),
+);
 
 // @docs Keep URL in sync with filter state for shareable links.
 $effect(() => {
@@ -229,6 +237,17 @@ $effect(() => {
 
 <!-- ❯ RENDER -->
 <div class="vault-panel" class:reduced-motion={reducedMotion} role="region" aria-label="Vault post list">
+	{#if title}
+		<header class="vault-header">
+			<div class="vault-header-text">
+				<h1 class="vault-title arge-title">{title}</h1>
+				{#if description}
+					<p class="vault-description">{description}</p>
+				{/if}
+			</div>
+			<span class="vault-count" aria-live="polite">{countDisplay}</span>
+		</header>
+	{/if}
 	<!-- @gogogo vault toolbar - sticky, search, sort, expand/collapse -->
 	<div class="vault-toolbar vault-toolbar-sticky">
 		<div class="vault-toolbar-left">
@@ -261,12 +280,6 @@ $effect(() => {
 				</div>
 			{/if}
 		</div>
-		<span class="vault-result-count" aria-live="polite">
-			{totalFilteredCount} {totalFilteredCount === 1 ? i18n(I18nKey.postCount) : i18n(I18nKey.postsCount)}
-			{#if hasActiveFilters && totalFilteredCount !== totalPostsCount}
-				<span class="vault-result-of"> / {totalPostsCount}</span>
-			{/if}
-		</span>
 		<!-- @gogogo vault filters - mobile filter drawer trigger -->
 		<button
 			type="button"
@@ -511,19 +524,53 @@ $effect(() => {
 		position: sticky;
 		top: 0;
 		z-index: 10;
-		background: var(--card-bg);
-		padding-bottom: 0.25rem;
+		padding-bottom: 0.5rem;
 		margin-bottom: -0.25rem;
 	}
 
-	.vault-result-count {
-		font-size: 0.8125rem;
-		color: oklch(0.55 0.04 var(--hue));
-		font-variant-numeric: tabular-nums;
+	.vault-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 2rem;
 	}
 
-	.vault-result-of {
-		color: oklch(0.5 0.04 var(--hue));
+	.vault-header-text {
+		min-width: 0;
+	}
+
+	.vault-title {
+		font-size: 1.5rem;
+		font-weight: 800;
+		margin: 0 0 0.75rem;
+		line-height: 1.2;
+	}
+
+	@media (min-width: 768px) {
+		.vault-title {
+			font-size: 1.875rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.vault-title {
+			font-size: 2.25rem;
+		}
+	}
+
+	.vault-description {
+		font-size: 0.9375rem;
+		color: oklch(0.55 0.04 var(--hue));
+		margin: 0;
+	}
+
+	.vault-count {
+		font-size: 1.25rem;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		color: oklch(0.78 0.05 var(--hue));
+		flex-shrink: 0;
 	}
 
 	.vault-toolbar-left {
@@ -997,6 +1044,33 @@ $effect(() => {
 	}
 
 	@media (max-width: 767px) {
+		.vault-header {
+			margin-bottom: 1.5rem;
+		}
+
+		.vault-count {
+			font-size: 1.125rem;
+		}
+
+		.vault-toolbar {
+			gap: 0.625rem;
+			row-gap: 0.75rem;
+		}
+
+		.vault-toolbar-left {
+			flex: 1;
+			min-width: min(100%, 12rem);
+		}
+
+		.vault-search {
+			max-width: none;
+		}
+
+		.vault-mobile-filter-btn {
+			min-height: 2.5rem;
+			padding: 0.5rem 1rem;
+		}
+
 		.tree-post-tags {
 			display: none;
 		}

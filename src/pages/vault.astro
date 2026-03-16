@@ -34,17 +34,9 @@ const [sortedPostsList, categoryList, tagList] = await Promise.all([
     <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
         <div class="card-base z-10 px-9 py-6 relative w-full ">
             <BackwardButton currentPath={Astro.url.pathname} />
-            <header class="mb-8">
-                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-3 arge-title">
-                    {pageTitle}
-                </h1>
-                {pageDescription && (
-                    <p class="text-neutral-600 dark:text-neutral-400">
-                        {pageDescription}
-                    </p>
-                )}
-            </header>
             <VaultPanel
+				title={pageTitle}
+				description={pageDescription}
 				sortedPosts={sortedPostsList}
 				categoryList={categoryList}
 				tagList={tagList}

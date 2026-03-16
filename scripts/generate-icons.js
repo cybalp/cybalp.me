@@ -7,6 +7,9 @@
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 // ❯ CONFIGURATION
 
@@ -92,10 +95,15 @@ function loadIconSet(prefix) {
     }
 
     try {
-        const iconSetPath = join(ROOT_DIR, "node_modules", packageName, "icons.json");
+        // ❯ @docs use require.resolve for pnpm compatibility (symlinked .pnpm store)
+        let iconSetPath = join(ROOT_DIR, "node_modules", packageName, "icons.json");
         if (!existsSync(iconSetPath)) {
-            console.warn(`Icon set file not found: ${iconSetPath}`);
-            return null;
+            try {
+                iconSetPath = require.resolve(`${packageName}/icons.json`);
+            } catch {
+                console.warn(`Icon set file not found: ${iconSetPath}`);
+                return null;
+            }
         }
         const data = JSON.parse(readFileSync(iconSetPath, "utf-8"));
         iconSetCache.set(prefix, data);

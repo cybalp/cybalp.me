@@ -2,7 +2,7 @@
 title: "KeePassXC"
 published: 2026-03-16
 description: "KeePassXC — cross-platform, open-source password manager. NO cloud!. NO ads! Full control!"
-cover: "img/keepassxc.png"
+cover: "img/keepassxc.webp"
 coverInContent: false
 pinned: false
 tags: ["Password Manager", "Security"]

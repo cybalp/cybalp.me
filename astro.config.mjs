@@ -5,7 +5,7 @@
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ❯ IMPORTS (external)
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import svelte, { vitePreprocess } from "@astrojs/svelte";
@@ -60,12 +60,30 @@ export default defineConfig({
     base: "/",
     trailingSlash: "always",
     adapter: adapter,
+    // ❯ @hint Decap CMS env (required when adminDisabled: true — local admin page)
+    env: {
+        schema: {
+            PUBLIC_DECAP_CMS_VERSION: envField.string({
+                context: "client",
+                access: "public",
+                optional: true,
+                default: "3.9.0",
+            }),
+            PUBLIC_DECAP_CMS_SRC_URL: envField.string({
+                context: "client",
+                access: "public",
+                optional: true,
+                default: "",
+            }),
+        },
+    },
     // ❯ INTEGRATIONS
     // ❯ @gogogo new integration
     integrations: [
         decapCmsOauth({
             decapCMSVersion: "3.9.0",
             oauthDisabled: false, // Enable OAuth, requires GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET env vars
+            adminDisabled: true, // @hint use local admin page — package injectRoute resolves path incorrectly (ENOENT)
         }),
         swup({
             theme: false,

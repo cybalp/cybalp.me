@@ -47,7 +47,11 @@ const tagsSchema = z.preprocess((arg) => {
 // ❯ @docs [^_]* pattern skips _ prefixed files (templates, staging drafts)
 // ❯ @gogogo new collection
 const postsCollection = defineCollection({
-	loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/posts" }),
+	loader: glob({
+		pattern: "**/[^_]*.{md,mdx}",
+		base: "./src/content/posts",
+		generateId: ({ entry }) => entry.replace(/\.(md|mdx|markdown)$/i, ""),
+	}),
 	schema: z.object({
 		title: z.string(),
 		published: dateSchema,

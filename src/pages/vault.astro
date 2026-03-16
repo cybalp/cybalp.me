@@ -1,23 +1,33 @@
 ---
-import BackwardButton from "@components/backwardButton.astro";
-import VaultPanel from "@components/VaultPanel.svelte";
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ @status OK!
 // ❯ @path ./src/pages/vault.astro
-// ❯ @desc Vault posts listing page.
+// ❯ @desc Vault posts listing page with tree-structured history.
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 // ❯ IMPORTS
+import BackwardButton from "@components/backwardButton.astro";
+import VaultPanel from "@components/VaultPanel.svelte";
 import { LinkPresets } from "@constants/link-presets";
 import GridLayout from "@layouts/grid.astro";
-import { getSortedPostsList } from "@utils/content";
+import {
+	getCategoryList,
+	getSortedPostsList,
+	getTagList,
+} from "@utils/content";
 import { LinkPreset } from "@/types/config";
 
 // ❯ CONFIGURATION
 const pageTitle = LinkPresets[LinkPreset.Vault].name;
 const pageDescription = LinkPresets[LinkPreset.Vault].description;
 
-// ❯ DATA FETCHING
-const sortedPostsList = await getSortedPostsList();
+	// @gogogo vault - data source for VaultPanel
+	// ❯ DATA FETCHING
+const [sortedPostsList, categoryList, tagList] = await Promise.all([
+	getSortedPostsList(),
+	getCategoryList(),
+	getTagList(),
+]);
 ---
 
 <GridLayout title={pageTitle} description={pageDescription}>
@@ -34,7 +44,12 @@ const sortedPostsList = await getSortedPostsList();
                     </p>
                 )}
             </header>
-            <VaultPanel sortedPosts={sortedPostsList} client:load></VaultPanel>
+            <VaultPanel
+				sortedPosts={sortedPostsList}
+				categoryList={categoryList}
+				tagList={tagList}
+				client:load
+			/>
         </div>
     </div>
 </GridLayout>

@@ -9,6 +9,14 @@ import { langToLocaleMap } from "@i18n/language";
 import { getDefaultLanguage } from "./language";
 
 // ❯ DATE FORMATTING
+// ❯ @doc Formats date to MM-DD string.
+export function formatDateToMMDD(date: Date | string): string {
+	const d = new Date(date);
+	const m = (d.getMonth() + 1).toString().padStart(2, "0");
+	const day = d.getDate().toString().padStart(2, "0");
+	return `${m}-${day}`;
+}
+
 // ❯ @doc Formats date to YYYY-MM-DD string.
 export function formatDateToYYYYMMDD(date: Date): string {
 	return date.toISOString().substring(0, 10);

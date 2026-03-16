@@ -13,6 +13,8 @@ import type { Tag } from "@utils/tag";
 import { getPostUrl, getTagUrl, url } from "@utils/url";
 import {
 	buildVaultTree,
+	buildVaultFilterUrl,
+	getYearsFromPosts,
 	type CategoryNode,
 	type VaultPost,
 } from "@utils/vault";
@@ -47,6 +49,8 @@ let searchDebounced = $state("");
 let sortMode = $state<"date-desc" | "date-asc" | "title-asc" | "title-desc">("date-desc");
 let mobileFilterOpen = $state(false);
 let reducedMotion = $state(false);
+let searchInputEl: HTMLInputElement | undefined;
+let filterDrawerEl: HTMLDivElement | undefined;
 
 // ❯ LIFECYCLE
 // @hint Reads ?tag=, ?category=, ?uncategorized=, ?year= from URL.
@@ -85,14 +89,14 @@ onMount(() => {
 	loadCollapsed();
 	const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
 	reducedMotion = mq.matches;
-	const onReduceChange = (e: MediaQueryListEvent) => {
-		reducedMotion = e.matches;
-	};
+	const onReduceChange = (e: MediaQueryListEvent) => { reducedMotion = e.matches; };
 	mq.addEventListener("change", onReduceChange);
 	window.addEventListener("popstate", syncFromUrl);
+	document.addEventListener("swup:contentReplaced", syncFromUrl);
 	return () => {
 		mq.removeEventListener("change", onReduceChange);
 		window.removeEventListener("popstate", syncFromUrl);
+		document.removeEventListener("swup:contentReplaced", syncFromUrl);
 	};
 });
 
@@ -161,12 +165,72 @@ const totalFilteredCount = $derived(tree.reduce((sum, n) => sum + n.years.reduce
 const showExpandCollapse = $derived(tree.length >= EXPAND_COLLAPSE_THRESHOLD);
 
 const vaultBaseUrl = url("/vault/");
+const availableYears = $derived(getYearsFromPosts(sortedPosts));
+const totalPostsCount = $derived(sortedPosts.length);
+
+// @docs Keep URL in sync with filter state for shareable links.
+$effect(() => {
+	const _ = { tags, categories, uncategorized, yearFilter };
+	if (typeof window === "undefined") return;
+	const path = (window.location.pathname || "/").replace(/\/$/, "");
+	if (!path.endsWith("vault")) return;
+	const u = buildVaultFilterUrl({ tags, categories, uncategorized, yearFilter });
+	const want = u.replace(/\/vault\/?/, "/vault/");
+	const have = ((window.location.pathname || "/") + (window.location.search || "")).replace(/\/vault\/?/, "/vault/");
+	if (have !== want) window.history.replaceState(null, "", u);
+});
+
+function removeTag(t: string) {
+	tags = tags.filter((x) => x !== t);
+	pushUrl();
+}
+function removeCategory(c: string) {
+	categories = categories.filter((x) => x !== c);
+	pushUrl();
+}
+function removeUncategorized() {
+	uncategorized = null;
+	pushUrl();
+}
+function removeYear() {
+	yearFilter = null;
+	pushUrl();
+}
+function addTag(t: string) {
+	if (!tags.includes(t)) tags = [...tags, t];
+	pushUrl();
+}
+function pushUrl() {
+	const u = buildVaultFilterUrl({ tags, categories, uncategorized, yearFilter });
+	window.history.pushState(null, "", u);
+}
+
+// @docs Keyboard: / focus search, Escape clear/close drawer.
+function handleKeydown(e: KeyboardEvent) {
+	if (e.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes((e.target as HTMLElement)?.tagName)) {
+		e.preventDefault();
+		searchInputEl?.focus();
+	} else if (e.key === "Escape") {
+		searchQuery = "";
+		mobileFilterOpen = false;
+	}
+}
+
+// @docs Focus trap: when drawer opens, focus drawer content.
+$effect(() => {
+	if (mobileFilterOpen && filterDrawerEl) {
+		const content = filterDrawerEl.querySelector(".vault-filter-drawer-content") as HTMLElement | null;
+		content?.focus();
+	}
+});
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 <!-- ❯ RENDER -->
-<div class="vault-panel" class:reduced-motion={reducedMotion}>
-	<!-- ❯ Toolbar: search, sort, expand/collapse, mobile filters -->
-	<div class="vault-toolbar">
+<div class="vault-panel" class:reduced-motion={reducedMotion} role="region" aria-label="Vault post list">
+	<!-- @gogogo vault toolbar - sticky, search, sort, expand/collapse -->
+	<div class="vault-toolbar vault-toolbar-sticky">
 		<div class="vault-toolbar-left">
 			<input
 				type="search"
@@ -174,6 +238,7 @@ const vaultBaseUrl = url("/vault/");
 				placeholder={i18n(I18nKey.vaultSearchPlaceholder)}
 				aria-label={i18n(I18nKey.vaultSearchPlaceholder)}
 				bind:value={searchQuery}
+				bind:this={searchInputEl}
 			/>
 			<select
 				class="vault-sort"
@@ -196,6 +261,12 @@ const vaultBaseUrl = url("/vault/");
 				</div>
 			{/if}
 		</div>
+		<span class="vault-result-count" aria-live="polite">
+			{totalFilteredCount} {totalFilteredCount === 1 ? i18n(I18nKey.postCount) : i18n(I18nKey.postsCount)}
+			{#if hasActiveFilters && totalFilteredCount !== totalPostsCount}
+				<span class="vault-result-of"> / {totalPostsCount}</span>
+			{/if}
+		</span>
 		<!-- @gogogo vault filters - mobile filter drawer trigger -->
 		<button
 			type="button"
@@ -208,13 +279,92 @@ const vaultBaseUrl = url("/vault/");
 		</button>
 	</div>
 
-	<!-- @gogogo vault filters - mobile filter drawer -->
+	<!-- @gogogo vault filters - desktop: categories, tags, year -->
+	<div class="vault-desktop-filters hidden md:flex">
+		<div class="vault-filter-group">
+			<span class="vault-filter-group-label">{i18n(I18nKey.categories)}</span>
+			<div class="vault-filter-chips">
+				<button type="button" class="vault-chip" class:active={categories.length === 0 && !uncategorized} onclick={() => { categories = []; uncategorized = null; pushUrl(); }}>
+					{i18n(I18nKey.projectsAll)}
+				</button>
+				{#each categoryList as cat}
+					<button
+						type="button"
+						class="vault-chip"
+						class:active={categories.includes(cat.name)}
+						onclick={() => {
+							if (categories.includes(cat.name)) categories = categories.filter((c) => c !== cat.name);
+							else { categories = [...categories, cat.name]; uncategorized = null; }
+							pushUrl();
+						}}
+					>
+						{cat.name} ({cat.count})
+					</button>
+				{/each}
+				<button
+					type="button"
+					class="vault-chip"
+					class:active={uncategorized !== null}
+					onclick={() => {
+						uncategorized = uncategorized ? null : "1";
+						categories = [];
+						pushUrl();
+					}}
+				>
+					{i18n(I18nKey.uncategorized)}
+				</button>
+			</div>
+		</div>
+		<div class="vault-filter-group">
+			<span class="vault-filter-group-label">{i18n(I18nKey.tags)}</span>
+			<div class="vault-filter-chips">
+				{#each tagList as tag}
+					<button
+						type="button"
+						class="vault-chip"
+						class:active={tags.includes(tag.name)}
+						onclick={() => {
+							if (tags.includes(tag.name)) tags = tags.filter((t) => t !== tag.name);
+							else tags = [...tags, tag.name];
+							pushUrl();
+						}}
+					>
+						#{tag.name} ({tag.count})
+					</button>
+				{/each}
+			</div>
+		</div>
+		{#if availableYears.length > 1}
+			<div class="vault-filter-group vault-filter-year">
+				<span class="vault-filter-group-label">{i18n(I18nKey.vaultYear)}</span>
+				<select
+					class="vault-year-select"
+					aria-label={i18n(I18nKey.vaultYear)}
+					value={yearFilter ?? ""}
+					onchange={(e) => {
+						const v = (e.currentTarget as HTMLSelectElement).value;
+						yearFilter = v === "" ? null : Number.parseInt(v, 10);
+						pushUrl();
+					}}
+				>
+					<option value="">{i18n(I18nKey.vaultAllYears)}</option>
+					{#each availableYears as y}
+						<option value={y}>{y}</option>
+					{/each}
+				</select>
+			</div>
+		{/if}
+	</div>
+
+	<!-- @gogogo vault filters - mobile filter drawer (focus trap when open) -->
 	<div
 		id="vault-filter-drawer"
 		class="vault-filter-drawer md:hidden"
 		class:open={mobileFilterOpen}
 		role="dialog"
+		aria-modal="true"
 		aria-label={i18n(I18nKey.vaultFilters)}
+		bind:this={filterDrawerEl}
 	>
 		<button
 			type="button"
@@ -222,7 +372,7 @@ const vaultBaseUrl = url("/vault/");
 			aria-label="Close filters"
 			onclick={() => (mobileFilterOpen = false)}
 		></button>
-		<div class="vault-filter-drawer-content">
+		<div class="vault-filter-drawer-content" tabindex="-1">
 			<h3 class="vault-filter-drawer-title">{i18n(I18nKey.categories)}</h3>
 			<div class="vault-filter-drawer-chips">
 				<a href={vaultBaseUrl} class="vault-drawer-chip">{i18n(I18nKey.projectsAll)}</a>
@@ -239,26 +389,38 @@ const vaultBaseUrl = url("/vault/");
 		</div>
 	</div>
 
-	<!-- ❯ Active filter badge + Clear link -->
+	<!-- ❯ Active filter badges with individual remove -->
 	{#if hasActiveFilters}
 		<div class="vault-filter-bar">
 			<span class="vault-filter-badges">
 				{#each categories as cat}
-					<span class="vault-filter-badge">{cat}</span>
+					<span class="vault-filter-badge">
+						{cat}
+						<button type="button" class="vault-badge-remove" aria-label={i18n(I18nKey.vaultRemoveFilter)} onclick={() => removeCategory(cat)}>×</button>
+					</span>
 				{/each}
 				{#each tags as tag}
-					<span class="vault-filter-badge">#{tag}</span>
+					<span class="vault-filter-badge">
+						#{tag}
+						<button type="button" class="vault-badge-remove" aria-label={i18n(I18nKey.vaultRemoveFilter)} onclick={() => removeTag(tag)}>×</button>
+					</span>
 				{/each}
 				{#if uncategorized}
-					<span class="vault-filter-badge">{i18n(I18nKey.uncategorized)}</span>
+					<span class="vault-filter-badge">
+						{i18n(I18nKey.uncategorized)}
+						<button type="button" class="vault-badge-remove" aria-label={i18n(I18nKey.vaultRemoveFilter)} onclick={removeUncategorized}>×</button>
+					</span>
 				{/if}
 				{#if yearFilter !== null && !Number.isNaN(yearFilter)}
-					<span class="vault-filter-badge">{yearFilter}</span>
+					<span class="vault-filter-badge">
+						{yearFilter}
+						<button type="button" class="vault-badge-remove" aria-label={i18n(I18nKey.vaultRemoveFilter)} onclick={removeYear}>×</button>
+					</span>
 				{/if}
 			</span>
-			<a href={vaultBaseUrl} class="vault-filter-clear">
+			<button type="button" class="vault-filter-clear" onclick={() => { tags = []; categories = []; uncategorized = null; yearFilter = null; pushUrl(); }}>
 				{i18n(I18nKey.vaultClearFilters)}
-			</a>
+			</button>
 		</div>
 	{/if}
 
@@ -303,19 +465,17 @@ const vaultBaseUrl = url("/vault/");
 								</div>
 							{/if}
 							{#each yearGroup.posts as post}
-								<a
-									href={getPostUrl(post)}
-									aria-label={post.data.title}
-									class="tree-post group"
-								>
-									<span class="tree-post-date">{formatDateToMMDD(post.data.published)}</span>
-									<span class="tree-post-title">{post.data.title}</span>
+								<div class="tree-post group">
+									<a href={getPostUrl(post)} aria-label={post.data.title} class="tree-post-link">
+										<span class="tree-post-date">{formatDateToMMDD(post.data.published)}</span>
+										<span class="tree-post-title">{post.data.title}</span>
+									</a>
 									<span class="tree-post-tags">
 										{#each parseTags(post.data.tags) as tag}
-											<span class="tree-post-tag">#{tag}</span>
+											<button type="button" class="tree-post-tag" onclick={(e) => { e.preventDefault(); e.stopPropagation(); addTag(tag); }}>#{tag}</button>
 										{/each}
 									</span>
-								</a>
+								</div>
 							{/each}
 						{/each}
 						</div>
@@ -345,6 +505,25 @@ const vaultBaseUrl = url("/vault/");
 		justify-content: space-between;
 		flex-wrap: wrap;
 		gap: 0.5rem;
+	}
+
+	.vault-toolbar-sticky {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: var(--card-bg);
+		padding-bottom: 0.25rem;
+		margin-bottom: -0.25rem;
+	}
+
+	.vault-result-count {
+		font-size: 0.8125rem;
+		color: oklch(0.55 0.04 var(--hue));
+		font-variant-numeric: tabular-nums;
+	}
+
+	.vault-result-of {
+		color: oklch(0.5 0.04 var(--hue));
 	}
 
 	.vault-toolbar-left {
@@ -518,12 +697,94 @@ const vaultBaseUrl = url("/vault/");
 		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--primary);
-		text-decoration: none;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0;
 		transition: opacity 0.2s ease;
 	}
 
 	.vault-filter-clear:hover {
 		opacity: 0.8;
+	}
+
+	.vault-badge-remove {
+		margin-left: 0.25rem;
+		padding: 0 0.125rem;
+		background: none;
+		border: none;
+		color: inherit;
+		cursor: pointer;
+		font-size: 1rem;
+		line-height: 1;
+		opacity: 0.8;
+	}
+
+	.vault-badge-remove:hover {
+		opacity: 1;
+	}
+
+	.vault-desktop-filters {
+		flex-wrap: wrap;
+		gap: 1rem;
+		padding: 0.75rem 0;
+		border-bottom: 1px solid var(--line-divider);
+	}
+
+	.vault-filter-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+	}
+
+	.vault-filter-group-label {
+		font-size: 0.6875rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: oklch(0.55 0.04 var(--hue));
+	}
+
+	.vault-filter-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.375rem;
+	}
+
+	.vault-chip {
+		font-size: 0.8125rem;
+		padding: 0.375rem 0.625rem;
+		border-radius: 0.375rem;
+		border: 1px solid var(--line-divider);
+		background: var(--btn-regular-bg);
+		color: oklch(0.78 0.05 var(--hue));
+		cursor: pointer;
+		transition: background 0.2s ease, color 0.2s ease;
+	}
+
+	.vault-chip:hover {
+		background: var(--btn-regular-bg-hover);
+		color: var(--primary);
+	}
+
+	.vault-chip.active {
+		background: color-mix(in oklch, var(--primary) 15%, transparent);
+		border-color: var(--primary);
+		color: var(--primary);
+	}
+
+	.vault-filter-year {
+		margin-left: auto;
+	}
+
+	.vault-year-select {
+		padding: 0.375rem 0.75rem;
+		font-size: 0.8125rem;
+		border-radius: 0.375rem;
+		border: 1px solid var(--line-divider);
+		background: var(--btn-regular-bg);
+		color: oklch(0.78 0.05 var(--hue));
+		min-width: 6rem;
 	}
 
 	.vault-empty {
@@ -667,10 +928,21 @@ const vaultBaseUrl = url("/vault/");
 		gap: 0.75rem;
 		padding: 0.375rem 0.5rem;
 		margin: 0.0625rem 0;
-		text-decoration: none;
-		transition: background 0.2s ease, transform 0.15s ease;
 		min-height: 2.25rem;
 		border-radius: 0.375rem;
+	}
+
+	.tree-post-link {
+		grid-column: 1 / 3;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		text-decoration: none;
+		min-width: 0;
+	}
+
+	.tree-post-link:hover .tree-post-title {
+		color: var(--primary);
 	}
 
 	.tree-post:hover {
@@ -699,10 +971,6 @@ const vaultBaseUrl = url("/vault/");
 		min-width: 0;
 	}
 
-	.tree-post:hover .tree-post-title {
-		color: var(--primary);
-	}
-
 	.tree-post-tags {
 		display: flex;
 		flex-wrap: wrap;
@@ -719,6 +987,13 @@ const vaultBaseUrl = url("/vault/");
 		border-radius: 0.2rem;
 		background: color-mix(in oklch, var(--btn-regular-bg) 100%, transparent);
 		border: 1px solid var(--line-divider);
+		cursor: pointer;
+		transition: background 0.2s ease, color 0.2s ease;
+	}
+
+	.tree-post-tag:hover {
+		background: color-mix(in oklch, var(--primary) 15%, transparent);
+		color: var(--primary);
 	}
 
 	@media (max-width: 767px) {

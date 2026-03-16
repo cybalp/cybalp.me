@@ -1,10 +1,11 @@
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ @status OK!
 // ❯ @path ./src/utils/vault.ts
-// ❯ @desc Vault tree building and filter logic.
+// ❯ @desc Vault tree building, filter logic, and URL helpers.
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ❯ IMPORTS
+import { url } from "@utils/url";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryPathLabel, getCategoryPathParts } from "@utils/category";
@@ -162,4 +163,33 @@ export function buildVaultTree(
 		nodes.push({ name: label, years: groupByYear(postsInCat, sortAsc) });
 	}
 	return nodes;
+}
+
+// ❯ URL HELPERS
+// @docs Builds vault URL with filter params for pushState/share.
+// @hint Search is client-only, not in URL.
+export function buildVaultFilterUrl(f: {
+	tags: string[];
+	categories: string[];
+	uncategorized: string | null;
+	yearFilter: number | null;
+}): string {
+	const params = new URLSearchParams();
+	f.tags.forEach((t) => params.append("tag", t));
+	f.categories.forEach((c) => params.append("category", c));
+	if (f.uncategorized) params.set("uncategorized", f.uncategorized);
+	if (f.yearFilter !== null && !Number.isNaN(f.yearFilter)) {
+		params.set("year", String(f.yearFilter));
+	}
+	const qs = params.toString();
+	return url(`/vault/${qs ? `?${qs}` : ""}`);
+}
+
+// @docs Extracts unique years from posts (desc).
+export function getYearsFromPosts(posts: VaultPost[]): number[] {
+	const set = new Set<number>();
+	for (const p of posts) {
+		set.add(new Date(p.data.published).getFullYear());
+	}
+	return Array.from(set).sort((a, b) => b - a);
 }

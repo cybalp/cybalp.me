@@ -5,7 +5,7 @@ description: "Store your SSH keys in KeePassXC. Once you unlock it, the keys are
 cover: "../APP!/img/keepassxc.webp"
 coverInContent: false
 pinned: false
-tags: ["KeePassXC", "SSH"]
+tags: ["Password Manager", "SSH"]
 category: ["HOW!"]
 draft: false
 comment: true

@@ -5,7 +5,7 @@ description: "KeePassXC — cross-platform, open-source password manager. NO clo
 cover: "img/keepassxc.webp"
 coverInContent: false
 pinned: false
-tags: ["Password Manager", "Security"]
+tags: ["Password Manager"]
 category: "APP!"
 draft: false
 comment: true

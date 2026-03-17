@@ -214,9 +214,15 @@ html.is-wallpaper-transitioning body {
 }
 
 /* @docs Mobile: remove will-change to avoid cover jank from layer promotion */
+/* @docs Mobile: disable Ken Burns zoom to prevent banner resize on small screens */
 @media (max-width: 768px) {
     .banner-container {
         will-change: auto;
+    }
+    .carousel-item.ken-burns-enabled,
+    .carousel-item.ken-burns-enabled.is-animating {
+        animation: none !important;
+        scale: 1 !important;
     }
 }
 

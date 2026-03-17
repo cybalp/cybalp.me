@@ -581,7 +581,9 @@ if (window.addEventListener) {
 
 // ❯ RESIZE HANDLER
 // ❯ @doc Updates banner height CSS variable on window resize.
+// ❯ @docs Mobile: skip resize updates to prevent banner grow/shrink from address bar show/hide.
 window.onresize = () => {
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
     let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
     offset = offset - offset % 4;
     document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);

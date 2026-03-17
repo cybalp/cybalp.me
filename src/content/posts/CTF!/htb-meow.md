@@ -1,7 +1,7 @@
 ---
 title: "Getting Started and Meow"
 published: 2026-03-17
-description: "Meow - Telnet"
+description: "Meow — Telnet"
 cover: "img/htb-meow.webp"
 coverInContent: false
 pinned: false

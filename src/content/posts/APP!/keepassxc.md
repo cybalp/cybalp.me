@@ -76,3 +76,5 @@ KeePassXC does not store your master password. It derives an encryption key from
 - [KeePassXC](https://keepassxc.org/) 
 - [GitHub](https://github.com/keepassxreboot/keepassxc) 
 - [Documentation](https://keepassxc.org/docs/)
+
+---

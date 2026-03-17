@@ -75,6 +75,18 @@ export default defineConfig({
                 optional: true,
                 default: "",
             }),
+            ADMIN_GITHUB_REPO_OWNER: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+                default: "cybalp",
+            }),
+            ADMIN_GITHUB_REPO_NAME: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+                default: "cybalp.me",
+            }),
         },
     },
     // ❯ INTEGRATIONS

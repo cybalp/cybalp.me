@@ -2,10 +2,11 @@
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ @status OK!
 // ❯ @path ./src/pages/admin-panel/index.astro
-// ❯ @desc Admin panel page entry point.
+// ❯ @desc Admin panel page entry point — Svelte SPA mount
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ IMPORTS
 import "../../styles/main.css";
+import AdminApp from "@components/admin/AdminApp.svelte";
 ---
 
 <!DOCTYPE html>
@@ -13,10 +14,13 @@ import "../../styles/main.css";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex" />
     <title>Admin Panel - CybAlp</title>
     <link rel="icon" type="image/png" href="/assets/images/logo.png">
 </head>
 <body>
-    <!-- ❯ ADMIN PANEL CONTENT -->
+    <div id="admin-root">
+        <AdminApp client:load />
+    </div>
 </body>
 </html>

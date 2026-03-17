@@ -52,14 +52,84 @@ if (!fs.existsSync(dirPath)) {
 }
 
 // ❯ POST GENERATION
+// ❯ @hint Use: npm run new-post -- CTF!/challenge-name  → creates CTF writeup
 
-const content = `---
+const isCtf = fileName.toLowerCase().includes("ctf!/") || args[0].toLowerCase().startsWith("ctf!");
+const defaultCategory = isCtf ? "CTF!" : "";
+const defaultTags = isCtf ? '["Web", "Crypto", "Forensics", "Pwn", "Reversing", "Misc"]' : "[]";
+
+const content = isCtf
+	? `---
+title: "[Platform] Challenge Name"
+published: ${getDate()}
+description: "One-line challenge summary"
+cover: ""
+coverInContent: false
+pinned: false
+tags: ${defaultTags}
+category: "CTF!"
+draft: false
+comment: true
+encrypted: false
+password: ""
+licenseName: ""
+author: "Alp"
+sourceLink: ""
+---
+
+:::tip[TL;DR]
+Flag: \`flag{...}\` — One sentence: how you got it.
+:::
+
+# Challenge
+
+- **Platform:** 
+- **Category:** 
+- **Difficulty:** 
+
+## Goal
+
+What does the challenge ask for?
+
+---
+
+# Recon
+
+\`\`\`bash
+# Commands, tools, initial enumeration
+\`\`\`
+
+---
+
+# Solution
+
+## Step 1: 
+
+\`\`\`bash
+# Commands
+\`\`\`
+
+## Step 2: 
+
+\`\`\`bash
+# Commands
+\`\`\`
+
+---
+
+# Flag
+
+\`\`\`
+flag{...}
+\`\`\`
+`
+	: `---
 title: ${args[0]}
 published: ${getDate()}
 description: ''
 cover: ''
 tags: []
-category: ''
+category: '${defaultCategory}'
 draft: false
 lang: ''
 ---

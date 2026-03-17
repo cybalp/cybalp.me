@@ -45,7 +45,7 @@ export type SortMode = "date-desc" | "date-asc" | "title-asc" | "title-desc";
 
 // ❯ CONSTANTS
 // @gogogo vault tree - category order for tree structure
-export const CATEGORY_ORDER = ["APP!", "HOW!", "WHO!"];
+export const CATEGORY_ORDER = ["CTF!", "APP!", "HOW!", "WHO!"];
 
 // ❯ HELPERS
 // @docs Checks if post category matches any target (supports hierarchical paths).

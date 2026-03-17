@@ -1,7 +1,7 @@
 ---
 title: "KeePassXC | SSH Agent Integration"
 published: 2026-03-17
-description: "Store your SSH keys in KeePassXC. Once you unlock it, the keys are automatically added to the SSH client. You no longer need separate key files or the `ssh-add` command."
+description: "Store your SSH keys in KeePassXC."
 cover: "../APP!/img/keepassxc.webp"
 coverInContent: false
 pinned: false

@@ -28,7 +28,7 @@ sourceLink: "https://www.hackthebox.com/"
 
 # Step 0: Getting Started
 
-If you're not sure how to get started, [this will help.](https://www.cybalp.me/posts/CTF!/ctf-start/)
+> If you're not sure how to get started, [this will help.](https://www.cybalp.me/posts/CTF!/htb-meow/#step-0-getting-started)
 
 ```bash
 

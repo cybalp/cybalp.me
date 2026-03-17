@@ -1,0 +1,63 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/post/postContentWithCover.astro
+// ❯ @desc Renders post content with cover image injected next to Machine Information block.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+import type { CollectionEntry } from "astro:content";
+import { getImage } from "astro:assets";
+import { getFileDirFromPath } from "@utils/url";
+import { injectMachineInfoCover } from "@utils/inject-machine-info-cover";
+
+// ❯ PROPS
+interface Props {
+	entry: CollectionEntry<"posts">;
+}
+
+const { entry } = Astro.props;
+
+// ❯ RENDER SLOT TO HTML
+const contentHtml = await Astro.slots.render("default");
+
+// ❯ RESOLVE COVER IMAGE (only if cover exists and content has Machine Information)
+// ❯ @hint Fallback to entry.id when filePath missing — glob loader may not provide filePath.
+let coverImgHtml = "";
+if (entry.data.cover) {
+	const contentDirRaw = entry.filePath
+		? getFileDirFromPath(entry.filePath)
+		: `content/posts/${entry.id.replace(/\/[^/]+$/, "")}`;
+	const contentDir = contentDirRaw.startsWith("src/")
+		? contentDirRaw
+		: `src/${contentDirRaw}`;
+	const importPath = `/${contentDir}/${entry.data.cover}`;
+	const imagesGlob = import.meta.glob<{ default: import("astro").ImageMetadata }>(
+		"/src/content/**/*.{jpeg,jpg,png,gif,webp}",
+	);
+	// ❯ @docs Try exact path first, then find by suffix (glob keys may vary).
+	let loader = imagesGlob[importPath] ?? imagesGlob[importPath.slice(1)];
+	if (!loader) {
+		const coverSuffix = entry.data.cover.replace(/^\.\//, "");
+		const contentDirNorm = contentDir.replace(/\\/g, "/");
+		for (const [key] of Object.entries(imagesGlob)) {
+			const keyNorm = key.replace(/\\/g, "/");
+			if (keyNorm.endsWith(coverSuffix) && keyNorm.includes(contentDirNorm)) {
+				loader = imagesGlob[key];
+				break;
+			}
+		}
+	}
+	const imageMod = await loader?.()?.then((r) => r.default);
+	if (imageMod) {
+		const optimized = await getImage({ src: imageMod });
+		// @docs Mobile: w-32 (128px) next to Machine Info; md: w-44 (176px) for desktop.
+		// @docs object-contain + aspect-square: full visibility, no cropping (circular cover).
+		coverImgHtml = `<img src="${optimized.src}" alt="Cover" class="rounded-xl w-32 md:w-44 shrink-0 aspect-square object-contain" loading="lazy" decoding="async" />`;
+	}
+}
+
+// ❯ INJECT COVER NEXT TO MACHINE INFORMATION
+const processedHtml = injectMachineInfoCover(contentHtml, coverImgHtml);
+---
+
+<div class="markdown-content" set:html={processedHtml} data-pagefind-body />

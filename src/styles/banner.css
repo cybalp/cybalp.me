@@ -213,6 +213,13 @@ html.is-wallpaper-transitioning body {
     }
 }
 
+/* @docs Mobile: remove will-change to avoid cover jank from layer promotion */
+@media (max-width: 768px) {
+    .banner-container {
+        will-change: auto;
+    }
+}
+
 @media (max-width: 1279px) and (prefers-color-scheme: dark) {
     .banner-text-overlay {
         background: linear-gradient(

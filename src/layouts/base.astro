@@ -334,6 +334,12 @@ import { initFancybox, cleanupFancybox } from "@utils/fancybox";
 import { loadAndInitTranslate, reExecuteTranslationIfActive } from "@utils/language";
 import { setupParticleEffects } from "@/utils/particle";
 
+// ❯ SCROLL RESTORATION
+// ❯ @doc Disable browser scroll restoration so Swup/navigation controls scroll position.
+if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
+	window.history.scrollRestoration = "manual";
+}
+
 // ❯ ERROR HANDLING
 // ❯ @doc Suppresses CSS preload errors for inline stylesheets.
 if (typeof window !== 'undefined') {
@@ -389,6 +395,18 @@ if (typeof window !== 'undefined') {
     };
 }
 
+// ❯ SCROLL TO TOP HELPER
+// ❯ @doc Ensures page starts at top on navigation; prevents browser scroll restoration from overriding.
+// ❯ @hint Uses "auto" for immediate scroll; "instant" has limited browser support.
+function scrollToTop() {
+	if (typeof window === "undefined") return;
+	window.history.scrollRestoration = "manual";
+	window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+	requestAnimationFrame(() => {
+		window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+	});
+}
+
 // ❯ SWUP SETUP
 // ❯ @doc Configures Swup hooks for page transitions.
 const setup = () => {
@@ -405,6 +423,7 @@ const setup = () => {
         }
     })
     window.swup.hooks.on('content:replace', () => {
+        scrollToTop();
         const gridClassCarrier = document.getElementById("grid-class-carrier");
         if (gridClassCarrier) {
             const gridClass = gridClassCarrier.getAttribute("data-grid-class");
@@ -474,10 +493,7 @@ const setup = () => {
         }, 300)
     });
     window.swup.hooks.on('page:view', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        scrollToTop();
         setTimeout(() => {
             if (document.getElementById('tcomment')) {
                 const pageLoadedEvent = new CustomEvent('cybalp:page:loaded', {

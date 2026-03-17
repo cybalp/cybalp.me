@@ -76,6 +76,25 @@ const style = Astro.props.style;
     </div>
 </WidgetLayout>
 
+<!-- ❯ SCRIPT: Inject wall content into terminal-output (data-content → #terminal-output) -->
+<!-- @hint Runs on load and after Swup content:replace since #left-sidebar is a Swup container -->
+<script>
+    function initWallTerminal() {
+        const container = document.querySelector("#wall .terminal-content");
+        const output = document.getElementById("terminal-output");
+        if (container && output) {
+            const content = container.getAttribute("data-content");
+            output.textContent = content ?? "";
+        }
+    }
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initWallTerminal);
+    } else {
+        initWallTerminal();
+    }
+    document.addEventListener("swup:contentReplaced", initWallTerminal);
+</script>
+
 <!-- ❯ STYLES -->
 <style>
     .terminal-container {

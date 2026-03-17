@@ -18,6 +18,8 @@ interface Props {
 	class?: string;
 	alt?: string;
 	position?: string;
+	/** @hint "contain" for logos/icons to avoid cropping; "cover" (default) fills container. */
+	objectFit?: "cover" | "contain";
 	basePath?: string;
 	style?: string;
 	loading?: "lazy" | "eager";
@@ -31,6 +33,7 @@ const {
 	src,
 	alt,
 	position = "center",
+	objectFit = "cover",
 	basePath = "/",
 	style,
 	loading = "lazy",
@@ -72,7 +75,10 @@ if (isLocal) {
 }
 
 // ❯ COMPUTED
-const imageClass = "w-full h-full object-cover";
+const imageClass =
+	objectFit === "contain"
+		? "w-full h-full object-contain"
+		: "w-full h-full object-cover";
 const imageStyle = `object-position: ${position}`;
 ---
 

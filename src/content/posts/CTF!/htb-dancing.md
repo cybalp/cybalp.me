@@ -21,7 +21,7 @@ sourceLink: "https://www.hackthebox.com/"
 - **Lab:** Starting Point
 - **OS:** Windows
 - **Difficulty:** Very Easy
-- **IP:** Spawn sonrası atanan IP
+- **IP:** `10.129.1.12`
 :::
 
 ---

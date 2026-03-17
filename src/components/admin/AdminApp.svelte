@@ -48,15 +48,24 @@ function handleLogin(t: string) {
 	view = "dashboard";
 }
 
+// ❯ @docs Explicit logout flag prevents $effect from rehydrating token after logout
+const LOGOUT_FLAG = "admin_logout";
+
 function handleLogout() {
+	sessionStorage.setItem(LOGOUT_FLAG, "1");
 	token = null;
 	user = null;
 	localStorage.removeItem("admin_token");
 }
 
 // ❯ RESTORE TOKEN
+// ❯ @docs Restores token from localStorage on mount; skips when user explicitly logged out
 $effect(() => {
 	if (typeof window === "undefined") return;
+	if (sessionStorage.getItem(LOGOUT_FLAG)) {
+		sessionStorage.removeItem(LOGOUT_FLAG);
+		return;
+	}
 	const stored = localStorage.getItem("admin_token");
 	if (stored && !token) {
 		token = stored;

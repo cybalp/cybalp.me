@@ -75,8 +75,18 @@ const navItems = [
 
 	<!-- ❯ MAIN -->
 	<main class="admin-main flex-1 overflow-auto">
-		<header class="sticky top-0 z-10 flex h-14 items-center border-b border-neutral-800 bg-neutral-950/90 px-6 backdrop-blur">
+		<header class="admin-header sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b border-neutral-800 bg-neutral-950/90 px-6 backdrop-blur">
 			<h1 class="text-lg font-semibold">{title}</h1>
+			{#if onLogout}
+				<button
+					type="button"
+					onclick={onLogout}
+					class="admin-logout-btn flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800/80 px-3 py-2 text-sm font-medium text-neutral-300 transition-colors hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+				>
+					<Icon icon="material-symbols:logout" class="size-4" />
+					Logout
+				</button>
+			{/if}
 		</header>
 		<div class="p-6">
 			<slot />

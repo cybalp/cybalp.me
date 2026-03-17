@@ -61,22 +61,7 @@ export default defineConfig({
     trailingSlash: "always",
     adapter: adapter,
     // ❯ @hint Decap CMS env (required when adminDisabled: true — local admin page)
-    env: {
-        schema: {
-            PUBLIC_DECAP_CMS_VERSION: envField.string({
-                context: "client",
-                access: "public",
-                optional: true,
-                default: "3.9.0",
-            }),
-            PUBLIC_DECAP_CMS_SRC_URL: envField.string({
-                context: "client",
-                access: "public",
-                optional: true,
-                default: "",
-            }),
-        },
-    },
+    env: {},
     // ❯ INTEGRATIONS
     // ❯ @gogogo new integration
     integrations: [

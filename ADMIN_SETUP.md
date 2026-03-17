@@ -41,11 +41,15 @@ OAUTH_GITHUB_CLIENT_SECRET=your_client_secret
 
 > **@hint** Bu değişkenler `astro-decap-cms-oauth` tarafından kullanılır. Astro 5 env schema ile tanımlıdır.
 
-### Opsiyonel: Repo Override
+### Opsiyonel: Repo / Branch Override
 
-Varsayılan repo `cybalp/cybalp.me`. Farklı bir repo kullanacaksan:
+Varsayılan repo `cybalp/cybalp.me`, branch `main`. Test için ayrı branch kullan:
 
 ```env
+# Test branch — commit'ler main'e gitmez
+ADMIN_GITHUB_BRANCH=admin-panel
+
+# Farklı repo
 ADMIN_GITHUB_REPO_OWNER=your_org
 ADMIN_GITHUB_REPO_NAME=your_repo
 ```
@@ -73,6 +77,7 @@ Tarayıcıda: **http://localhost:4321/admin-panel/**
 1. Vercel projesinde **Environment Variables** ekle:
    - `OAUTH_GITHUB_CLIENT_ID`
    - `OAUTH_GITHUB_CLIENT_SECRET`
+   - (Opsiyonel) `ADMIN_GITHUB_BRANCH` — test için `admin-panel`, production için `main`
    - (Opsiyonel) `ADMIN_GITHUB_REPO_OWNER`, `ADMIN_GITHUB_REPO_NAME`
 
 2. GitHub OAuth App callback URL’ini production domain’e ayarla:

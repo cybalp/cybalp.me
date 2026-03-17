@@ -87,6 +87,12 @@ export default defineConfig({
                 optional: true,
                 default: "cybalp.me",
             }),
+            ADMIN_GITHUB_BRANCH: envField.string({
+                context: "server",
+                access: "secret",
+                optional: true,
+                default: "main",
+            }),
         },
     },
     // ❯ INTEGRATIONS

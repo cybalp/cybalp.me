@@ -6,7 +6,11 @@
 
 // ❯ IMPORTS
 import type { APIRoute } from "astro";
-import { ADMIN_GITHUB_REPO_OWNER, ADMIN_GITHUB_REPO_NAME } from "astro:env/server";
+import {
+	ADMIN_GITHUB_REPO_OWNER,
+	ADMIN_GITHUB_REPO_NAME,
+	ADMIN_GITHUB_BRANCH,
+} from "astro:env/server";
 import { requireAuth } from "@lib/admin/auth";
 import {
 	listPostsRecursive,
@@ -26,6 +30,7 @@ function getRepoConfig(): RepoConfig {
 	return {
 		owner: ADMIN_GITHUB_REPO_OWNER ?? "cybalp",
 		repo: ADMIN_GITHUB_REPO_NAME ?? "cybalp.me",
+		branch: ADMIN_GITHUB_BRANCH ?? "main",
 	};
 }
 

@@ -9,14 +9,9 @@ import type { GitHubContentItem, GitHubFileContent } from "./types";
 
 // ❯ CONSTANTS
 const GITHUB_API = "https://api.github.com";
-const BRANCH = "main";
 
-// ❯ @hint Pass owner/repo from API route (astro:env/server)
-export type RepoConfig = { owner: string; repo: string };
-
-function repo(rc: RepoConfig) {
-	return { owner: rc.owner, repo: rc.repo };
-}
+// ❯ @hint Pass owner/repo/branch from API route (astro:env/server)
+export type RepoConfig = { owner: string; repo: string; branch: string };
 
 // ❯ HELPERS
 function headers(token: string): HeadersInit {
@@ -33,8 +28,8 @@ export async function listDir(
 	path: string,
 	rc: RepoConfig,
 ): Promise<GitHubContentItem[]> {
-	const { owner, repo: r } = repo(rc);
-	const url = `${GITHUB_API}/repos/${owner}/${r}/contents/${path}?ref=${BRANCH}`;
+	const { owner, repo: r, branch } = rc;
+	const url = `${GITHUB_API}/repos/${owner}/${r}/contents/${path}?ref=${branch}`;
 	const res = await fetch(url, { headers: headers(token) });
 	if (!res.ok) {
 		const err = await res.json().catch(() => ({}));
@@ -75,8 +70,8 @@ export async function getFile(
 	path: string,
 	rc: RepoConfig,
 ): Promise<GitHubFileContent> {
-	const { owner, repo: r } = repo(rc);
-	const url = `${GITHUB_API}/repos/${owner}/${r}/contents/${path}?ref=${BRANCH}`;
+	const { owner, repo: r, branch } = rc;
+	const url = `${GITHUB_API}/repos/${owner}/${r}/contents/${path}?ref=${branch}`;
 	const res = await fetch(url, { headers: headers(token) });
 	if (!res.ok) {
 		const err = await res.json().catch(() => ({}));
@@ -106,12 +101,12 @@ export async function putFile(
 	rc: RepoConfig,
 	sha?: string,
 ): Promise<{ sha: string }> {
-	const { owner, repo: r } = repo(rc);
+	const { owner, repo: r, branch } = rc;
 	const url = `${GITHUB_API}/repos/${owner}/${r}/contents/${path}`;
 	const body: Record<string, unknown> = {
 		message,
 		content: Buffer.from(content, "utf-8").toString("base64"),
-		branch: BRANCH,
+		branch,
 	};
 	if (sha) body.sha = sha;
 
@@ -138,12 +133,12 @@ export async function deleteFile(
 	sha: string,
 	rc: RepoConfig,
 ): Promise<void> {
-	const { owner, repo: r } = repo(rc);
+	const { owner, repo: r, branch } = rc;
 	const url = `${GITHUB_API}/repos/${owner}/${r}/contents/${path}`;
 	const res = await fetch(url, {
 		method: "DELETE",
 		headers: { ...headers(token), "Content-Type": "application/json" },
-		body: JSON.stringify({ message, sha, branch: BRANCH }),
+		body: JSON.stringify({ message, sha, branch }),
 	});
 	if (!res.ok) {
 		const err = await res.json().catch(() => ({}));

@@ -130,7 +130,7 @@ onMount(() => {
             <div class="mobile-menu-item">
                 <a
                     href={link.external ? link.url : url(link.url)}
-                    class="group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
+                    class="no-underline group flex justify-between items-center py-2 pl-3 pr-1 rounded-lg gap-8
                            hover:bg-(--btn-plain-bg-hover) active:bg-(--btn-plain-bg-active) transition"
                     target={link.external ? "_blank" : null}
                     onclick={() => { isOpen = false; }}

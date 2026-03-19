@@ -6,6 +6,11 @@
 
 /* ❯ CORE LOGIC */
 
+/* ❯ Remove underlines from all navbar links (logo, nav items, etc.) */
+#navbar a {
+    text-decoration: none;
+}
+
 .navbar-nav-links {
     min-width: 0;
     flex-shrink: 1;

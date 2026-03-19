@@ -1,6 +1,6 @@
 ---
 title: "Kevin Mitnick"
-published: 2026-02-10
+published: 2026-02-10T09:00:00
 description: "Kevin Mitnick mind analysis"
 cover: "img/kevin-mitnick.webp"
 coverInContent: false

@@ -1,6 +1,6 @@
 ---
 title: "Linus Torvalds"
-published: 2026-03-16
+published: 2026-03-16T09:30:00
 description: "Linus Torvalds mind analysis"
 cover: "img/linus-torvalds.webp"
 coverInContent: false

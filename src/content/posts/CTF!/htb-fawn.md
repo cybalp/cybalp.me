@@ -1,6 +1,6 @@
 ---
 title: "Fawn"
-published: 2026-03-17
+published: 2026-03-17T10:30:00
 description: "Fawn — FTP anonymous"
 cover: "img/htb-fawn.webp"
 coverInContent: false

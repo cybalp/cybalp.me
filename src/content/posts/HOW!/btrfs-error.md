@@ -1,6 +1,6 @@
 ---
 title: "BTRFS | File System Damage"
-published: 2026-01-30
+published: 2026-01-30T09:00:00
 description: "BTRFS file corruption solution and analysis"
 cover: "img/btrfs.webp"
 coverInContent: false

@@ -1,6 +1,6 @@
 ---
 title: "Redeemer"
-published: 2026-03-18
+published: 2026-03-18T15:00:00
 description: "Redeemer — Redis enumeration"
 cover: "img/htb-redeemer.webp"
 coverInContent: false

@@ -1,6 +1,6 @@
 ---
 title: "KeePassXC"
-published: 2026-03-16
+published: 2026-03-16T09:00:00
 description: "KeePassXC — cross-platform, open-source password manager. NO cloud!. NO ads! Full control!"
 cover: "img/keepassxc.webp"
 coverInContent: false
@@ -61,7 +61,7 @@ KeePassXC does not store your master password. It derives an encryption key from
 
 ## Getting Started
 
-1. **Download** from [keepassxc.org](https://keepassxc.org/download) or via your distribution’s package manager (`pacman -S keepassxc`, `apt install keepassxc`, etc.)
+1. **Download** from [keepassxc.org](https://keepassxc.org/download) or via your distribution’s package manager.
 2. **Create a database** — File → New Database → set a strong master password
 3. **Add entries** — or import from CSV, 1Password, Bitwarden, etc.
 4. **Optional:** Install the browser extension and enable the “KeePassXC-Browser” option in the application

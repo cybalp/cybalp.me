@@ -18,6 +18,19 @@ function getDate() {
     return `${year}-${month}-${day}`;
 }
 
+// ❯ @doc Returns current datetime in ISO 8601 format (YYYY-MM-DDTHH:mm:ss) for post sorting.
+// ❯ @hint Ensures stable ordering when multiple posts share the same date.
+function getDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
+
 // ❯ VALIDATION
 
 const args = process.argv.slice(2);
@@ -61,7 +74,7 @@ const defaultTags = isCtf ? '["Web", "Crypto", "Forensics", "Pwn", "Reversing", 
 const content = isCtf
 	? `---
 title: "[Platform] Challenge Name"
-published: ${getDate()}
+published: ${getDateTime()}
 description: "One-line challenge summary"
 cover: ""
 coverInContent: false
@@ -125,7 +138,7 @@ flag{...}
 `
 	: `---
 title: ${args[0]}
-published: ${getDate()}
+published: ${getDateTime()}
 description: ''
 cover: ''
 tags: []

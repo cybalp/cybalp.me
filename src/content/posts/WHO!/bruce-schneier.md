@@ -1,6 +1,6 @@
 ---
 title: "Bruce Schneier"
-published: 2026-02-13
+published: 2026-02-13T09:00:00
 description: "Bruce Schneier mind analysis"
 cover: "img/bruce-schneier.webp"
 coverInContent: false

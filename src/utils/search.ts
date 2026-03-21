@@ -11,7 +11,7 @@ import type { SearchSource } from "@/types/config";
 // ❯ @docs Defined here (not re-exported from the page endpoint) to avoid ambiguous JSON import resolution.
 export interface SearchIndexItem {
 	id: string;
-	type: "post" | "code" | "moment" | "album";
+	type: "post" | "ctf" | "code" | "moment" | "album";
 	source: string;
 	title: string;
 	content: string;

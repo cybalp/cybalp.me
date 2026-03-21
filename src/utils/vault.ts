@@ -21,6 +21,8 @@ export type VaultPost = {
 		published: Date | string;
 		routeName?: string;
 	};
+	/** @hint When set (e.g. CTF writeups under /ctf/writeups/), use instead of getPostUrl. */
+	postUrl?: string;
 };
 
 export type YearGroup = {

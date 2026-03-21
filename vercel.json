@@ -1,4 +1,11 @@
 {
+    "redirects": [
+        {
+            "source": "/posts/CTF!/:slug",
+            "destination": "/ctf/writeups/:slug",
+            "permanent": true
+        }
+    ],
     "buildCommand": "pnpm build",
     "installCommand": "pnpm install",
     "framework": "astro",

@@ -6,7 +6,6 @@ cover: "img/htb-redeemer.webp"
 coverInContent: false
 pinned: false
 tags: ["HTB", "Redis"]
-category: "CTF!"
 draft: false
 comment: true
 encrypted: false
@@ -28,7 +27,7 @@ sourceLink: "https://www.hackthebox.com/"
 
 # Step 0: Getting Started
 
-If you're not sure how to get started, [this will help -> Step 0: Getting Started.](https://www.cybalp.me/posts/CTF!/htb-meow/#step-0-getting-started)
+If you're not sure how to get started, [this will help -> Step 0: Getting Started.](https://www.cybalp.me/ctf/writeups/htb-meow/#step-0-getting-started)
 
 ```bash
 
@@ -37,7 +36,7 @@ IP=10.129.136.187 && ping -c 2 $IP
 
 ```
 
->  See also: [Here.](https://www.cybalp.me/posts/CTF!/htb-fawn/#step-0-getting-started)
+>  See also: [Here.](https://www.cybalp.me/ctf/writeups/htb-fawn/#step-0-getting-started)
 
 Are you ready? OK!
 

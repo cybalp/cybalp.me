@@ -8,20 +8,21 @@
 // ❯ IMPORTS
 import type { CollectionEntry } from "astro:content";
 
-import { getPostUrl } from "@utils/url";
+import { getCtfWriteupUrl, getPostUrl } from "@utils/url";
 import { postConfig } from "@/config";
 import Twikoo from "./twikoo.astro";
 
 // ❯ PROPS
 interface Props {
-	post: CollectionEntry<"posts">;
+	post: CollectionEntry<"posts"> | CollectionEntry<"ctf">;
 }
 
 // ❯ PROPS DESTRUCTURING
 const { post } = Astro.props;
 
 // ❯ COMPUTED
-const path = getPostUrl(post);
+const path =
+	post.collection === "ctf" ? getCtfWriteupUrl(post) : getPostUrl(post);
 
 // ❯ COMMENT SERVICE DETECTION
 let commentService = "";

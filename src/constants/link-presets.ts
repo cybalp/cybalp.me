@@ -66,4 +66,10 @@ export const LinkPresets: { [key in LinkPreset]: NavbarLink } = {
 		icon: "material-symbols:bar-chart",
 		description: "Comprehensive statistics and analytics",
 	},
+	[LinkPreset.Ctf]: {
+		name: "CTF!",
+		url: "/ctf/",
+		icon: "material-symbols:flag",
+		description: "Capture-the-flag writeups and challenge notes",
+	},
 };

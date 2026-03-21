@@ -6,7 +6,6 @@ cover: "img/htb-fawn.webp"
 coverInContent: false
 pinned: false
 tags: ["HTB", "FTP"]
-category: "CTF!"
 draft: false
 comment: true
 encrypted: false
@@ -28,7 +27,7 @@ sourceLink: "https://www.hackthebox.com/"
 
 # Step 0: Getting Started
 
-If you're not sure how to get started, [this will help.](https://www.cybalp.me/posts/CTF!/htb-meow/#step-0-getting-started)
+If you're not sure how to get started, [this will help.](https://www.cybalp.me/ctf/writeups/htb-meow/#step-0-getting-started)
 
 ![HTB-Fawn 1](img/htb-fawn1.webp)
 

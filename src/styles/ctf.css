@@ -1,0 +1,438 @@
+/* ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* ❯ @status OK! */
+/* ❯ @path ./src/styles/ctf.css */
+/* ❯ @desc CTF pages — explicit light/dark text (no currentColor on links). */
+/* ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+/* ❯ TOKENS — readable on --card-bg in both themes */
+:root {
+	--ctf-fg: rgb(23 23 23);
+	--ctf-fg-muted: rgb(64 64 64);
+	--ctf-fg-subtle: rgb(82 82 82);
+	--ctf-placeholder: rgb(115 115 115);
+}
+
+.dark {
+	--ctf-fg: rgb(245 245 245);
+	--ctf-fg-muted: rgb(212 212 212);
+	--ctf-fg-subtle: rgb(180 180 180);
+	--ctf-placeholder: rgb(163 163 163);
+}
+
+/* ❯ HUB (/ctf/) */
+.ctf-hub {
+	position: relative;
+	border-radius: var(--radius-large);
+	overflow: hidden;
+	isolation: isolate;
+	border: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	background: var(--card-bg);
+	color: var(--ctf-fg);
+}
+
+.ctf-hub::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	background:
+		radial-gradient(
+			ellipse 120% 80% at 100% 0%,
+			color-mix(in oklch, var(--primary) 14%, transparent),
+			transparent 55%
+		),
+		radial-gradient(
+			ellipse 90% 60% at 0% 100%,
+			color-mix(in oklch, var(--primary) 6%, transparent),
+			transparent 50%
+		);
+	opacity: 1;
+}
+
+.dark .ctf-hub::before {
+	background:
+		radial-gradient(
+			ellipse 120% 80% at 100% 0%,
+			color-mix(in oklch, var(--primary) 18%, transparent),
+			transparent 55%
+		),
+		radial-gradient(
+			ellipse 90% 60% at 0% 100%,
+			color-mix(in oklch, var(--primary) 10%, transparent),
+			transparent 50%
+		);
+}
+
+.ctf-hub__inner {
+	position: relative;
+	z-index: 1;
+}
+
+.ctf-hub__kicker {
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--primary);
+	margin-bottom: 0.75rem;
+}
+
+.ctf-hub__lead {
+	font-size: 0.9375rem;
+	line-height: 1.65;
+	max-width: 38rem;
+	color: var(--ctf-fg-muted);
+}
+
+/* ❯ CTA block — <a> must not use browser link color */
+.ctf-hub-cta {
+	display: flex;
+	align-items: stretch;
+	gap: 0;
+	text-decoration: none;
+	border-radius: 0.875rem;
+	overflow: hidden;
+	border: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	background: color-mix(in oklch, var(--card-bg) 94%, rgb(128 128 128) 6%);
+	color: var(--ctf-fg);
+	box-shadow: 0 1px 2px color-mix(in oklch, black 4%, transparent);
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.25s ease,
+		transform 0.2s ease;
+}
+
+.dark .ctf-hub-cta {
+	background: color-mix(in oklch, var(--card-bg) 92%, white 8%);
+	box-shadow: 0 1px 3px color-mix(in oklch, black 35%, transparent);
+}
+
+.ctf-hub-cta:hover {
+	border-color: color-mix(in oklch, var(--primary) 45%, var(--line-divider));
+	box-shadow:
+		0 8px 28px color-mix(in oklch, var(--primary) 12%, transparent),
+		0 0 0 1px color-mix(in oklch, var(--primary) 20%, transparent);
+	transform: translateY(-1px);
+}
+
+.ctf-hub-cta__rail {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 4.25rem;
+	flex-shrink: 0;
+	background: linear-gradient(
+		180deg,
+		color-mix(in oklch, var(--primary) 28%, transparent),
+		color-mix(in oklch, var(--primary) 10%, transparent)
+	);
+	color: var(--primary);
+}
+
+.ctf-hub-cta__body {
+	flex: 1;
+	min-width: 0;
+	padding: 1.125rem 1.25rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 0.35rem;
+}
+
+.ctf-hub-cta__title {
+	font-size: 1.0625rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--ctf-fg);
+}
+
+.ctf-hub-cta__desc {
+	font-size: 0.8125rem;
+	line-height: 1.55;
+	color: var(--ctf-fg-muted);
+}
+
+.ctf-hub-cta__action {
+	display: flex;
+	align-items: center;
+	padding: 0 1.25rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--primary);
+	border-left: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	background: color-mix(in oklch, var(--primary) 8%, transparent);
+}
+
+@media (max-width: 640px) {
+	.ctf-hub-cta {
+		flex-direction: column;
+	}
+	.ctf-hub-cta__rail {
+		width: 100%;
+		padding: 0.75rem;
+	}
+	.ctf-hub-cta__action {
+		border-left: none;
+		border-top: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+		justify-content: center;
+		padding: 0.75rem 1rem;
+	}
+}
+
+/* ❯ CTF STARTED */
+.ctf-started-shell {
+	position: relative;
+	border-radius: var(--radius-large);
+	border: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	background: var(--card-bg);
+	overflow: hidden;
+	color: var(--ctf-fg);
+}
+
+.ctf-started-shell::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 3px;
+	background: linear-gradient(
+		180deg,
+		var(--primary),
+		color-mix(in oklch, var(--primary) 40%, transparent)
+	);
+	border-radius: 3px 0 0 3px;
+	pointer-events: none;
+}
+
+.ctf-started__intro {
+	margin-bottom: 2rem;
+	padding-bottom: 1.5rem;
+	border-bottom: 1px solid color-mix(in oklch, var(--line-divider) 80%, transparent);
+}
+
+.ctf-started__label {
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--primary);
+	margin-bottom: 0.5rem;
+}
+
+.ctf-started__lead {
+	font-size: 0.9375rem;
+	line-height: 1.65;
+	max-width: 42rem;
+	color: var(--ctf-fg-muted);
+}
+
+.ctf-started-stat-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+/* ❯ Stat labels inside CTF — bump contrast vs global .stat-label */
+.ctf-started-stat-grid .stat-label {
+	color: rgb(82 82 82);
+}
+
+.dark .ctf-started-stat-grid .stat-label {
+	color: rgb(212 212 212);
+}
+
+@media (min-width: 768px) {
+	.ctf-started-stat-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.25rem;
+	}
+}
+
+.ctf-started-search {
+	width: 100%;
+	padding: 0.75rem 1rem 0.75rem 2.75rem;
+	padding-right: 2.75rem;
+	border-radius: 0.75rem;
+	border: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	background: color-mix(in oklch, var(--card-bg) 100%, rgb(0 0 0) 0%);
+	color: var(--ctf-fg);
+	font-size: 0.875rem;
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.ctf-started-search::placeholder {
+	color: var(--ctf-placeholder);
+	opacity: 1;
+}
+
+.ctf-started-search:focus {
+	outline: none;
+	border-color: color-mix(in oklch, var(--primary) 55%, var(--line-divider));
+	box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 18%, transparent);
+}
+
+.ctf-started-section-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1rem;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	padding-top: 0.25rem;
+}
+
+.ctf-started-section-head h2 {
+	font-size: 1.125rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--ctf-fg);
+}
+
+.ctf-started-section-count {
+	font-size: 0.875rem;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--ctf-fg-subtle);
+}
+
+.ctf-started-accordion {
+	border-radius: 0.75rem;
+	border: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	background: color-mix(in oklch, var(--card-bg) 98%, transparent);
+	overflow: hidden;
+	transition:
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.ctf-started-accordion[open] {
+	border-color: color-mix(in oklch, var(--primary) 35%, var(--line-divider));
+	box-shadow: 0 4px 24px color-mix(in oklch, black 6%, transparent);
+}
+
+.dark .ctf-started-accordion[open] {
+	box-shadow: 0 4px 28px color-mix(in oklch, black 45%, transparent);
+}
+
+.ctf-started-summary {
+	padding: 0.9rem 1rem;
+	font-weight: 700;
+	font-size: 0.9375rem;
+	color: var(--ctf-fg);
+}
+
+.ctf-started-summary:hover {
+	background: color-mix(in oklch, var(--primary) 6%, transparent);
+}
+
+.ctf-started-summary .ctf-started-summary-meta {
+	color: var(--ctf-fg-muted);
+	font-weight: 600;
+}
+
+.ctf-started-post {
+	border-radius: 0.625rem;
+	border: 1px solid color-mix(in oklch, var(--line-divider) 70%, transparent) !important;
+	background: color-mix(in oklch, var(--card-bg) 100%, transparent);
+	transition:
+		border-color 0.2s ease,
+		background 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.ctf-started-post:hover {
+	border-color: color-mix(in oklch, var(--primary) 40%, var(--line-divider)) !important;
+	background: color-mix(in oklch, var(--primary) 6%, transparent);
+	box-shadow: 0 2px 12px color-mix(in oklch, var(--primary) 8%, transparent);
+}
+
+.ctf-started-post-title {
+	color: var(--ctf-fg);
+}
+
+.ctf-started-post:hover .ctf-started-post-title {
+	color: var(--primary);
+}
+
+.ctf-started-post-desc {
+	color: var(--ctf-fg-muted);
+}
+
+.ctf-started-tag {
+	font-size: 0.6875rem;
+	font-weight: 600;
+	padding: 0.2rem 0.5rem;
+	border-radius: 0.375rem;
+	border: 1px solid color-mix(in oklch, var(--line-divider) 80%, transparent);
+	background: color-mix(in oklch, var(--card-bg) 100%, transparent);
+	color: var(--ctf-fg-subtle);
+}
+
+/* ❯ WRITEUP ARTICLE SHELL */
+.ctf-writeup-shell .card-base {
+	border: 1px solid color-mix(in oklch, var(--line-divider) 100%, transparent);
+	box-shadow: 0 2px 16px color-mix(in oklch, black 5%, transparent);
+}
+
+.dark .ctf-writeup-shell .card-base {
+	box-shadow: 0 2px 24px color-mix(in oklch, black 40%, transparent);
+}
+
+/* ❯ GRID CARDS — cover fills media strip (twikoo .card-base sets overflow:visible) */
+.ctf-grid-card.card-base {
+	overflow: hidden !important;
+	border-radius: var(--radius-large);
+}
+
+/* @docs Kills inline-img baseline gap + forces raster to bleed under rounded clip */
+.ctf-grid-card__media {
+	position: relative;
+	isolation: isolate;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	background: color-mix(in oklch, var(--card-bg) 100%, rgb(0 0 0) 0%);
+}
+
+.ctf-grid-card__cover-slot {
+	line-height: 0;
+}
+
+.ctf-grid-card__cover-slot .ctf-grid-card__img-root {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+}
+
+.ctf-grid-card__cover-slot .ctf-grid-card__img-root picture {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.ctf-grid-card__cover-slot .ctf-grid-card__img-root img {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-width: 100%;
+	min-height: 100%;
+	max-width: none;
+	object-fit: cover;
+	object-position: center;
+	transform: scale(1.03);
+	transform-origin: center center;
+	will-change: transform;
+}

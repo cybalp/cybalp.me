@@ -6,7 +6,6 @@ cover: "img/htb-meow.webp"
 coverInContent: false
 pinned: false
 tags: ["HTB", "Telnet"]
-category: "CTF!"
 draft: false
 comment: true
 encrypted: false

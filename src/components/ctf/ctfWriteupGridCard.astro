@@ -1,0 +1,116 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/components/ctf/ctfWriteupGridCard.astro
+// ❯ @desc CTF writeup gallery card — cover on top, platform badge, links to writeup page.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ❯ IMPORTS
+import type { CollectionEntry } from "astro:content";
+import ImageWrapper from "@components/common/imageWrapper.astro";
+import { getCtfWriteupUrl, getFileDirFromPath } from "@utils/url";
+import { Icon } from "astro-icon/components";
+
+// ❯ PROPS
+interface Props {
+	entry: CollectionEntry<"ctf">;
+	platform: string;
+	platformBadgeClass: string;
+	searchBlob: string;
+}
+
+// ❯ PROPS DESTRUCTURING
+const { entry, platform, platformBadgeClass, searchBlob } = Astro.props;
+
+const href = getCtfWriteupUrl(entry);
+const { title, description, cover, tags, pinned } = entry.data;
+const hasCover = Boolean(cover && String(cover).trim() !== "");
+const imageBaseDir = getFileDirFromPath(entry.filePath || "");
+---
+
+<!-- ❯ RENDER -->
+<article
+	class="ctf-grid-card card-base flex flex-col border border-(--line-divider) bg-(--card-bg) h-full transition-all duration-200 hover:shadow-lg hover:border-(--primary)/35 hover:-translate-y-0.5"
+	data-search={searchBlob}
+>
+	<a
+		href={href}
+		class="ctf-grid-card__link group flex flex-col flex-1 min-h-0 no-underline text-inherit outline-none focus-visible:ring-2 focus-visible:ring-(--primary) focus-visible:ring-offset-2 focus-visible:ring-offset-(--card-bg) rounded-[inherit]"
+	>
+		<!-- ❯ MEDIA (@gogogo ctf gallery — styles in ctf.css) -->
+		<div class="ctf-grid-card__media w-full shrink-0">
+			{pinned && (
+				<span
+					class="absolute left-2 top-2 z-20 inline-flex items-center gap-0.5 rounded-md bg-amber-500/95 px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-white shadow-sm"
+				>
+					<Icon name="mdi:pin" class="size-3" aria-hidden="true" />
+					Pinned
+				</span>
+			)}
+			<span
+				class:list={[
+					"absolute right-2 top-2 z-20 max-w-[min(12rem,70%)] truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide shadow-sm",
+					platformBadgeClass,
+				]}
+			>
+				{platform}
+			</span>
+			{hasCover ? (
+				<div class="ctf-grid-card__cover-slot absolute inset-0 min-h-0">
+					<div
+						class="pointer-events-none absolute inset-0 z-10 bg-black/0 transition-colors group-hover:bg-black/25 group-active:bg-black/40"
+						aria-hidden="true"
+					/>
+					<div
+						class="pointer-events-none absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
+						aria-hidden="true"
+					>
+						<Icon
+							name="material-symbols:chevron-right-rounded"
+							class="text-5xl text-white drop-shadow-md"
+						/>
+					</div>
+					<ImageWrapper
+						src={cover!}
+						basePath={imageBaseDir}
+						alt={`Cover: ${title}`}
+						class="ctf-grid-card__img-root absolute inset-0 size-full min-h-0"
+						objectFit="cover"
+						loading="lazy"
+					/>
+				</div>
+			) : (
+				<div
+					class="flex h-full w-full items-center justify-center bg-gradient-to-br from-(--primary)/15 via-neutral-200/50 to-(--primary)/10 dark:from-(--primary)/20 dark:via-neutral-800/50 dark:to-(--primary)/15"
+					aria-hidden="true"
+				>
+					<Icon
+						name="material-symbols:flag-outline"
+						class="size-14 text-(--primary)/50"
+					/>
+				</div>
+			)}
+		</div>
+
+		<!-- ❯ BODY -->
+		<div class="flex flex-1 flex-col gap-2 p-4 md:p-5">
+			<h3
+				class="line-clamp-2 text-base font-bold leading-snug text-neutral-900 dark:text-neutral-100 transition-colors group-hover:text-(--primary)"
+			>
+				{title}
+			</h3>
+			{description && (
+				<p class="line-clamp-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+					{description}
+				</p>
+			)}
+			{(tags?.length ?? 0) > 0 && (
+				<div class="mt-auto flex flex-wrap gap-1.5 pt-1">
+					{(tags ?? []).map((tag) => (
+						<span class="ctf-started-tag">{tag}</span>
+					))}
+				</div>
+			)}
+		</div>
+	</a>
+</article>

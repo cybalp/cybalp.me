@@ -479,7 +479,7 @@ $effect(() => {
 							{/if}
 							{#each yearGroup.posts as post}
 								<div class="tree-post group">
-									<a href={getPostUrl(post)} aria-label={post.data.title} class="tree-post-link">
+									<a href={post.postUrl ?? getPostUrl(post)} aria-label={post.data.title} class="tree-post-link">
 										<span class="tree-post-date">{formatDateToMMDD(post.data.published)}</span>
 										<span class="tree-post-title">{post.data.title}</span>
 									</a>

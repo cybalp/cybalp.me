@@ -1,7 +1,7 @@
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ @status OK!
 // ❯ @path ./src/content.config.ts
-// ❯ @desc Content collection schemas and glob loaders for posts and spec pages
+// ❯ @desc Content collection schemas: posts, ctf writeups, spec pages
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // ❯ IMPORTS
@@ -42,6 +42,40 @@ const categorySchema = z.preprocess(
 const tagsSchema = z.preprocess((arg) => {
 	return parseTags(arg);
 }, z.array(z.string()).optional().default([]));
+
+// ❯ CTF WRITEUPS (not under posts — lives in ./src/content/ctf)
+// ❯ @docs Same shape as blog posts minus category; URLs are /ctf/writeups/:slug/
+const ctfCollection = defineCollection({
+	loader: glob({
+		pattern: "**/[^_]*.{md,mdx}",
+		base: "./src/content/ctf",
+		generateId: ({ entry }) => entry.replace(/\.(md|mdx|markdown)$/i, ""),
+	}),
+	schema: z.object({
+		title: z.string(),
+		published: dateSchema,
+		updated: optionalDateSchema,
+		description: z.string().optional().default(""),
+		cover: z.string().optional().default(""),
+		coverInContent: z.boolean().optional().default(false),
+		tags: tagsSchema,
+		lang: z.string().optional().default(""),
+		pinned: z.boolean().optional().default(false),
+		author: z.string().optional().default(""),
+		sourceLink: z.string().optional().default(""),
+		licenseName: z.string().optional().default(""),
+		licenseUrl: z.string().optional().default(""),
+		comment: z.boolean().optional().default(true),
+		draft: z.boolean().optional().default(false),
+		encrypted: z.boolean().optional().default(false),
+		password: z.string().optional().default(""),
+		routeName: z.string().optional(),
+		prevTitle: z.string().default(""),
+		prevSlug: z.string().default(""),
+		nextTitle: z.string().default(""),
+		nextSlug: z.string().default(""),
+	}),
+});
 
 // ❯ COLLECTIONS
 // ❯ @docs [^_]* pattern skips _ prefixed files (templates, staging drafts)
@@ -88,5 +122,6 @@ const specCollection = defineCollection({
 // ❯ EXPORTS
 export const collections = {
 	posts: postsCollection,
+	ctf: ctfCollection,
 	spec: specCollection,
 };

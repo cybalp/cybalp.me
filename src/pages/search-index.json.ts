@@ -11,6 +11,7 @@ import { getCollection } from "astro:content";
 import { sortedAlbums } from "@utils/media";
 import { sortedMoments } from "@utils/PersonalLog";
 import { getSortedPracticalCodes } from "@utils/practical-codes";
+import { removeFileExtension } from "@utils/url";
 import type { SearchIndexItem } from "@utils/search";
 import { searchConfig } from "@/config";
 
@@ -75,6 +76,33 @@ async function buildPostsIndex(): Promise<SearchIndexItem[]> {
 				category: Array.isArray(entry.data.category)
 					? entry.data.category.join("/")
 					: entry.data.category ?? "",
+			},
+		};
+	});
+}
+
+// ❯ @doc CTF writeups — src/content/ctf, URLs /ctf/writeups/:slug/
+async function buildCtfWriteupsIndex(): Promise<SearchIndexItem[]> {
+	if (!isSourceEnabled("ctf")) return [];
+
+	const entries = await getCollection("ctf", ({ data }) =>
+		import.meta.env.PROD ? data.draft !== true : true,
+	);
+
+	return entries.map((entry) => {
+		const rawContent = stripMarkdown(entry.body ?? "");
+		const slug = removeFileExtension(entry.id);
+		return {
+			id: `ctf-${entry.id}`,
+			type: "ctf" as const,
+			source: "ctf",
+			title: entry.data.title,
+			content: [entry.data.description ?? "", rawContent].join(" ").slice(0, 800),
+			url: `/ctf/writeups/${slug}/`,
+			tags: entry.data.tags ?? [],
+			meta: {
+				date: entry.data.published?.toISOString(),
+				category: "CTF!",
 			},
 		};
 	});
@@ -151,14 +179,21 @@ function buildMediaIndex(): SearchIndexItem[] {
 
 // ❯ ROUTE HANDLER
 export const GET: APIRoute = async () => {
-	const [posts, codes, moments, media] = await Promise.all([
+	const [posts, ctfWriteups, codes, moments, media] = await Promise.all([
 		buildPostsIndex(),
+		buildCtfWriteupsIndex(),
 		Promise.resolve(buildCodesIndex()),
 		Promise.resolve(buildMomentsIndex()),
 		Promise.resolve(buildMediaIndex()),
 	]);
 
-	const index: SearchIndexItem[] = [...posts, ...codes, ...moments, ...media];
+	const index: SearchIndexItem[] = [
+		...posts,
+		...ctfWriteups,
+		...codes,
+		...moments,
+		...media,
+	];
 
 	return new Response(JSON.stringify(index), {
 		headers: {

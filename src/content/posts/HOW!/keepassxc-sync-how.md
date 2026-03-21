@@ -2,7 +2,7 @@
 title: "KeePassXC ⥄ Syncthing"
 published: 2026-03-19T10:00:00
 description: "Security++ | Store passwords locally + local synchronization"
-cover: "../APP!/img/keepassxc.webp"
+cover: "img/keepassxc-syncthing.webp"
 coverInContent: false
 pinned: false
 tags: ["Password Manager", "File Sync", "Security++"]
@@ -88,7 +88,7 @@ Oh, right. Don’t forget to select the device from the Sharing tab..
 
 - Just confirm the notification in the app—that’s all.
 
-## Adım 4: Phone - KeePassium
+## Step 4: Phone - KeePassium
 
 - All you need to do is add the `.kdbx` file from the folder created by Möbius Sync to the KeePassium application.
 

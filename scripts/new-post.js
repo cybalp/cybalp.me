@@ -1,7 +1,7 @@
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ❯ @status OK!
 // ❯ @path ./scripts/new-post.js
-// ❯ @desc Creates new blog post template.
+// ❯ @desc Creates new blog post or CTF writeup template.
 // ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import fs from "fs";
@@ -11,34 +11,46 @@ import path from "path";
 
 // ❯ @doc Returns current date in YYYY-MM-DD format.
 function getDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = String(today.getMonth() + 1).padStart(2, "0");
+	const day = String(today.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
 }
 
 // ❯ @doc Returns current datetime in ISO 8601 format (YYYY-MM-DDTHH:mm:ss) for post sorting.
 // ❯ @hint Ensures stable ordering when multiple posts share the same date.
 function getDateTime() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const seconds = String(now.getSeconds()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+	const now = new Date();
+	const year = now.getFullYear();
+	const month = String(now.getMonth() + 1).padStart(2, "0");
+	const day = String(now.getDate()).padStart(2, "0");
+	const hours = String(now.getHours()).padStart(2, "0");
+	const minutes = String(now.getMinutes()).padStart(2, "0");
+	const seconds = String(now.getSeconds()).padStart(2, "0");
+	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
 
 // ❯ VALIDATION
 
-const args = process.argv.slice(2);
+const rawArgs = process.argv.slice(2);
+let isCtf = false;
+const args = [];
+for (const a of rawArgs) {
+	if (a === "--ctf" || a === "-c") {
+		isCtf = true;
+		continue;
+	}
+	args.push(a);
+}
 
 if (args.length === 0) {
-    console.error(`Error: No filename argument provided
-Usage: npm run new-post -- <filename>`);
-    process.exit(1);
+	console.error(`Error: No filename argument provided
+Usage:
+  npm run new-post -- <filename>           → src/content/posts/
+  npm run new-post -- --ctf <slug>         → src/content/ctf/ (CTF writeup)
+Legacy: npm run new-post -- CTF!/slug      → same as --ctf slug`);
+	process.exit(1);
 }
 
 // ❯ FILE PREPARATION
@@ -46,30 +58,38 @@ Usage: npm run new-post -- <filename>`);
 let fileName = args[0];
 const fileExtensionRegex = /\.(md|mdx)$/i;
 if (!fileExtensionRegex.test(fileName)) {
-    fileName += ".md";
+	fileName += ".md";
 }
 
-const targetDir = "./src/content/posts/";
+const legacyCtf =
+	fileName.toLowerCase().includes("ctf!/") ||
+	args[0].toLowerCase().startsWith("ctf!");
+if (legacyCtf) {
+	isCtf = true;
+	fileName = fileName.replace(/^CTF!\//i, "").replace(/^ctf!\//i, "");
+}
+
+const targetDir = isCtf ? "./src/content/ctf/" : "./src/content/posts/";
 const fullPath = path.join(targetDir, fileName);
 
 if (fs.existsSync(fullPath)) {
-    console.error(`Error: File ${fullPath} already exists`);
-    process.exit(1);
+	console.error(`Error: File ${fullPath} already exists`);
+	process.exit(1);
 }
 
 // ❯ DIRECTORY CREATION
 
 const dirPath = path.dirname(fullPath);
 if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
+	fs.mkdirSync(dirPath, { recursive: true });
 }
 
 // ❯ POST GENERATION
-// ❯ @hint Use: npm run new-post -- CTF!/challenge-name  → creates CTF writeup
+// ❯ @hint CTF writeups live in src/content/ctf — URLs are /ctf/writeups/:slug/
 
-const isCtf = fileName.toLowerCase().includes("ctf!/") || args[0].toLowerCase().startsWith("ctf!");
-const defaultCategory = isCtf ? "CTF!" : "";
-const defaultTags = isCtf ? '["Web", "Crypto", "Forensics", "Pwn", "Reversing", "Misc"]' : "[]";
+const defaultTags = isCtf
+	? '["Web", "Crypto", "Forensics", "Pwn", "Reversing", "Misc"]'
+	: "[]";
 
 const content = isCtf
 	? `---
@@ -80,7 +100,6 @@ cover: ""
 coverInContent: false
 pinned: false
 tags: ${defaultTags}
-category: "CTF!"
 draft: false
 comment: true
 encrypted: false
@@ -142,11 +161,11 @@ published: ${getDateTime()}
 description: ''
 cover: ''
 tags: []
-category: '${defaultCategory}'
+category: ''
 draft: false
 lang: ''
 ---
 `;
 
 fs.writeFileSync(path.join(targetDir, fileName), content);
-console.log(`Post ${fullPath} created`);
+console.log(`Created: ${fullPath}`);

@@ -68,6 +68,7 @@ const linkPresetNameMap: Record<string, LinkPreset> = {
 	Identity: LinkPreset.Identity,
 	PracticalCodes: LinkPreset.PracticalCodes,
 	Netstat: LinkPreset.Netstat,
+	Ctf: LinkPreset.Ctf,
 };
 
 // ❯ @doc Normalizes navbar link from string, enum, or object to standard format.

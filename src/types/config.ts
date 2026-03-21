@@ -170,6 +170,7 @@ export enum LinkPreset {
 	Identity = 8,
 	PracticalCodes = 9,
 	Netstat = 10,
+	Ctf = 11,
 }
 
 export type NavbarLink = {

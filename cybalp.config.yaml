@@ -103,7 +103,7 @@ navbar:
           url: "/dump/"
           icon: "material-symbols:storage"
           description: "Public memory leaks"
-          children: ["PersonalLog", "Media", "PracticalCodes", "Netstat"]
+          children: ["PersonalLog", "Media", "Ctf", "PracticalCodes", "Netstat"]
         - name: "Identity"
           url: "/identity/"
           icon: "material-symbols:fingerprint"
@@ -235,6 +235,11 @@ search:
           label: "Posts"
           url: "/vault/"
           aliases: ["post", "posts", "blog", "vault", "write", "article"]
+        - id: "ctf"
+          enabled: true
+          label: "CTF"
+          url: "/ctf/"
+          aliases: ["ctf", "hack", "box", "challenge", "writeup", "htb"]
         - id: "practicalCodes"
           enabled: true
           label: "Codes"

@@ -55,6 +55,21 @@ export function getPostUrl(post: any): string {
 	return getPostUrlBySlug(post.id);
 }
 
+// ❯ CTF WRITEUP URLS
+// ❯ @doc Canonical path for content/ctf writeups (not under /posts/).
+export function getCtfWriteupUrl(
+	entry: CollectionEntry<"ctf"> | { id: string },
+): string {
+	const slug = removeFileExtension(entry.id);
+	return url(`/ctf/writeups/${slug}/`);
+}
+
+// ❯ @doc Resolves prev/next links by collection id (slug path).
+export function getCtfWriteupUrlBySlug(slug: string): string {
+	const clean = removeFileExtension(slug);
+	return url(`/ctf/writeups/${clean}/`);
+}
+
 // ❯ @doc Generates category vault URL.
 export function getCategoryUrl(category: string | string[] | null): string {
 	if (!category) return url("/vault/?uncategorized=true");

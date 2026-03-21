@@ -1,0 +1,308 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/ctf/ctf-started/index.astro
+// ❯ @desc CTF! → CTF Started — Practical Codes–style card grid, covers, search.
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+export const prerender = true;
+
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import BackwardButton from "@components/backwardButton.astro";
+import CtfWriteupGridCard from "@components/ctf/ctfWriteupGridCard.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import GridLayout from "@layouts/grid.astro";
+import { url } from "@utils/url";
+import "../../../styles/ctf.css";
+
+// ❯ CONFIGURATION
+const pageTitle = "CTF Started";
+const pageDescription =
+	"Structured writeups: filter by platform, search across tags, and open full walkthroughs.";
+
+// ❯ @docs Pinned first, then newest; mirrors getRawSortedCtf in @utils/ctf.
+function sortCtfEntries(entries: CollectionEntry<"ctf">[]) {
+	return [...entries].sort((a, b) => {
+		if (a.data.pinned && !b.data.pinned) return -1;
+		if (!a.data.pinned && b.data.pinned) return 1;
+		return (
+			new Date(b.data.published).getTime() -
+			new Date(a.data.published).getTime()
+		);
+	});
+}
+
+// ❯ @docs First tag = platform label for badges / search (untagged → Other).
+function platformFirstTag(entry: CollectionEntry<"ctf">): string {
+	const tags = entry.data.tags ?? [];
+	const first = tags[0];
+	return first ?? "Other";
+}
+
+function countDistinctPlatforms(entries: CollectionEntry<"ctf">[]): number {
+	const s = new Set<string>();
+	for (const e of entries) {
+		s.add(platformFirstTag(e));
+	}
+	return s.size;
+}
+
+// ❯ @doc Tailwind badge styles keyed by platform-ish names (fallback: gray).
+function platformBadgeClass(name: string): string {
+	const n = name.toLowerCase();
+	const map: Record<string, string> = {
+		htb: "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200",
+		thm: "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200",
+		pico: "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200",
+		tryhackme:
+			"bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200",
+	};
+	const direct = map[n];
+	if (direct) return direct;
+	for (const [k, v] of Object.entries(map)) {
+		if (n.includes(k)) return v;
+	}
+	return "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200";
+}
+
+function searchBlob(entry: CollectionEntry<"ctf">): string {
+	const t = [
+		entry.data.title,
+		entry.data.description ?? "",
+		...(entry.data.tags ?? []),
+	]
+		.join(" ")
+		.toLowerCase();
+	return t.replace(/["<>]/g, " ");
+}
+
+// ❯ DATA
+const rawEntries = await getCollection("ctf", ({ data }) => {
+	if (import.meta.env.PROD && data.draft) return false;
+	return true;
+});
+
+const sortedWriteups = sortCtfEntries(rawEntries);
+const totalWriteups = rawEntries.length;
+const platformCount = countDistinctPlatforms(rawEntries);
+
+const uniqueTags = new Set<string>();
+for (const e of rawEntries) {
+	for (const t of e.data.tags ?? []) uniqueTags.add(t);
+}
+const tagCount = uniqueTags.size;
+---
+
+<GridLayout title={pageTitle} description={pageDescription}>
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="card-base ctf-started-shell z-10 px-6 py-8 md:px-10 md:py-9 relative w-full text-neutral-900 dark:text-neutral-100">
+            <BackwardButton
+                href={url("/ctf/")}
+                text={`${i18n(I18nKey.backTo)} CTF!`}
+            />
+            <div class="ctf-started__intro mt-2">
+                <p class="ctf-started__label">Writeups</p>
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-3 tracking-tight arge-title">
+                    {pageTitle}
+                </h1>
+                <p class="ctf-started__lead">
+                    {pageDescription}
+                </p>
+            </div>
+
+            <!-- ❯ STATS -->
+            <div class="ctf-started-stat-grid">
+                <div class="stat-card stat-card-blue group text-left w-full relative">
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{totalWriteups}</div>
+                        <div class="stat-label">Writeups</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-green group text-left w-full relative">
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{platformCount}</div>
+                        <div class="stat-label">Platforms</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-purple group text-left w-full relative">
+                    <div class="stat-icon">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">{tagCount}</div>
+                        <div class="stat-label">Tags</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ❯ SEARCH -->
+            <div class="mb-6">
+                <div class="relative">
+                    <input
+                        type="search"
+                        id="ctf-started-search"
+                        name="ctf-started-search"
+                        autocomplete="off"
+                        placeholder="Search title, description, tags, or platform…"
+                        class="ctf-started-search w-full pl-10 pr-10 py-3"
+                    />
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-500 dark:text-neutral-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <button
+                        id="ctf-started-search-clear"
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hidden"
+                        type="button"
+                        aria-label="Clear search"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ctf-started-section-head">
+                <h2>Writeups</h2>
+                <span id="ctf-started-results-count" class="ctf-started-section-count text-sm font-medium tabular-nums">
+                    {totalWriteups} {totalWriteups === 1 ? "writeup" : "writeups"}
+                </span>
+            </div>
+
+            <!-- ❯ CARD GRID (@gogogo ctf gallery) -->
+            <div id="ctf-started-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {sortedWriteups.map((entry) => {
+                    const platform = platformFirstTag(entry);
+                    return (
+                        <CtfWriteupGridCard
+                            entry={entry}
+                            platform={platform}
+                            platformBadgeClass={platformBadgeClass(platform)}
+                            searchBlob={searchBlob(entry)}
+                        />
+                    );
+                })}
+            </div>
+
+            <div id="ctf-started-no-results" class="hidden text-center py-12">
+                <p class="text-neutral-600 dark:text-neutral-300 text-lg">
+                    No writeups match your search. Try another keyword.
+                </p>
+            </div>
+
+            {totalWriteups === 0 && (
+                <div class="text-center py-12">
+                    <p class="text-neutral-600 dark:text-neutral-300 text-lg">
+                        No CTF writeups yet. Add Markdown files under <strong class="text-neutral-800 dark:text-neutral-100">src/content/ctf/</strong>.
+                    </p>
+                </div>
+            )}
+        </div>
+    </div>
+
+    <script>
+        (window as any).initCtfStarted = function initCtfStarted() {
+            const path = window.location.pathname;
+            if (!path.includes("ctf-started")) return;
+
+            const input = document.getElementById("ctf-started-search") as HTMLInputElement | null;
+            const clearBtn = document.getElementById("ctf-started-search-clear");
+            const noResults = document.getElementById("ctf-started-no-results");
+            const countEl = document.getElementById("ctf-started-results-count");
+            const grid = document.getElementById("ctf-started-grid");
+
+            if (!input || !grid) {
+                setTimeout(() => initCtfStarted(), 100);
+                return;
+            }
+
+            const cards = () =>
+                Array.from(grid.querySelectorAll(".ctf-grid-card")) as HTMLElement[];
+
+            const total = cards().length;
+
+            function applyFilter() {
+                if (!input) return;
+                const term = input.value.toLowerCase().trim();
+                let visible = 0;
+
+                cards().forEach((row) => {
+                    const hay = row.getAttribute("data-search") || "";
+                    const ok = !term || hay.includes(term);
+                    row.classList.toggle("hidden", !ok);
+                    if (ok) visible++;
+                });
+
+                // ❯ @docs Show empty state when some writeups exist but none match the filter.
+                noResults?.classList.toggle("hidden", !(total > 0 && visible === 0));
+                grid?.classList.toggle("hidden", total > 0 && visible === 0);
+
+                if (countEl) {
+                    countEl.textContent = `${visible} ${visible === 1 ? "writeup" : "writeups"}`;
+                }
+
+                clearBtn?.classList.toggle("hidden", !term);
+            }
+
+            const oldHandler = (input as any).__ctfStartedInput;
+            if (oldHandler) input.removeEventListener("input", oldHandler);
+            const inputHandler = () => applyFilter();
+            (input as any).__ctfStartedInput = inputHandler;
+            input.addEventListener("input", inputHandler);
+
+            const oldClear = (clearBtn as any)?.__ctfStartedClear;
+            if (clearBtn && oldClear) clearBtn.removeEventListener("click", oldClear);
+            const clearHandler = () => {
+                input.value = "";
+                applyFilter();
+            };
+            if (clearBtn) {
+                (clearBtn as any).__ctfStartedClear = clearHandler;
+                clearBtn.addEventListener("click", clearHandler);
+            }
+
+            applyFilter();
+        };
+
+        const runInit = () => {
+            const initFn = (window as any).initCtfStarted;
+            if (typeof initFn === "function") initFn();
+        };
+        runInit();
+
+        function setupCtfStartedSwup() {
+            if (window.swup && window.swup.hooks) {
+                window.swup.hooks.on("page:view", () => {
+                    setTimeout(() => {
+                        const initFn = (window as any).initCtfStarted;
+                        if (typeof initFn === "function") initFn();
+                    }, 50);
+                });
+                return true;
+            }
+            return false;
+        }
+
+        if (!setupCtfStartedSwup()) {
+            const t = setInterval(() => {
+                if (setupCtfStartedSwup()) clearInterval(t);
+            }, 100);
+            setTimeout(() => clearInterval(t), 5000);
+        }
+        document.addEventListener("swup:enable", () => setupCtfStartedSwup());
+    </script>
+</GridLayout>

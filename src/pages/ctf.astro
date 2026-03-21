@@ -1,0 +1,58 @@
+---
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ❯ @status OK!
+// ❯ @path ./src/pages/ctf.astro
+// ❯ @desc Dump → CTF! — hub page; only links to CTF Started (writeups live under /ctf/writeups/).
+// ❯ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+export const prerender = true;
+
+import BackwardButton from "@components/backwardButton.astro";
+import { LinkPresets } from "@constants/link-presets";
+import GridLayout from "@layouts/grid.astro";
+import { url } from "@utils/url";
+import { LinkPreset } from "@/types/config";
+import { Icon } from "astro-icon/components";
+import "../styles/ctf.css";
+
+// ❯ CONFIGURATION
+const pageTitle = LinkPresets[LinkPreset.Ctf].name;
+const pageDescription = LinkPresets[LinkPreset.Ctf].description;
+---
+
+<GridLayout title={pageTitle} description={pageDescription}>
+    <div class="flex w-full rounded-(--radius-large) overflow-hidden relative min-h-32">
+        <div class="ctf-hub w-full text-neutral-900 dark:text-neutral-100">
+            <div class="ctf-hub__inner px-6 py-8 md:px-10 md:py-10">
+                <BackwardButton currentPath={Astro.url.pathname} />
+                <header class="mb-10 md:mb-12 mt-2">
+                    <p class="ctf-hub__kicker">Lab</p>
+                    <h1 class="text-3xl md:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight mb-4 arge-title">
+                        {pageTitle}
+                    </h1>
+                    <p class="ctf-hub__lead">
+                        {pageDescription}
+                    </p>
+                </header>
+                <a
+                    href={url("/ctf/ctf-started/")}
+                    class="ctf-hub-cta group max-w-2xl"
+                >
+                    <span class="ctf-hub-cta__rail" aria-hidden="true">
+                        <Icon
+                            name="material-symbols:flag-outline"
+                            class="text-2xl md:text-[1.75rem] opacity-95"
+                        />
+                    </span>
+                    <span class="ctf-hub-cta__body">
+                        <span class="ctf-hub-cta__title">CTF Started</span>
+                        <span class="ctf-hub-cta__desc">
+                            Browse challenges by platform, search writeups, and open full walkthroughs.
+                        </span>
+                    </span>
+                    <span class="ctf-hub-cta__action">Open</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</GridLayout>

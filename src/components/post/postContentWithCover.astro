@@ -12,7 +12,7 @@ import { injectMachineInfoCover } from "@utils/inject-machine-info-cover";
 
 // ❯ PROPS
 interface Props {
-	entry: CollectionEntry<"posts">;
+	entry: CollectionEntry<"posts"> | CollectionEntry<"ctf">;
 }
 
 const { entry } = Astro.props;
@@ -26,7 +26,9 @@ let coverImgHtml = "";
 if (entry.data.cover) {
 	const contentDirRaw = entry.filePath
 		? getFileDirFromPath(entry.filePath)
-		: `content/posts/${entry.id.replace(/\/[^/]+$/, "")}`;
+		: entry.collection === "ctf"
+			? `content/ctf/${entry.id.replace(/\/[^/]+$/, "")}`
+			: `content/posts/${entry.id.replace(/\/[^/]+$/, "")}`;
 	const contentDir = contentDirRaw.startsWith("src/")
 		? contentDirRaw
 		: `src/${contentDirRaw}`;
